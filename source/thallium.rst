@@ -17,7 +17,7 @@ in place of the C++ threading library.
    :code:`thallium::mutex` and :code:`thallium::thread`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    thallium/01_init.rst
    thallium/02_hello.rst
