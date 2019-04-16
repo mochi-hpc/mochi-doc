@@ -32,3 +32,4 @@ in understanding other Margo-based services.
    margo/05_async.rst
    margo/06_provider.rst
    margo/07_pools.rst
+   margo/08_custom_serialization.rst

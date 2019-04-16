@@ -5,13 +5,21 @@ The previous tutorial explained how to initialize a server and a client.
 This this tutoria, we will have the server register and RPC handler and
 the client send an RPC request to the server.
 
-Server
-------
+Server-side RPC handler
+-----------------------
 
 We will change the code of our server as follows.
 
-.. literalinclude:: ../../../code/margo/02_hello/server.c
-   :language: cpp
+.. container:: toggle
+
+    .. container:: header
+    
+       .. container:: btn btn-info 
+
+          server.c (show/hide)
+
+    .. literalinclude:: ../../../code/margo/02_hello/server.c
+       :language: cpp
 
 What changes is the following declaration of an RPC handler.
 
@@ -61,13 +69,21 @@ which will make the main ES exit the call to :code:`margo_wait_for_finalize` and
    (here :code:`TOTAL_RPCS` and :code:`num_rpcs`).
 
 
-Client
-------
+Calling the RPC from clients
+----------------------------
 
 The following code is the corresponding client.
 
-.. literalinclude:: ../../../code/margo/02_hello/client.c
-   :language: cpp
+.. container:: toggle
+
+    .. container:: header
+    
+       .. container:: btn btn-info 
+
+          client.c (show/hide)
+
+    .. literalinclude:: ../../../code/margo/02_hello/client.c
+       :language: cpp
 
 This client takes the server's address as argument (copy-past the address printed
 by the server when calling the client). This string representation of the server's

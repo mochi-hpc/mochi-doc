@@ -5,8 +5,10 @@
 #include <mercury.h>
 #include "types.h"
 
-static const int TOTAL_RPCS = 16;
-static int num_rpcs = 0;
+typedef struct {
+    int max_rpcs;
+    int num_rpcs;
+} server_data;
 
 hg_return_t sum(hg_handle_t h);
 DECLARE_MARGO_RPC_HANDLER(sum)
@@ -16,6 +18,11 @@ int main(int argc, char** argv)
     margo_instance_id mid = margo_init("tcp", MARGO_SERVER_MODE, 0, 0);
     assert(mid);
 
+    server_data svr_data = {
+        .max_rpcs = 4,
+        .num_rpcs = 0
+    };
+
     hg_addr_t my_address;
     margo_addr_self(mid, &my_address);
     char addr_str[128];
@@ -24,7 +31,8 @@ int main(int argc, char** argv)
     margo_addr_free(mid,my_address);
     printf("Server running at address %s\n", addr_str);
 
-    MARGO_REGISTER(mid, "sum", sum_in_t, sum_out_t, sum);
+    hg_id_t rpc_id = MARGO_REGISTER(mid, "sum", sum_in_t, sum_out_t, sum);
+    margo_register_data(mid, rpc_id, &svr_data);
 
     margo_wait_for_finalize(mid);
 
@@ -34,12 +42,14 @@ int main(int argc, char** argv)
 hg_return_t sum(hg_handle_t h)
 {
     hg_return_t ret;
-    num_rpcs += 1;
 
     sum_in_t in;
     sum_out_t out;
 
     margo_instance_id mid = margo_hg_handle_get_instance(h);
+
+    const struct hg_info* info = margo_get_info(h);
+    server_data* svr_data = (server_data*)margo_registered_data(mid, info->id);
 
     ret = margo_get_input(h, &in);
     assert(ret == HG_SUCCESS);
@@ -56,7 +66,8 @@ hg_return_t sum(hg_handle_t h)
     ret = margo_destroy(h);
     assert(ret == HG_SUCCESS);
 
-    if(num_rpcs == TOTAL_RPCS) {
+    svr_data->num_rpcs += 1;
+    if(svr_data->num_rpcs == svr_data->max_rpcs) {
         margo_finalize(mid);
     }
 

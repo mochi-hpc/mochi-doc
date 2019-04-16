@@ -1,0 +1,24 @@
+.toggle {
+  padding-bottom: 12px;
+}
+
+.toggle .header {
+    display: block;
+    clear: both;
+/*    background-color:#f3f6f6;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 12px 12px;
+    overflow: auto;
+    white-space: pre;
+    font-size: 14px;
+    line-height: 1.4; */
+}
+
+.toggle .header:after {
+    content: " ▶";
+}
+
+.toggle .header.open:after {
+    content: " ▼";
+}
