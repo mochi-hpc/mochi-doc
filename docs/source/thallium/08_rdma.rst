@@ -12,30 +12,8 @@ Client
 
 Here is an example of a client sending a "do_rdma" RPC with a bulk object as argument.
 
-.. code-block:: cpp
-
-  #include <iostream>
-  #include <thallium.hpp>
-
-  namespace tl = thallium;
-
-  int main(int argc, char** argv) {
-
-      tl::engine myEngine("tcp", MARGO_CLIENT_MODE);
-      tl::remote_procedure remote_do_rdma = myEngine.define("do_rdma").disable_response();
-      tl::endpoint server_endpoint = myEngine.lookup("tcp://127.0.0.1:1234");
-
-      std::string buffer = "Matthieu";
-      std::vector<std::pair<void*,std::size_t>> segments(1);
-      segments[0].first  = (void*)(&buffer[0]);
-      segments[0].second = buffer.size()+1;
-
-      tl::bulk myBulk = myEngine.expose(segments, tl::bulk_mode::read_only);
-
-      remote_do_rdma.on(server_endpoint)(myBulk);
-
-      return 0;
-  }
+.. literalinclude:: ../../../code/thallium/08_rdma/client.cpp
+       :language: cpp
 
 In this client, we define a buffer with the content "Matthieu"
 (because it's a string, there is actually a null-terminating character).
@@ -52,33 +30,8 @@ Server
 
 Here is the server code now:
 
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <thallium.hpp>
-   #include <thallium/serialization/stl/string.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp://127.0.0.1:1234", THALLIUM_SERVER_MODE);
-
-       std::function<void(const tl::request&, tl::bulk&)> f =
-           [&myEngine](const tl::request& req, tl::bulk& b) {
-               tl::endpoint ep = req.get_endpoint();
-               std::vector<char> v(6);
-               std::vector<std::pair<void*,std::size_t>> segments(1);
-               segments[0].first  = (void*)(&v[0]);
-               segments[0].second = v.size();
-               tl::bulk local = myEngine.expose(segments, tl::bulk_mode::write_only);
-               b.on(ep) >> local;
-               std::cout << "Server received bulk: ";
-               for(auto c : v) std::cout << c;
-               std::cout << std::endl;
-           };
-       myEngine.define("do_rdma",f).ignore_response();
-   }
+.. literalinclude:: ../../../code/thallium/08_rdma/server.cpp
+       :language: cpp
 
 In the RPC handler, we get the client's :code:`endpoint` using
 :code:`req.get_endpoint()`. We then create a buffer of size 6.

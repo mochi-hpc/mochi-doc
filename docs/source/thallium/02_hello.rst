@@ -8,24 +8,8 @@ Server
 
 Let's take again the server code from the previous section and improve it.
 
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   void hello(const tl::request& req) {
-       std::cout << "Hello World!" << std::endl;
-   }
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp://127.0.0.1:1234", THALLIUM_SERVER_MODE);
-       myEngine.define("hello", hello).disable_response();
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/02_hello/server.cpp
+       :language: cpp
 
 The :code:`engine::define` method is used to define an RPC.
 The first argument is the name of the RPC (a string), the second is a function.
@@ -39,21 +23,8 @@ Client
 
 Let's now take a look at the client code.
 
-.. code-block:: cpp
-
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp", THALLIUM_CLIENT_MODE);
-       tl::remote_procedure hello = myEngine.define("hello").disable_response();
-       tl::endpoint server = myEngine.lookup("tcp://127.0.0.1:1234");
-       hello.on(server)();
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/02_hello/client.cpp
+       :language: cpp
 
 The client does not declare the :code:`hello` function, since its code is on the server.
 Instead, it calls :code:`engine::define` with only the name of the RPC, indicating that

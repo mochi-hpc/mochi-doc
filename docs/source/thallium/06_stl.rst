@@ -50,48 +50,14 @@ The following is a revisited Hello World example in which the client sends its n
 Server
 ------
 
-.. code-block:: cpp
-
-   #include <string>
-   #include <iostream>
-   #include <thallium.hpp>
-   #include <thallium/serialization/stl/string.hpp>
-
-   namespace tl = thallium;
-
-   void hello(const tl::request& req, const std::string& name) {
-       std::cout << "Hello " << name << std::endl;
-   }
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp://127.0.0.1:1234", THALLIUM_SERVER_MODE);
-       myEngine.define("hello", hello).disable_response();
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/06_stl/server.cpp
+       :language: cpp
 
 Client
 ------
 
-.. code-block:: cpp
-
-   #include <string>
-   #include <thallium.hpp>
-   #include <thallium/serialization/stl/string.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp", THALLIUM_CLIENT_MODE);
-       tl::remote_procedure hello = myEngine.define("hello").disable_response();
-       tl::endpoint server = myEngine.lookup("tcp://127.0.0.1:1234");
-       std::string name = "Matthieu";
-       hello.on(server)(name);
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/06_stl/client.cpp
+       :language: cpp
 
 .. note:: 
    We explicitly define :code:`std::string name = "Matthieu";` 

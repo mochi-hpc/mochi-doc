@@ -8,18 +8,8 @@ how to use execution streams, threads, tasks, pools, etc.
 
 The following code initializes Argobots through Thallium.
 
-.. code-block:: cpp
-
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-       // the constructor of the tl::abt object initializes Argobots
-       tl::abt a;
-       // its destructor finalizes it
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/10_abt_intro/main.cpp
+       :language: cpp
 
 .. note:: 
    If you are creating a :code:`thallium::engine`, this engine

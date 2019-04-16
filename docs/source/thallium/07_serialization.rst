@@ -12,28 +12,8 @@ put inside the class.
 
 Here is an example with a point class representing a 3d point.
 
-.. code-block:: cpp
-
-   class point {
-
-       private:
-
-           double x;
-           double y;
-           double z;
-
-       public:
-
-           point(double a=0.0, double b=0.0, double c=0.0)
-           : x(a), y(b), z(c) {}
-
-           template<typename A>
-           void serialize(A& ar) {
-                ar & x;
-                ar & y;
-                ar & z;
-           }
-   };
+.. literalinclude:: ../../../code/thallium/07_serialization/point.hpp
+       :language: cpp
 
 You will also need the class to be default-constructible.
 

@@ -9,25 +9,8 @@ Server
 
 Here is the server code.
 
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   void sum(const tl::request& req, int x, int y) {
-       std::cout << "Computing " << x << "+" << y << std::endl;
-       req.respond(x+y);
-   }
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp://127.0.0.1:1234", THALLIUM_SERVER_MODE);
-       myEngine.define("sum", sum);
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/03_args/server.cpp
+       :language: cpp
 
 Notice that our :code:`sum` function now takes two integers in addition
 to the const reference to a :code:`thallium::request`. You can also see
@@ -40,23 +23,8 @@ Client
 
 Let's now take a look at the client code.
 
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp", THALLIUM_CLIENT_MODE);
-       tl::remote_procedure sum = myEngine.define("sum");
-       tl::endpoint server = myEngine.lookup("tcp://127.0.0.1:1234");
-       int ret = sum.on(server)(42,63);
-       std::cout << "Server answered " << ret << std::endl;
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/03_args/client.cpp
+       :language: cpp
 
 The client calls the remote procedure with two integers and gets an integer back.
 This way of passing parameters and returning a value hides many implementation

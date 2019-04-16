@@ -10,20 +10,8 @@ Server
 
 Here is a simple example of server.
 
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp", THALLIUM_SERVER_MODE);
-       std::cout << "Server running at address " << myEngine.self() << std::endl;
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/01_init/server.cpp
+       :language: cpp
 
 You can compile this program with the following command (using GCC):
 
@@ -46,18 +34,8 @@ Client
 
 The following code initialize the engine as a client:
 
-.. code-block:: cpp
-
-   #include <thallium.hpp>
-
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-
-       tl::engine myEngine("tcp", THALLIUM_CLIENT_MODE);
-
-       return 0;
-   }
+.. literalinclude:: ../../../code/thallium/01_init/client.cpp
+       :language: cpp
 
 You can compile this program with the following command (using GCC):
 
