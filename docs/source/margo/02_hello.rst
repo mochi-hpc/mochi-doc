@@ -25,12 +25,12 @@ What changes is the following declaration of an RPC handler.
 
 .. code-block:: cpp
 
-   static hg_return_t hello_world(hg_handle_t h);
+   static void hello_world(hg_handle_t h);
    DECLARE_MARGO_RPC_HANDLER(hello_world)
 
 The first line declares the function that will be called upon
 receiving a "hello" RPC request. This function must take a :code:`hg_handle_t`
-object as argument and return a value of type :code:`hg_return_t`.
+object as argument and does not return anything.
 
 The second line declares *hello_world* as a RPC handler. :code:`DECLARE_MARGO_RPC_HANDLER`
 is a macro that generates the code necessary for the RPC handler to be placed
@@ -63,6 +63,8 @@ it is being passed, after we are done using it.
 
 In this example, after receiving 4 requests, the RPC handler will call :code:`margo_finalize`,
 which will make the main ES exit the call to :code:`margo_wait_for_finalize` and terminate.
+
+After the definition of the RPC handler, :code:`DEFINE_MARGO_RPC_HANDLER` must be called for Margo to define additional wrapper functions.
 
 .. note::
    We will see at the end of this tutorial how to avoid using global variables

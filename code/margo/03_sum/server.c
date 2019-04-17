@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
-#include <abt.h>
 #include <margo.h>
-#include <mercury.h>
 #include "types.h"
 
 typedef struct {
@@ -10,7 +8,7 @@ typedef struct {
     int num_rpcs;
 } server_data;
 
-hg_return_t sum(hg_handle_t h);
+static void sum(hg_handle_t h);
 DECLARE_MARGO_RPC_HANDLER(sum)
 
 int main(int argc, char** argv)
@@ -39,7 +37,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-hg_return_t sum(hg_handle_t h)
+static void sum(hg_handle_t h)
 {
     hg_return_t ret;
 
@@ -70,7 +68,5 @@ hg_return_t sum(hg_handle_t h)
     if(svr_data->num_rpcs == svr_data->max_rpcs) {
         margo_finalize(mid);
     }
-
-    return HG_SUCCESS;
 }
 DEFINE_MARGO_RPC_HANDLER(sum)

@@ -5,7 +5,7 @@
 static const int TOTAL_RPCS = 4;
 static int num_rpcs = 0;
 
-static hg_return_t hello_world(hg_handle_t h);
+static void hello_world(hg_handle_t h);
 DECLARE_MARGO_RPC_HANDLER(hello_world)
 
 int main(int argc, char** argv)
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-static hg_return_t hello_world(hg_handle_t h)
+static void hello_world(hg_handle_t h)
 {
     hg_return_t ret;
 
@@ -44,7 +44,5 @@ static hg_return_t hello_world(hg_handle_t h)
     if(num_rpcs == TOTAL_RPCS) {
         margo_finalize(mid);
     }
-
-    return HG_SUCCESS;
 }
 DEFINE_MARGO_RPC_HANDLER(hello_world)
