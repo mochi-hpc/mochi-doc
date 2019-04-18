@@ -20,7 +20,9 @@ use the .rst format). You can build the documentation
 using the following command.
 
 ```
+cd docs
 make html
 ```
 
-And check the result by opening the `build/index.html` page.
+And check the result by opening the `build/index.html` page
+that has been created in the docs directory.
