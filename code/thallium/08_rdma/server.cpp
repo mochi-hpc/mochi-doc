@@ -21,5 +21,5 @@ int main(int argc, char** argv) {
             for(auto c : v) std::cout << c;
             std::cout << std::endl;
         };
-    myEngine.define("do_rdma",f).ignore_response();
+    myEngine.define("do_rdma",f).disable_response();
 }
