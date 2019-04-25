@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     hg_addr_t svr_addr;
     margo_addr_lookup(mid, svr_addr_str, &svr_addr);
 
-    alpha_client_t alpha_clt
+    alpha_client_t alpha_clt;
     alpha_provider_handle_t alpha_ph;
 
     alpha_client_init(mid, &alpha_clt);

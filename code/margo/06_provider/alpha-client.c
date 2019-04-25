@@ -1,3 +1,4 @@
+#include "types.h"
 #include "alpha-client.h"
 
 struct alpha_client {
@@ -56,8 +57,8 @@ int alpha_provider_handle_create(
     if(client == ALPHA_CLIENT_NULL)
         return ALPHA_FAILURE;
 
-    sdskv_provider_handle_t ph =
-        (sdskv_provider_handle_t)calloc(1, sizeof(*ph));
+    alpha_provider_handle_t ph =
+        (alpha_provider_handle_t)calloc(1, sizeof(*ph));
 
     if(!ph) return ALPHA_FAILURE;
 
@@ -67,9 +68,9 @@ int alpha_provider_handle_create(
         return ALPHA_FAILURE;
     }
 
-    provider->client      = client;
-    provider->provider_id = provider_id;
-    provider->refcount    = 1;
+    ph->client      = client;
+    ph->provider_id = provider_id;
+    ph->refcount    = 1;
 
     client->num_prov_hdl += 1;
 
@@ -113,7 +114,7 @@ int alpha_compute_sum(
     in.x = x;
     in.y = y;
 
-    ret = margo_create(mid, handle->addr, handle->client->sum_id, &h);
+    ret = margo_create(handle->client->mid, handle->addr, handle->client->sum_id, &h);
     if(ret != HG_SUCCESS)
         return ALPHA_FAILURE;
 
@@ -135,5 +136,3 @@ int alpha_compute_sum(
     margo_destroy(h);
     return ALPHA_SUCCESS;
 }
-
-#endif

@@ -23,7 +23,7 @@ int main(int argc, char** argv)
             ABT_POOL_FIFO,
             ABT_POOL_ACCESS_SPSC,
             ABT_TRUE,
-	        &pool);	
+            &pool);
 
     ABT_xstream xstream;
     ABT_xstream_create_basic(
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
     alpha_provider_register(mid, 42, pool, ALPHA_PROVIDER_IGNORE);
 
-    margo_push_finalize_callback(mid, finalize_xstream_cb);
+    margo_push_finalize_callback(mid, finalize_xstream_cb, (void*)xstream);
 
     margo_wait_for_finalize(mid);
 

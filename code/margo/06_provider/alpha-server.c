@@ -1,6 +1,8 @@
 #include "alpha-server.h"
+#include "types.h"
 
 struct alpha_provider {
+    margo_instance_id mid;
     hg_id_t sum_id;
     /* other provider-specific data */
 };
@@ -8,7 +10,7 @@ struct alpha_provider {
 static void alpha_finalize_provider_cb(void* p);
 
 DECLARE_MARGO_RPC_HANDLER(alpha_sum_ult);
-static hg_return_t alpha_sum_ult(hg_handle_t h);
+static void alpha_sum_ult(hg_handle_t h);
 /* add other RPC declarations here */
 
 int alpha_provider_register(
@@ -21,7 +23,7 @@ int alpha_provider_register(
     hg_id_t id;
     hg_bool_t flag;
 
-    margo_is_listening(mid, &flag);
+    flag = margo_is_listening(mid);
     if(flag == HG_FALSE) {
         fprintf(stderr, "alpha_provider_register(): margo instance is not a server.");
         return ALPHA_FAILURE;
@@ -36,6 +38,8 @@ int alpha_provider_register(
     p = (alpha_provider_t)calloc(1, sizeof(*p));
     if(p == NULL)
         return ALPHA_FAILURE;
+
+    p->mid = mid;
 
     id = MARGO_REGISTER_PROVIDER(mid, "alpha_sum",
             sum_in_t, sum_out_t,
@@ -52,9 +56,9 @@ int alpha_provider_register(
 }
 
 int alpha_provider_destroy(
-        alpha_provider_t* provider)
+        alpha_provider_t provider)
 {
-    margo_deregister(provider->sum_id);
+    margo_deregister(provider->mid, provider->sum_id);
     /* deregister other RPC ids */
 
     free(provider);
@@ -87,9 +91,3 @@ static void alpha_sum_ult(hg_handle_t h)
     ret = margo_free_input(h, &in);
 }
 DEFINE_MARGO_RPC_HANDLER(alpha_sum_ult)
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif

@@ -1,0 +1,8 @@
+add_subdirectory (01_init)
+add_subdirectory (02_hello)
+add_subdirectory (03_sum)
+add_subdirectory (04_bulk)
+add_subdirectory (05_async)
+add_subdirectory (06_provider)
+add_subdirectory (07_pool)
+add_subdirectory (08_proc)

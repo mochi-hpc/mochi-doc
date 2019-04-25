@@ -12,7 +12,7 @@ extern "C" {
 
 typedef struct alpha_provider* alpha_provider_t;
 #define ALPHA_PROVIDER_NULL ((alpha_provider_t)NULL)
-#define ALPHA_PROVIDER_IGNORE ALPHA_PROVIDER_NULL
+#define ALPHA_PROVIDER_IGNORE ((alpha_provider_t*)NULL)
 
 /**
  * @brief Creates a new ALPHA provider. If ALPHA_PROVIDER_IGNORE
@@ -40,7 +40,7 @@ int alpha_provider_register(
  * @return ALPHA_SUCCESS or error code defined in alpha-common.h
  */
 int alpha_provider_destroy(
-        alpha_provider_t* provider);
+        alpha_provider_t provider);
 
 #ifdef __cplusplus
 }

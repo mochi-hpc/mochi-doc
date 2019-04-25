@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     printf("Server running at address %s\n", addr_str);
 
     hg_id_t rpc_id = MARGO_REGISTER(mid, "sum", sum_in_t, sum_out_t, sum);
-    margo_register_data(mid, rpc_id, &svr_data);
+    margo_register_data(mid, rpc_id, &svr_data, NULL);
 
     margo_wait_for_finalize(mid);
 

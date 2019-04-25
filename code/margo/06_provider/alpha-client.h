@@ -2,6 +2,7 @@
 #define __ALPHA_CLIENT_H
 
 #include <margo.h>
+#include <alpha-common.h>
 
 #if defined(__cplusplus)
 extern "C" {
