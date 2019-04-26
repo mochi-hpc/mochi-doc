@@ -48,8 +48,8 @@ Contents
    installing.rst
    margo.rst
    thallium.rst
-   argobots.rst
    mercury.rst
+   argobots.rst
 
 
 Indices and tables
