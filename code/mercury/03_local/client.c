@@ -10,11 +10,6 @@ typedef struct {
     int           completed;
 } client_data_t;
 
-/*
- * This callback will be called after looking up for the server's address.
- * This is the function that will also send the RPC to the servers, then
- * set the completed variable to 1.
- */
 hg_return_t lookup_callback(const struct hg_cb_info *callback_info);
 
 int main(int argc, char** argv)
