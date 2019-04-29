@@ -15,3 +15,4 @@ turorials in order to use Margo and Thallium.
    mercury/03_local.rst
    mercury/04_args.rst
    mercury/05_bulk.rst
+   mercury/06_proc.rst
