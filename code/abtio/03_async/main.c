@@ -22,6 +22,9 @@ int main(int argc, char** argv)
     // wait for the request to be completed
     abt_io_op_wait(op);
 
+    // free the request
+    abt_io_op_free(op);
+
     // close the file
     abt_io_close(abtio, fd);
 
