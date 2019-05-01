@@ -26,18 +26,22 @@ the same sort of services using all the power of modern C++. It is the
 recommended library for C++ developers. Note that Thallium also provides
 C++ wrappers to Argobots.
 
-Argobots is used for threading/tasking in Mochi. Understanding its underlying
-programming model may not be necessary at first, for simple Margo or Thallium
-services, but may become useful to optimize performance or customize the
-scheduling and placement of threads and tasks in a Mochi service.
-
 Mercury is Mochi's underlying RPC/RDMA library. While it is not necessary
 to undertand how to use Mercury itself when developing with Margo or Thallium
 (which we recommend), we provide a set of tutorials for those who would need
 to use it directly rather than through higher level libraries.
 
+Argobots is used for threading/tasking in Mochi. Understanding its underlying
+programming model may not be necessary at first, for simple Margo or Thallium
+services, but may become useful to optimize performance or customize the
+scheduling and placement of threads and tasks in a Mochi service.
+
 Note that documentation and tutorials on each of these libraries are
 independent of one another. The reader is free to start with either library.
+
+Additionally, ABT-IO is a small library that can be used to offload POSIX
+I/O operations to dedicated execution stream to better integrate with
+the core Mochi libraries.
 
 Contents
 ========
@@ -50,6 +54,7 @@ Contents
    thallium.rst
    mercury.rst
    argobots.rst
+   abtio.rst
 
 
 Indices and tables

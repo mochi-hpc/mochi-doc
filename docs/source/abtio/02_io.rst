@@ -1,0 +1,39 @@
+Issuing I/O operations
+======================
+
+Once initialized, ABT-IO can be used to issue I/O operations as follows.
+
+.. literalinclude:: ../../../code/abtio/02_io/main.c
+       :language: cpp
+
+The list of available I/O operations is the following.
+
++-----------------+------------------------------+
+| ABT-IO function | Corresponding POSIX function |
++=================+==============================+
+| abt_io_open     | open                         |
++-----------------+------------------------------+
+| abt_io_write    | write                        |
++-----------------+------------------------------+
+| abt_io_pwrite   | pwrite                       |
++-----------------+------------------------------+
+| abt_io_read     | read                         |
++-----------------+------------------------------+
+| abt_io_pread    | pread                        |
++-----------------+------------------------------+
+| abt_io_mkostemp | mkostemp                     |
++-----------------+------------------------------+
+| abt_io_unlink   | unlink                       |
++-----------------+------------------------------+
+| abt_io_close    | close                        |
++-----------------+------------------------------+
+
+.. important::
+   We highly recommend using the :code:`pwrite` and :code:`pread`
+   wrappers rather than the :code:`write` and :code:`read` wrappers,
+   especially if you either post I/O operations from multiple ES,
+   or setup ABT-IO to execute I/O operations in multiple ES.
+   :code:`abt_io_read` and :code:`abt_io_write` rely on the file
+   descriptor's internal cursor, and Argobots cannot guarantee
+   the order of I/O operations posted, which may lead to 
+   unpredictable reordering.
