@@ -47,6 +47,11 @@ Additionally, **ABT-IO** is a small library that can be used to offload POSIX
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.
 
+.. important::
+   In all the tutorials, we use the term "server" to denote a process to which
+   one can send RPC requests, and "client" to denote a process that sends such
+   RPC requests. It is important to note however that a server can also send
+   RPC requests to other servers, and even to itself.
 
 Contents
 ========
