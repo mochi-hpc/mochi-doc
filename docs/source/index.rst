@@ -7,7 +7,8 @@ Welcome to the Mochi project
 ============================
 
 
-The Mochi project is a collaboration between Argonne National Laboratory,
+The `Mochi project <https://press3.mcs.anl.gov/mochi/>`_ is a 
+collaboration between Argonne National Laboratory,
 Los Alamos National Laboratory, Carnegie Mellon University, and the HDF Group.
 The objective of this project is to explore a software defined storage approach
 for composing storage services that provides new levels of functionality,
