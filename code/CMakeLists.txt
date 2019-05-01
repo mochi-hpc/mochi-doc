@@ -28,7 +28,7 @@ set (BUILD_SHARED_LIBS "OFF" CACHE BOOL "Build a shared library")
 
 # packages we depend on
 include (xpkg-import)
-find_package (mercury CONFIG REQUIRED)
+find_package (mercury REQUIRED)
 include_directories(${MERCURY_INCLUDE_DIR})
 xpkg_import_module (argobots REQUIRED argobots)
 xpkg_import_module (margo REQUIRED margo)
