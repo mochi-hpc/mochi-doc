@@ -17,27 +17,36 @@ This website gathers documentation and tutorials for the main libraries
 used or developed in the context of the Mochi project:
 Margo, Thallium, Argobots, and Mercury.
 
-Margo is a C library enabling the development of distributed HPC services.
+The Mochi libraries
+-------------------
+
+**Margo** is a C library enabling the development of distributed HPC services.
 It relies on Mercury for RPC/RDMA, and Argobots for threading/tasking, hidding
 the complexity of these two libraries under a simple programming model.
 
-Thallium is a C++14 library wrapping Margo and enabling the development of
+**Thallium** is a C++14 library wrapping Margo and enabling the development of
 the same sort of services using all the power of modern C++. It is the
 recommended library for C++ developers. Note that Thallium also provides
 C++ wrappers to Argobots.
 
-Argobots is used for threading/tasking in Mochi. Understanding its underlying
+**Mercury** is Mochi's underlying RPC/RDMA library. While it is not necessary
+to understand how to use Mercury itself when developing with Margo or Thallium
+(which we recommend), we provide a set of tutorials for those who would need
+to use it directly rather than through higher level libraries.
+
+**Argobots** is used for threading/tasking in Mochi. Understanding its underlying
 programming model may not be necessary at first, for simple Margo or Thallium
 services, but may become useful to optimize performance or customize the
 scheduling and placement of threads and tasks in a Mochi service.
 
-Mercury is Mochi's underlying RPC/RDMA library. While it is not necessary
-to undertand how to use Mercury itself when developing with Margo or Thallium
-(which we recommend), we provide a set of tutorials for those who would need
-to use it directly rather than through higher level libraries.
+.. note::
+   The tutorials for each of these libraries are independent of one another.
+   Feel free to start with the most relevant for you.
 
-Note that documentation and tutorials on each of these libraries are
-independent of one another. The reader is free to start with either library.
+Additionally, **ABT-IO** is a small library that can be used to offload POSIX
+I/O operations to dedicated execution stream to better integrate with
+the core Mochi libraries. ABT-IO depends on Argobots only.
+
 
 Contents
 ========
@@ -50,6 +59,7 @@ Contents
    thallium.rst
    mercury.rst
    argobots.rst
+   abtio.rst
 
 
 Indices and tables

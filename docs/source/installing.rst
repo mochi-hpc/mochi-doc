@@ -57,6 +57,7 @@ install Margo if you didn't install it before, as well as its dependencies).
 :code:`spack install mercury` can be used to install Mercury, and
 :code:`spack install argobots` can be used to install Argobots, should you
 need to install either independently of Margo or Thallium.
+:code:`spack install abt-io` will install ABT-IO.
 
 Loading and using the Mochi libraries
 -------------------------------------
@@ -70,3 +71,61 @@ Once installed, you can load Margo using the following command.
 This will load Margo and its dependencies (Mercury, Argobots, etc.).
 :code:`spack load -r thallium` will load Thallium and its dependencies
 (Margo, Mercury, Argobots, etc.). You are now ready to use the Mochi libraries!
+
+Using the Mochi libraries with pkg-config
+-----------------------------------------
+
+Once loaded, all the Mochi libraries can be found using :code:`pkg-config`.
+For examples:
+
+.. code-block:: console
+
+   $ pkg-config --libs margo
+
+Using the Mochi libraries with cmake
+------------------------------------
+
+Within a cmake project, Thallium and Mercury can be found using:
+
+.. code-block:: console
+   
+   find_package(mercury REQUIRED)
+   include_directories(${MERCURY_INCLUDE_DIR})
+   find_package(thallium REQUIRED)
+
+To make cmake find Margo, Argobots, or ABT-IO, download
+`this file <https://xgitlab.cels.anl.gov/sds/mochi-doc/blob/master/code/cmake/xpkg-import.cmake>`_
+and place it in a *cmake* folder in your project.
+In the root CMakeLists.txt file of your project, add
+:code:`set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")`
+and :code:`include (xpkg-import)`. You can then find Margo, Argobots, and ABT-IO using the following:
+
+.. code-block:: console
+
+   xpkg_import_module (argobots REQUIRED argobots)
+   xpkg_import_module (margo REQUIRED margo)
+   xpkg_import_module (abtio REQUIRED abt-io)
+
+You can now link targets as follows.
+
+.. code-block:: console
+   
+   # Code using Mercury
+   add_executable(my_mercury_prog source.c)
+   target_link_libraries(my_mercury_prog mercury)
+
+   # Code using Margo
+   add_executable(my_margo_prog source.c)
+   target_link_libraries(my_margo_prog margo)
+
+   # Code using Thallium
+   add_executable(my_thallium_prog source.cpp)
+   target_link_libraries(my_thallium_prog thallium)
+   
+   # Code using Argobots
+   add_executable(my_abt_prog source.c)
+   target_link_libraries(my_abt_prog abt)
+
+   # Code using ABT-IO
+   add_executable(my_abt_io_prog source.c)
+   target_link_libraries(my_abt_io_prog abt-io abt)
