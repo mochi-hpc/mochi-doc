@@ -30,7 +30,7 @@ recommended library for C++ developers. Note that Thallium also provides
 C++ wrappers to Argobots.
 
 **Mercury** is Mochi's underlying RPC/RDMA library. While it is not necessary
-to undertand how to use Mercury itself when developing with Margo or Thallium
+to understand how to use Mercury itself when developing with Margo or Thallium
 (which we recommend), we provide a set of tutorials for those who would need
 to use it directly rather than through higher level libraries.
 
