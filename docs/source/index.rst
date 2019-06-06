@@ -66,6 +66,7 @@ Contents
    mercury.rst
    argobots.rst
    abtio.rst
+   general.rst
 
 
 Indices and tables
