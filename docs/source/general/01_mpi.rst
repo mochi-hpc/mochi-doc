@@ -41,7 +41,7 @@ pose any problem because the client will either block on an MPI call
 (and not need the progress loop to be running) or block on a Margo call
 (and not need MPI progress to happen).
 
-If the progress loop has been placed in a dedicated ES, it will running
+If the progress loop has been placed in a dedicated ES, it will run
 continuously in the background and, once again, the client will not have
 to care about conflicting MPI and Margo calls.
 
@@ -86,7 +86,7 @@ blocks on an MPI call, it will block its entire ES and therefore prevent
 the progress loop from running.
 
 If the RPC handlers execute in the same ES as :code:`margo_init`,
-and MPI call that blocks the main ES will prevent RPC handlers from running.
+an MPI call that blocks the main ES will prevent RPC handlers from running.
 A frequent mistake we see users make is initializing Margo with a dedicated
 progress loop (third argument of :code:`margo_init` set to 1), and RPC handlers
 running in the main ES (fourth argument set to 0), but block the main ES on
