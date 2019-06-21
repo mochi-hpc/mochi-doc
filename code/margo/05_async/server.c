@@ -66,7 +66,5 @@ static void sum(hg_handle_t h)
     if(num_rpcs == TOTAL_RPCS) {
         margo_finalize(mid);
     }
-
-    return HG_SUCCESS;
 }
 DEFINE_MARGO_RPC_HANDLER(sum)

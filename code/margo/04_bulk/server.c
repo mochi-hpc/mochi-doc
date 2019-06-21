@@ -41,7 +41,7 @@ static void sum(hg_handle_t h)
 
     margo_instance_id mid = margo_hg_handle_get_instance(h);
 
-    struct hg_info* info = margo_get_info(h);
+    const struct hg_info* info = margo_get_info(h);
     hg_addr_t client_addr = info->addr;
 
     ret = margo_get_input(h, &in);
@@ -51,7 +51,7 @@ static void sum(hg_handle_t h)
     values = calloc(in.n, sizeof(*values));
     hg_size_t buf_size = in.n * sizeof(*values);
 
-    ret = margo_bulk_create(mid, 1, &values, &buf_size,
+    ret = margo_bulk_create(mid, 1, (void**)&values, &buf_size,
             HG_BULK_WRITE_ONLY, &local_bulk);
     assert(ret == HG_SUCCESS);
 

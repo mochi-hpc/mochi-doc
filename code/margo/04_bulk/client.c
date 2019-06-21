@@ -25,7 +25,7 @@ int main(int argc, char** argv)
         hg_size_t size = 10*sizeof(int32_t);
 
         hg_bulk_t local_bulk;
-        margo_bulk_create(mid, 1, &values, &size, HG_BULK_READ_ONLY, &local_bulk);
+        margo_bulk_create(mid, 1, (void**)&values, &size, HG_BULK_READ_ONLY, &local_bulk);
 
         args.n = 10;
         args.bulk = local_bulk;
