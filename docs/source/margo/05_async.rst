@@ -83,3 +83,13 @@ It returns as soon as the response has been posted to the Mercury queue.
    from :code:`margo_irespond`, which returns as soon as the
    response has been scheduled for sending. Hence it is unlikely
    that you ever need :code:`margo_irespond`.
+
+Timeout
+-------
+
+Just like there is a :code:`margo_forward_timed`, there is a
+:code:`margo_iforward_timed`, which takes an additional parameter
+(before the request pointer) indicating a timeout in millisecond.
+This timeout applies from the time of the call to :code:`margo_iforward_timed`.
+Should the server not respond within this time limit, the called to
+:code:`margo_wait` on the resulting request will return :code:`HG_TIMEOUT`.
