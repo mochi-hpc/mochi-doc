@@ -32,3 +32,4 @@ in place of the C++ threading library.
    thallium/11_abt_classes.rst
    thallium/12_rpc_pool.rst
    thallium/13_abt_custom.rst
+   thallium/14_async.rst
