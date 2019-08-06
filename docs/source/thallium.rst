@@ -28,6 +28,7 @@ in place of the C++ threading library.
    thallium/07_serialization.rst
    thallium/08_rdma.rst
    thallium/09_providers.rst
+   thallium/15_finalize.rst
    thallium/10_abt_intro.rst
    thallium/11_abt_classes.rst
    thallium/12_rpc_pool.rst
