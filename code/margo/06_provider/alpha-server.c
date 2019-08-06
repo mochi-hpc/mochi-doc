@@ -7,7 +7,7 @@ struct alpha_provider {
     /* other provider-specific data */
 };
 
-static void alpha_finalize_provider_cb(void* p);
+static void alpha_finalize_provider(void* p);
 
 DECLARE_MARGO_RPC_HANDLER(alpha_sum_ult);
 static void alpha_sum_ult(hg_handle_t h);
@@ -48,27 +48,31 @@ int alpha_provider_register(
     p->sum_id = id;
     /* add other RPC registration here */
 
-    if(provider == ALPHA_PROVIDER_IGNORE)
-        margo_push_finalize_callback(mid, &alpha_finalize_provider_cb, p);
+    margo_provider_push_finalize_callback(mid, p, &alpha_finalize_provider, p);
 
     *provider = p;
     return ALPHA_SUCCESS;
 }
 
+static void alpha_finalize_provider(void* p)
+{
+    alpha_provider_t provider = (alpha_provider_t)p;
+    margo_deregister(provider->mid, provider->sum_id);
+    /* deregister other RPC ids ... */
+    free(provider)
+}
+
 int alpha_provider_destroy(
         alpha_provider_t provider)
 {
-    margo_deregister(provider->mid, provider->sum_id);
-    /* deregister other RPC ids */
+    /* pop the finalize callback */
+    margo_provider_pop_finalize_callback(provider->mid, provider);
+    /* call the callback */
+    alpha_finalize_provider(provider);
 
-    free(provider);
+    return ALPHA_SUCCESS;
 }
 
-static void alpha_finalize_provider_cb(void* p)
-{
-    alpha_provider_t provider = (alpha_provider_t)p;
-    alpha_provider_destroy(provider);
-}
 
 static void alpha_sum_ult(hg_handle_t h)
 {

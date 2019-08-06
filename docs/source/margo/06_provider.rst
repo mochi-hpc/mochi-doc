@@ -139,8 +139,8 @@ Our interface contains the :code:`alpha_provider_register` function,
 which creates an Alpha provider and registers its RPCs, and the
 :code:`alpha_provider_destroy` function, which destroys it and deregisters
 the corresponding RPCs. The former also allows users to pass
-:code:`ALPHA_PROVIDER_IGNORE` as last argument. When doing so, the provider
-will automatically be destroyed upon calling :code:`margo_finalize`.
+:code:`ALPHA_PROVIDER_IGNORE` as last argument, when we don't expect to do
+anything with the provider after registration.
 
 This interface would also be the place where to put other functions that
 configure or modify the Alpha provider once created.
@@ -170,7 +170,7 @@ the RPC ids as well as any data you may need as context for your RPCs.
 
 The :code:`alpha_provider_register` function starts by checking that the 
 Margo instance is in server mode by using :code:`margo_is_listening`.
-It then checks that there isn't already a provider with the same id. It does
+It then checks that there isn't already an alpha provider with the same id. It does
 so by using :code:`margo_provider_registered_name` to check whether the *sum*
 RPC has already been registered with the same provider id.
 
@@ -178,10 +178,20 @@ We then use :code:`MARGO_REGISTER_PROVIDER` instead of :code:`MARGO_REGISTER`.
 This macro takes a provider id and an Argobots pool in addition to the parameters
 of :code:`MARGO_REGISTER`.
 
-Finally, if the user passed :code:`ALPHA_PROVIDER_IGNORE` to the function,
-we call :code:`margo_push_finalize_callback` so register a callback that
-Margo should call when calling :code:`margo_finalize`. This callback will
-destroy the provider.
+Finally, we call :code:`margo_provider_push_finalize_callback` to setup 
+a callback that Margo should call when calling :code:`margo_finalize`.
+This callback will deregister the RPCs and free the provider.
+
+The :code:`alpha_provider_destroy` function is pretty simple but important
+to understand. In most cases the user will create a provider and leave it running
+until something calls :code:`margo_finalize`, at which point the provider's
+finalization callback will be called. If the user wants to destroy the provider
+before Margo is finalized, it is important to tell Margo not to call the provider's
+finalization callback when :code:`margo_finalize`. Hence, we use :code:`margo_provider_pop_finalize_callback`.
+This function takes a Margo instance, and an owner for the callback (here the provider).
+If the provider registered multiple callbacks using :code:`margo_provider_push_finalize_callback`,
+:code:`margo_provider_pop_finalize_callback` will pop the last one pushed, and should therefore
+be called as many time as needed to pop all the finalization callbacks corresponding to the provider.
 
 Using the Alpha client
 ----------------------
