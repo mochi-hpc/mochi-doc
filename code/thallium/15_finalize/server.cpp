@@ -35,9 +35,9 @@ class my_sum_provider : public tl::provider<my_sum_provider> {
     my_sum_provider(tl::engine& e, uint16_t provider_id=1)
     : tl::provider<my_sum_provider>(e, provider_id)
       // keep the RPCs in remote_procedure objects so we can deregister them.
-    , m_prod(define("prod", &my_sum_provider::prod));
-    , m_sum(define("sum", &my_sum_provider::sum));
-    , m_hello(define("hello", &my_sum_provider::hello));
+    , m_prod(define("prod", &my_sum_provider::prod))
+    , m_sum(define("sum", &my_sum_provider::sum))
+    , m_hello(define("hello", &my_sum_provider::hello))
     , m_print(define("print", &my_sum_provider::print, tl::ignore_return_value()))
     {
         // setup a finalization callback for this provider, in case it is
@@ -54,10 +54,10 @@ class my_sum_provider : public tl::provider<my_sum_provider> {
     }
 
     ~my_sum_provider() {
-        p->m_prod.deregister();
-        p->m_sum.deregister();
-        p->m_hello.deregister();
-        p->m_print.deregister();
+        m_prod.deregister();
+        m_sum.deregister();
+        m_hello.deregister();
+        m_print.deregister();
         // pop the finalize callback. If this destructor was called
         // from the finalization callback, there is nothing to pop
         get_engine().pop_finalize_callback(this);
@@ -67,6 +67,7 @@ class my_sum_provider : public tl::provider<my_sum_provider> {
 int main(int argc, char** argv) {
 
     tl::engine myEngine("tcp", THALLIUM_SERVER_MODE);
+    myEngine.enable_remote_shutdown();
     std::cout << "Server running at address " << myEngine.self()
         << " with provider ids 22 and 23 " << std::endl;
     // create a pointer to the provider instance using the factory methods.
