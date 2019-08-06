@@ -116,3 +116,19 @@ into the :code:`resp` variable.
    Just like we called :code:`margo_free_input` on the server because the input
    had been obtained using :code:`margo_get_input`, we must call :code:`margo_free_output`
    on the client side because the output has been obtained using :code:`margo_get_output`.
+
+Timeout
+-------
+
+It can sometimes be important for the client to be able to timeout if an operation
+takes too long. This can be done using :code:`margo_forward_timed`, which takes an
+extra parameter: a timeout (:code:`double`) value in milliseconds. If the server has
+not responded to the RPC after this timeout expires, :code:`margo_forward_timed`
+will return :code:`HG_TIMEOUT` and the RPC will be cancelled.
+
+.. important::
+   The fact that a call has timed out does not mean that the server hasn't
+   received the RPC or hasn't processed it. It simply means that, should the server send a
+   reponse back, this response will be ignored by the client. Worse: the server will
+   not be aware that the client has cancelled the operation. It is up to the developer to
+   make sure that such a behavior is consistent with the semantics of her protocol.

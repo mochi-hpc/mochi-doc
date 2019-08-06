@@ -61,3 +61,15 @@ the compiler to generate the right deserialization code.
    the call would have led to data corruptions and potential crash. One way to ensure
    that the right types are used is to explicitely cast the litterals:
    :code:`sum.on(server)(static_cast<int64_t>(42), static_cast<int64_t>(63));`.
+
+Timeout
+-------
+
+It can sometime be useful for an operation to be given a certain amount of time before
+timing out. This can be done using the :code:`callable_remote_procedure::timed()`
+function. This function behaves like the :code:`operator()` but takes a first parameter
+of type :code:`std::chrono::duration` representing an amount of time after which
+the call will throw a :code:`thallium::timeout` exception. For instance in the above
+client code, :code:`int ret = sum.on(server)(42,63);` would become
+:code:`int ret = sum.on(server).timed(std::chrono::milliseconds(5), 42 ,63);` to
+allow for a 5ms timeout.

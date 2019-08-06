@@ -241,3 +241,11 @@ multiple providers spin up in the same program.
    Providers declaring RPCs with distinct names (i.e. providers from
    distinct microservices) can have the same provider ids. The provider id
    is here to distinguish providers of the same type within a given server.
+
+Timeout
+-------
+
+The :code:`margo_provider_forward_timed` and :code:`margo_provider_iforward_timed`
+can be used when sending RPCs (in a blocking or non-blocking manner) to specify
+a timeout in milliseconds after which the call (or result of :code:`margo_wait`)
+will be :code:`HG_TIMEOUT`.

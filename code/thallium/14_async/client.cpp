@@ -11,7 +11,13 @@ int main(int argc, char** argv) {
     tl::engine myEngine("tcp", THALLIUM_CLIENT_MODE);
     tl::remote_procedure sum = myEngine.define("sum");
     tl::endpoint server = myEngine.lookup(argv[1]);
-    int ret = sum.on(server)(42,63);
+    auto request = sum.on(server).async(42,63);
+    // do something else ...
+    // check if request completed
+    bool completed =  request.received();
+    // ...
+    // actually wait on the request and get the result out of it
+    int ret = request.wait();
     std::cout << "Server answered " << ret << std::endl;
 
     return 0;
