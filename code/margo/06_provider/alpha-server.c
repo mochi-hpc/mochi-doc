@@ -59,7 +59,7 @@ static void alpha_finalize_provider(void* p)
     alpha_provider_t provider = (alpha_provider_t)p;
     margo_deregister(provider->mid, provider->sum_id);
     /* deregister other RPC ids ... */
-    free(provider)
+    free(provider);
 }
 
 int alpha_provider_destroy(
