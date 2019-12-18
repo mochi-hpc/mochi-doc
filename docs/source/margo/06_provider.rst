@@ -193,6 +193,12 @@ If the provider registered multiple callbacks using :code:`margo_provider_push_f
 :code:`margo_provider_pop_finalize_callback` will pop the last one pushed, and should therefore
 be called as many time as needed to pop all the finalization callbacks corresponding to the provider.
 
+.. warning::
+   Finalization callbacks are called after the Mercury progress loop is terminated.
+   Hence, you cannot send RPCs from them. If you need a finalization callback to be
+   called before the progress loop is terminated, use :code:`margo_push_prefinalize_callback`
+   or :code:`margo_provider_push_prefinalize_callback`.
+
 Using the Alpha client
 ----------------------
 
