@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     };
 
     server_data.hg_class = HG_Init(argv[1], HG_TRUE);
-    assert(hg_class != NULL);
+    assert(server_data.hg_class != NULL);
 
     char hostname[128];
     hg_size_t hostname_size;

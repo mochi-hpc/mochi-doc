@@ -50,7 +50,8 @@ int alpha_provider_register(
 
     margo_provider_push_finalize_callback(mid, p, &alpha_finalize_provider, p);
 
-    *provider = p;
+    if(provider)
+        *provider = p;
     return ALPHA_SUCCESS;
 }
 
