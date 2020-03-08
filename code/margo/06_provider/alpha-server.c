@@ -92,7 +92,7 @@ static void alpha_sum_ult(hg_handle_t h)
     printf("Computed %d + %d = %d\n",in.x,in.y,out.ret);
 
     ret = margo_respond(h, &out);
-
     ret = margo_free_input(h, &in);
+    margo_destroy(h);
 }
 DEFINE_MARGO_RPC_HANDLER(alpha_sum_ult)
