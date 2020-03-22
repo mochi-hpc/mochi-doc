@@ -18,8 +18,8 @@ This website gathers documentation and tutorials for the main libraries
 used or developed in the context of the Mochi project:
 Margo, Thallium, Argobots, and Mercury.
 
-The Mochi libraries
--------------------
+The core Mochi libraries
+------------------------
 
 **Margo** is a C library enabling the development of distributed HPC services.
 It relies on Mercury for RPC/RDMA, and Argobots for threading/tasking, hidding
@@ -44,15 +44,22 @@ scheduling and placement of threads and tasks in a Mochi service.
    The tutorials for each of these libraries are independent of one another.
    Feel free to start with the most relevant for you.
 
-Additionally, **ABT-IO** is a small library that can be used to offload POSIX
-I/O operations to dedicated execution stream to better integrate with
-the core Mochi libraries. ABT-IO depends on Argobots only.
-
 .. important::
    In all the tutorials, we use the term "server" to denote a process to which
    one can send RPC requests, and "client" to denote a process that sends such
    RPC requests. It is important to note however that a server can also send
    RPC requests to other servers, and even to itself.
+
+Other Mochi libraries/components
+--------------------------------
+
+**ABT-IO** is a small library that can be used to offload POSIX
+I/O operations to dedicated execution stream to better integrate with
+the core Mochi libraries. ABT-IO depends on Argobots only.
+
+**SSG** is Mochi's Scalable Service Group library. It provides functionalities
+to bootstrap a dynamic group of process and manage group membership. This
+library can be used for fault tolerance and/or to implement elastic services.
 
 Contents
 ========
@@ -66,6 +73,7 @@ Contents
    mercury.rst
    argobots.rst
    abtio.rst
+   ssg.rst
    general.rst
 
 
