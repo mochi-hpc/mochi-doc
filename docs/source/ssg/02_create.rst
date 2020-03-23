@@ -38,7 +38,7 @@ The group configuration structure :code:`ssg_group_config_t` includes
 the following parameters.
 * :code:`swim_period_length_ms`: the number of milliseconds between each invokation of the SWIM protocol.
 * :code:`swim_suspect_timeout_periods`: the number of periods of the SWIM protocol that should pass without a process answering for this process to be marked as *suspected*.
-* :code: `swim_subgroup_member_count`: ?
+* :code: `swim_subgroup_member_count`: when a process A cannot reach a process B directly during the execution of the SWIM protocol, it will ask *swim_subgroup_member_count* to try reaching it on its behalf before considering it suspected.
 * :code: `ssg_credential`: some credential information.
 
 Group membership callback

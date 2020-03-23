@@ -1,6 +1,13 @@
 Observing an SSG group
 ======================
 
+.. warning::
+
+   The concept of "observer" is not yet fully implemented in SSG.
+   Ultimately, the rational is that observers are processes that
+   can get updated on the group's state, without being part of the
+   group itself. Right now however, this feature remains unimplemented.
+
 It may be useful for a process to be aware of an SSG group
 (i.e. be able to access the address of its members) without
 being itself a member of the group. We call such a process an
@@ -35,5 +42,3 @@ in the observer process.
 
     .. literalinclude:: ../../../code/ssg/07_observe/proc2.c
        :language: cpp
-
-TODO: what does this mean concretely to "observe a group"?
