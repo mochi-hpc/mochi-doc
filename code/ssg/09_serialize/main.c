@@ -59,7 +59,7 @@ int main(int argc, char** argv)
     // the buffer needs to be freed after serialization
     free(buf);
 
-    ret = ssg_group_destroy(gid);
+    ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 
     margo_finalize(mid);

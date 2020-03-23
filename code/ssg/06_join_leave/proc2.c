@@ -36,15 +36,12 @@ int main(int argc, char** argv)
     ret = ssg_group_join(mid, gid, my_membership_update_cb, NULL);
     assert(ret == SSG_SUCCESS);
 
-    margo_thread_sleep(mid, 2000);
+    margo_thread_sleep(mid, 10000);
     // ...
     // do stuff using the group
     // ...
 
     ret = ssg_group_leave(gid);
-    assert(ret == SSG_SUCCESS);
-
-    ret = ssg_group_destroy(gid);
     assert(ret == SSG_SUCCESS);
 
     margo_finalize(mid);

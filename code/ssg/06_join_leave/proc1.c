@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     ssg_group_config_t config = {
         .swim_period_length_ms = 1000,
         .swim_suspect_timeout_periods = 5,
-        .swim_subgroup_member_count = -1,
+        .swim_subgroup_member_count = 1,
         .ssg_credential = -1
     };
 
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     // ...
     margo_thread_sleep(mid, 10000);
     
-    ret = ssg_group_destroy(gid);
+    ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 
     margo_finalize(mid);

@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     // get a string address from a rank
     const char* addr_str = ssg_group_id_get_addr_str(gid, 0);
 
-    ret = ssg_group_destroy(gid);
+    ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 
     margo_finalize(mid);
