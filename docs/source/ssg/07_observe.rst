@@ -10,6 +10,8 @@ In the code samples bellow, Process 1 creates a group and stays alive
 for 10 seconds. Process 2 reads the group id from the file created
 by Process 1, and start observing it using :code:`ssg_group_observe`.
 It then stops observing it using :code:`ssg_group_unobserve`.
+Note the use of :code:`ssg_group_destroy` instead of :code:`ssg_group_leave`
+in the observer process.
 
 .. container:: toggle
 

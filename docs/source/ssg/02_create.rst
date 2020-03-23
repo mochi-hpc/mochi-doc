@@ -51,5 +51,9 @@ and the :code:`ssg_member_id_t` argument indicates which member joined, left, or
 Destroying a group
 ------------------
 
-The :code:`ssg_group_destroy()` function is used to destroy a group id and the information
-attached to it. If the caller is a member of the group, this also leaves the group.
+The :code:`ssg_group_leave()` function is used to notify other members that the caller is
+leaving the group, and to free the local resources associated with the group id.
+
+.. important::
+   SSG also provides :code:`ssg_group_destroy()`. This function is reserved for processes
+   that have opened a group id (e.g, to observe it) but are not members.
