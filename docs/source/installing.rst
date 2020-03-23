@@ -24,13 +24,13 @@ You can then check that Spack can find Margo (for example) by typping:
 
 .. code-block:: console
 
-   spack info margo
+   spack info mochi-margo
 
 You should see something like the following.
 
 .. code-block:: console
 
-   AutotoolsPackage:   margo
+   AutotoolsPackage:   mochi-margo
    
    Description:
        A library that provides Argobots bindings to the Mercury RPC
@@ -46,18 +46,19 @@ Installing Margo is then as simple as typping the following.
 
 .. code-block:: console
 
-   spack install margo
+   spack install mochi-margo
 
 You will notice that Spack also installs Mercury and Argobots, since these
 are needed by Margo, as well as other dependencies.
 
-You can install Thallium using :code:`spack install thallium` (this will
+You can install Thallium using :code:`spack install mochi-thallium` (this will
 install Margo if you didn't install it before, as well as its dependencies).
 
 :code:`spack install mercury` can be used to install Mercury, and
 :code:`spack install argobots` can be used to install Argobots, should you
 need to install either independently of Margo or Thallium.
-:code:`spack install abt-io` will install ABT-IO.
+:code:`spack install mochi-abt-io` will install ABT-IO.
+:code:`spack install mochi-ssg` will install SSG.
 
 Loading and using the Mochi libraries
 -------------------------------------
@@ -66,10 +67,10 @@ Once installed, you can load Margo using the following command.
 
 .. code-block:: console
 
-   spack load -r margo
+   spack load -r mochi-margo
 
 This will load Margo and its dependencies (Mercury, Argobots, etc.).
-:code:`spack load -r thallium` will load Thallium and its dependencies
+:code:`spack load -r mochi-thallium` will load Thallium and its dependencies
 (Margo, Mercury, Argobots, etc.). You are now ready to use the Mochi libraries!
 
 Using the Mochi libraries with pkg-config
@@ -105,6 +106,7 @@ and :code:`include (xpkg-import)`. You can then find Margo, Argobots, and ABT-IO
    xpkg_import_module (argobots REQUIRED argobots)
    xpkg_import_module (margo REQUIRED margo)
    xpkg_import_module (abtio REQUIRED abt-io)
+   xpkg_import_module (ssg REQUIRED ssg)
 
 You can now link targets as follows.
 
@@ -129,3 +131,7 @@ You can now link targets as follows.
    # Code using ABT-IO
    add_executable(my_abt_io_prog source.c)
    target_link_libraries(my_abt_io_prog abt-io abt)
+
+   # Code using SSG
+   add_executable(my_ssg_prog source.c)
+   target_link_libraries(my_ssg_prog ssg)
