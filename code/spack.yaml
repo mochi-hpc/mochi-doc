@@ -1,0 +1,10 @@
+spack:
+  specs:
+  - mochi-thallium
+  - mochi-margo
+  - mochi-ssg
+  - mochi-abt-io
+  - mercury
+  - argobots
+  - cmake
+  concretization: together
