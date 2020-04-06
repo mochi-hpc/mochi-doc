@@ -1,12 +1,14 @@
-Mochi documentation
-===================
+# Mochi documentation
 
 This repository contains a Sphinx-based documentation
-for the Mochi libraries: Margo, Thallium, Argobots, Mercury.
+for the Mochi libraries: Margo, Thallium, Argobots, Mercury,
+ABT-IO, and SSG, as well as corresponding code examples.
 
-To contribute to this documentation, make sure that you
-have Sphinx installed as well as the ReadTheDoc theme.
-These can be installed as follows using `pip`.
+## Building the documentation
+
+To build and/orcontribute to this documentation, make sure
+that you have Sphinx installed as well as the ReadTheDoc theme.
+These can be installed as follows using Python's `pip`.
 
 ```
 pip install sphinx
@@ -26,3 +28,18 @@ make html
 
 And check the result by opening the `build/index.html` page
 that has been created in the docs directory.
+
+## Building the code examples
+
+To build the code, you will need spack and the
+[sds-repo](https://xgitlab.cels.anl.gov/sds/sds-repo) setup.
+
+```
+cd code
+spack env activate .
+spack install
+mkdir build
+cd build
+cmake .. -DCMAKE_CXX_COMPILER=mpicxx -DCMAKE_C_COMPILER=mpicc
+make
+```
