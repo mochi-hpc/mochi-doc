@@ -21,9 +21,8 @@ int main(int argc, char** argv) {
             = tl::xstream::create(tl::scheduler::predef::deflt, *myPool);
         ess.push_back(std::move(es));
     }
-
     std::cout << "Server running at address " << myEngine.self() << std::endl;
-    myEngine.define("sum", sum, 1, *myPool);
+    myEngine.define("sum", sum, 0, *myPool);
 
     myEngine.wait_for_finalize();
 
