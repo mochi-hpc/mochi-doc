@@ -22,10 +22,11 @@ int main(int argc, char** argv)
     for(i=0; i<4; i++) {
 
         int32_t values[10] = { 1,4,2,5,6,3,5,3,2,5 };
-        hg_size_t size = 10*sizeof(int32_t);
+        hg_size_t segment_sizes[1] = { 10*sizeof(int32_t) };
+        void* segment_ptrs[1] = { (void*)values };
 
         hg_bulk_t local_bulk;
-        margo_bulk_create(mid, 1, (void**)&values, &size, HG_BULK_READ_ONLY, &local_bulk);
+        margo_bulk_create(mid, 1, segment_ptrs, segment_sizes, HG_BULK_READ_ONLY, &local_bulk);
 
         args.n = 10;
         args.bulk = local_bulk;
