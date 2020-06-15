@@ -57,6 +57,8 @@ class my_pool {
 
     public:
 
+    static const tl::pool::access access_type = tl::pool::access::mpmc;
+
     my_pool() = default;
 
     size_t get_size() const {
@@ -148,7 +150,7 @@ int main(int argc, char** argv) {
     // create pools
     std::vector<tl::managed<tl::pool>> pools;
     for(int i=0; i < NUM_XSTREAMS; i++) {
-        pools.push_back(tl::pool::create<tl::pool::access::mpmc, my_pool, my_unit>());
+        pools.push_back(tl::pool::create<my_pool, my_unit>());
     }
 
     // create schedulers

@@ -1,10 +1,11 @@
 spack:
   specs:
-  - mochi-thallium
+  - mochi-thallium@master
   - mochi-margo
   - mochi-ssg
   - mochi-abt-io
-  - mercury
+  - mercury@master
   - argobots
   - cmake
+  - mpich
   concretization: together
