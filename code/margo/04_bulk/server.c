@@ -69,7 +69,7 @@ static void sum(hg_handle_t h)
     assert(ret == HG_SUCCESS);
 
     ret = margo_bulk_free(local_bulk);
-    assert(ret);
+    assert(ret == HG_SUCCESS);
 
     free(values);
 
