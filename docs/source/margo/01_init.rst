@@ -9,16 +9,8 @@ Initializing a server
 The following code initializes Margo for use as a server,
 then prints the address at which the server can be contacted.
 
-.. container:: toggle
-
-    .. container:: header
-    
-       .. container:: btn btn-info
-
-          server.c (show/hide)
-
-    .. literalinclude:: ../../../code/margo/01_init/server.c
-       :language: cpp
+.. literalinclude:: ../../../code/margo/01_init/server.c
+   :language: cpp
 
 :code:`margo_init` creates a :code:`margo_instance_id` object. It takes four arguments.
 The first one is *protocol* (here TCP). It is also possible to provide the address and port number to use.
@@ -65,3 +57,12 @@ loop of a client in a separate ES is useful if the client uses non-blocking RPCs
 or if the client is multithreaded.
 
 :code:`margo_finalize` is used to finalize the :code:`margo_instance_id` object.
+
+
+Extended initialization
+-----------------------
+
+A :code:`margo_init_ext` function is provided that enables passing
+configuration parameters as well as externally-initialized Argobots pools
+and Mercury class/context. This function is explained in detail in
+a latter section.
