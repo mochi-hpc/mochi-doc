@@ -9,8 +9,9 @@ void hello(const tl::request& req) {
 
 int main(int argc, char** argv) {
 
-    tl::engine myEngine("tcp://127.0.0.1:1234", THALLIUM_SERVER_MODE);
+    tl::engine myEngine("tcp", THALLIUM_SERVER_MODE);
     myEngine.define("hello", hello).disable_response();
+    std::cout << "Server running at address " << myEngine.self() << std::endl;
 
     return 0;
 }
