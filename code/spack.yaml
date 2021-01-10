@@ -1,10 +1,10 @@
 spack:
   specs:
-  - mochi-thallium@master
+  - mochi-thallium
   - mochi-margo
   - mochi-ssg
   - mochi-abt-io
-  - mercury@master
+  - mercury
   - argobots
   - cmake
   - mpich
