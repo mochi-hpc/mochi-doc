@@ -28,14 +28,14 @@ int main(int argc, char** argv)
         margo_request req;
         margo_iforward(h, &args, &req);
 
-        printf("Waiting for reply...\n");
+        margo_trace(mid, "Waiting for reply...");
 
         margo_wait(req);
 
         sum_out_t resp;
         margo_get_output(h, &resp);
 
-        printf("Got response: %d+%d = %d\n", args.x, args.y, resp.ret);
+        margo_trace(mid, "Got response: %d+%d = %d", args.x, args.y, resp.ret);
 
         margo_free_output(h,&resp);
         margo_destroy(h);

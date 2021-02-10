@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     // do stuff using the group
     // ...
     margo_thread_sleep(mid, 10000);
-    
+
     ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 

@@ -36,7 +36,8 @@ To build the code, you will need spack and the
 
 ```
 cd code
-spack env activate .
+spack env create mochi-doc-env spack.yaml
+spack env activate mochi-doc-env
 spack install
 mkdir build
 cd build

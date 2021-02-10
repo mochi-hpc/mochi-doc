@@ -38,7 +38,7 @@ int main(int argc, char** argv)
         sum_out_t resp;
         margo_get_output(h, &resp);
 
-        printf("Got response: %d\n", resp.ret);
+        margo_debug(mid, "Got response: %d", resp.ret);
 
         margo_free_output(h,&resp);
         margo_destroy(h);

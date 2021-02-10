@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     size_t addr_str_size = 128;
     margo_addr_to_string(mid, addr_str, &addr_str_size, my_address);
     margo_addr_free(mid,my_address);
-    printf("Server running at address %s\n", addr_str);
+    margo_info(mid, "Server running at address %s", addr_str);
 
     MARGO_REGISTER(mid, "sum", sum_in_t, sum_out_t, sum);
 
@@ -43,7 +43,7 @@ static void sum(hg_handle_t h)
     assert(ret == HG_SUCCESS);
 
     out.ret = in.x + in.y;
-    printf("Computed %d + %d = %d\n",in.x,in.y,out.ret);
+    margo_trace(mid, "Computed %d + %d = %d", in.x, in.y, out.ret);
 
     margo_thread_sleep(mid, 1000);
 

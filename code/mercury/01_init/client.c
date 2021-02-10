@@ -9,7 +9,7 @@ static hg_context_t*   hg_context   = NULL; /* Pointer to the Mercury context */
 int main(int argc, char** argv)
 {
     hg_return_t ret;
-    /* 
+    /*
      * Initialize an hg_class.
      * Here we only specify the protocal since this is a client
      * (no need for an address and a port). HG_FALSE indicates that

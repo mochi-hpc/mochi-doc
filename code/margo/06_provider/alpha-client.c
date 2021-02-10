@@ -40,9 +40,9 @@ int alpha_client_init(margo_instance_id mid, alpha_client_t* client)
 int alpha_client_finalize(alpha_client_t client)
 {
     if(client->num_prov_hdl != 0) {
-        fprintf(stderr,  
-                "Warning: %d provider handles not released when alpha_client_finalize was called\n",
-                client->num_prov_hdl);
+        margo_warning(client->mid,
+            "%d provider handles not released when alpha_client_finalize was called",
+            client->num_prov_hdl);
     }
     free(client);
     return ALPHA_SUCCESS;

@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 
     hg_handle_t handle;
     ret = margo_create(mid, svr_addr, hello_rpc_id, &handle);
-    assert(ret == HG_SUCCESS);	
+    assert(ret == HG_SUCCESS);
 
     ret = margo_forward(handle, NULL);
     assert(ret == HG_SUCCESS);

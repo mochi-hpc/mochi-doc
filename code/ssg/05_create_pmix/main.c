@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     // ...
     // do stuff using the group
     // ...
-    
+
     ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 

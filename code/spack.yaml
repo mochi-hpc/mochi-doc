@@ -4,6 +4,7 @@ spack:
   - mochi-margo
   - mochi-ssg
   - mochi-abt-io
+  - mochi-bedrock
   - mercury
   - argobots
   - cmake

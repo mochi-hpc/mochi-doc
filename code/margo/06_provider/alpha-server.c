@@ -25,19 +25,21 @@ int alpha_provider_register(
 
     flag = margo_is_listening(mid);
     if(flag == HG_FALSE) {
-        fprintf(stderr, "alpha_provider_register(): margo instance is not a server.");
+        margo_error(mid, "alpha_provider_register(): margo instance is not a server");
         return ALPHA_FAILURE;
     }
 
     margo_provider_registered_name(mid, "alpha_sum", provider_id, &id, &flag);
     if(flag == HG_TRUE) {
-        fprintf(stderr, "alpha_provider_register(): a provider with the same provider id (%d) already exists.\n", provider_id);
+        margo_error(mid, "alpha_provider_register(): a provider with the same provider id (%d) already exists", provider_id);
         return ALPHA_FAILURE;
     }
 
     p = (alpha_provider_t)calloc(1, sizeof(*p));
-    if(p == NULL)
+    if(p == NULL) {
+        margo_error(mid, "alpha_provider_register(): failed to allocate memory for provider");
         return ALPHA_FAILURE;
+    }
 
     p->mid = mid;
 
@@ -89,7 +91,7 @@ static void alpha_sum_ult(hg_handle_t h)
     ret = margo_get_input(h, &in);
 
     out.ret = in.x + in.y;
-    printf("Computed %d + %d = %d\n",in.x,in.y,out.ret);
+    margo_trace(mid, "Computed %d + %d = %d", in.x, in.y, out.ret);
 
     ret = margo_respond(h, &out);
     ret = margo_free_input(h, &in);
