@@ -36,8 +36,8 @@ manually if you run it.
    We use :code:`margo_info` to display information. This function is part of Margo's logging feature,
    which includes six logging levels: :code:`margo_trace`, :code:`margo_debug`, :code:`margo_info`,
    :code:`margo_warning`, :code:`margo_error`, and :code:`margo_critical`. These functions take a margo
-   instance as first argument, a string format as second arguments, and optionally extra parameters.
-   They work the same way as :code:`printf` but will automatically add a :code:`\n` at the end of the
+   instance as first argument, a string format as second argument, and optional parameters.
+   Note that these functions will automatically add a :code:`\n` at the end of the
    provided string. The logging level can be set using :code:`margo_set_log_level` (see margo-logging.h).
 
 
