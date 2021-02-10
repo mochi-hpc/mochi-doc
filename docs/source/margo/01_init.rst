@@ -32,6 +32,14 @@ using :code:`margo_addr_to_string`. The address returned by :code:`margo_addr_se
 :code:`margo_finalize`. In this example, nothing calls :code:`margo_finalize`, so you will need to kill the server
 manually if you run it.
 
+.. note::
+   We use :code:`margo_info` to display information. This function is part of Margo's logging feature,
+   which includes six logging levels: :code:`margo_trace`, :code:`margo_debug`, :code:`margo_info`,
+   :code:`margo_warning`, :code:`margo_error`, and :code:`margo_critical`. These functions take a margo
+   instance as first argument, a string format as second arguments, and optionally extra parameters.
+   They work the same way as :code:`printf` but will automatically add a :code:`\n` at the end of the
+   provided string. The logging level can be set using :code:`margo_set_log_level` (see margo-logging.h).
+
 
 Initializing a client
 ---------------------
@@ -41,7 +49,7 @@ The following code initializes Margo for use as a client.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           client.c (show/hide)
