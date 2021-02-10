@@ -46,6 +46,7 @@ static void sum(hg_handle_t h)
     sum_out_t out;
 
     margo_instance_id mid = margo_hg_handle_get_instance(h);
+    margo_set_log_level(mid, MARGO_LOG_INFO);
 
     const struct hg_info* info = margo_get_info(h);
     server_data* svr_data = (server_data*)margo_registered_data(mid, info->id);

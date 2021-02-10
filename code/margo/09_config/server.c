@@ -15,6 +15,7 @@ int main(int argc, char** argv)
 
     margo_instance_id mid = margo_init_ext("tcp", MARGO_SERVER_MODE, &args);
     assert(mid);
+    margo_set_log_level(mid, MARGO_LOG_INFO);
 
     char* config = margo_get_config(mid);
     margo_info(mid, "%s", config);

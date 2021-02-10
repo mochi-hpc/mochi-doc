@@ -13,6 +13,7 @@ int main(int argc, char** argv)
     uint16_t    provider_id  = atoi(argv[2]);
 
     margo_instance_id mid = margo_init("tcp", MARGO_CLIENT_MODE, 0, 0);
+    margo_set_log_level(mid, MARGO_LOG_INFO);
 
     hg_addr_t svr_addr;
     margo_addr_lookup(mid, svr_addr_str, &svr_addr);
