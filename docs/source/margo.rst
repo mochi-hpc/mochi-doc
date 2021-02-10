@@ -34,3 +34,4 @@ in understanding other Margo-based services.
    margo/07_pools.rst
    margo/08_proc.rst
    margo/09_config.rst
+   margo/10_logging.rst
