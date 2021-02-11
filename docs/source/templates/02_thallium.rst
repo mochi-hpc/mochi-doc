@@ -53,9 +53,10 @@ external dependencies. For instance, a dummy backend may be a backend that simpl
 acknowledges requests but does not process them, or provides mock results.
 
 The project uses a number of dependencies:
-* TCLAP for parsing program options in the examples;
-* CppUnit for unit testing (in the tests directory);
-* spdlog to provide logging.
+
+- TCLAP for parsing program options in the examples;
+- CppUnit for unit testing (in the tests directory);
+- spdlog to provide logging.
 
 The *examples* directory contains an example using the microservice:
 the server example will start one or more providers and print the server's address.
