@@ -1,22 +1,33 @@
 .. Mochi documentation master file, created by
    sphinx-quickstart on Thu Apr 11 10:32:12 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 Welcome to the Mochi project
 ============================
 
 
-The `Mochi project <https://press3.mcs.anl.gov/mochi/>`_ is a 
+The `Mochi project <https://press3.mcs.anl.gov/mochi/>`_ is a
 collaboration between Argonne National Laboratory,
 Los Alamos National Laboratory, Carnegie Mellon University, and the HDF Group.
 The objective of this project is to explore a software defined storage approach
 for composing storage services that provides new levels of functionality,
 performance, and reliability for science applications at extreme scale.
 
-This website gathers documentation and tutorials for the main libraries 
-used or developed in the context of the Mochi project:
-Margo, Thallium, Argobots, and Mercury.
+This website gathers documentation and tutorials for the main libraries
+used or developed in the context of the Mochi project.
+
+Getting started
+---------------
+
+There are multiple ways of getting started with Mochi depending on your goal.
+In all cases though, we recommend reading about Margo first. Margo is what binds
+Mercury (RPC/RDMA) and Argobots (threading/tasking) under a runtime that all
+the other components will use. If you are into C++, you may then want to read
+about Thallium, which is a C++ library written on top of Margo.
+
+If you want to use some of our components, you can then jump to their corresponding
+tutorial sections. If you want to _develop_ your own component, your can jump
+to the Mochi templates and to the Bedrock bootstrapping system.
+
 
 The core Mochi libraries
 ------------------------
@@ -61,6 +72,19 @@ the core Mochi libraries. ABT-IO depends on Argobots only.
 to bootstrap a dynamic group of process and manage group membership. This
 library can be used for fault tolerance and/or to implement elastic services.
 
+Developing and deploying a service
+----------------------------------
+
+**Templates** are provided to help users develop their own components
+using Margo or Thallium. These templates can save a tremendous amount
+of time and will let you focus on the important part of your service: its
+RPCs and its API.
+
+**Bedrock** is a bootstrapping system for composed Mochi services.
+It provides a simple a unified way of deploying Mochi components in a process
+and configure them using a JSON file. It also enable querying and changing
+this configuration at run time.
+
 Contents
 ========
 
@@ -74,6 +98,8 @@ Contents
    argobots.rst
    abtio.rst
    ssg.rst
+   templates.rst
+   bedrock.rst
    general.rst
 
 
