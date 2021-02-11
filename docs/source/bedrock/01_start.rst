@@ -30,8 +30,8 @@ do for now is query for its internal configuration, or shut it down.
 
 This command can take additional parameters.
 
-- *-c/--config <config.json>*: specifies the JSON configuration file.
-- *-v/--verbose <level>*: logging level (*trace*, *debug*, *info*, *warning*, *error*, *critical*, or *off*).
-- *--stdin*: pass the JSON configuration via stdin instead of *-c/--config*.
+- :code:`-c/--config <config.json>`: specifies the JSON configuration file.
+- :code:`-v/--verbose <level>`: logging level (*trace*, *debug*, *info*, *warning*, *error*, *critical*, or *off*).
+- :code:`--stdin`: pass the JSON configuration via stdin instead of :code:`-c/--config`.
 
 The next section will disect the content of a JSON configuration file.
