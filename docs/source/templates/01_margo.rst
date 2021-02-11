@@ -82,6 +82,7 @@ step can be done by using the *setup.py* script at the root of this repository
 (see next section).
 
 The *include* directory of this template project provides public header files.
+
 - *alpha/alpha-common.h* contains APIs that are common to the three
   libraries, such as error codes or common types;
 - *alpha/alpha-client.h* contains the client-side functions to create
