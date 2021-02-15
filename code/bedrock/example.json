@@ -42,6 +42,10 @@
         "progress_pool" : "my_progress_pool",
         "rpc_pool" : "my_rpc_pool"
     },
+    "bedrock": {
+        "pool": "my_rpc_pool",
+        "provider_id": 0
+    },
     "abt_io" : [
         {
             "name" : "my_abt_io",
