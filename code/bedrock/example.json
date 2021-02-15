@@ -1,0 +1,85 @@
+{
+    "margo" : {
+        "mercury" : {
+        },
+        "argobots" : {
+        "abt_mem_max_num_stacks" : 8,
+        "abt_thread_stacksize" : 2097152,
+        "version" : "1.0.0",
+        "pools" : [
+            {
+                "name" : "my_progress_pool",
+                "kind" : "fifo_wait",
+                "access" : "mpmc"
+            },
+            {
+                "name" : "my_rpc_pool",
+                "kind" : "fifo_wait",
+                "access" : "mpmc"
+            }
+        ],
+        "xstreams" : [
+            {
+                "name" : "my_progress_xstream",
+                "cpubind" : 0,
+                "affinity" : [ 0, 1 ],
+                "scheduler" : {
+                    "type" : "basic_wait",
+                    "pools" : [ "my_progress_pool" ]
+                }
+            },
+            {
+                "name" : "my_rpc_xstream",
+                "cpubind" : 2,
+                "affinity" : [ 2, 3, 4, 5 ],
+                "scheduler" : {
+                    "type" : "basic_wait",
+                    "pools" : [ "my_rpc_pool" ]
+                }
+            }
+            ]
+        },
+        "progress_pool" : "my_progress_pool",
+        "rpc_pool" : "my_rpc_pool"
+    },
+    "abt_io" : [
+        {
+            "name" : "my_abt_io",
+            "pool" : "__primary__"
+        }
+    ],
+    "ssg" : [
+        {
+            "name" : "mygroup",
+            "bootstrap" : "init",
+            "group_file" : "mygroup.ssg"
+        }
+    ],
+    "libraries" : {
+        "module_a" : "examples/libexample-module-a.so",
+        "module_b" : "examples/libexample-module-b.so"
+    },
+    "providers" : [
+        {
+            "name" : "ProviderA",
+            "type" : "module_a",
+            "provider_id" : 42,
+            "pool" : "__primary__",
+            "config" : {},
+            "dependencies" : {}
+        },
+        {
+            "name" : "ProviderB",
+            "type" : "module_b",
+            "provider_id" : 33,
+            "pool" : "__primary__",
+            "config" : {},
+            "dependencies" : {
+                "ssg_group" : "mygroup",
+                "a_provider" : "ProviderA",
+                "a_local" : [ "ProviderA@local" ],
+                "a_client" : "module_a:client"
+            }
+        }
+    ]
+}
