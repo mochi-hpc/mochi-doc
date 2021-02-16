@@ -4,7 +4,7 @@ Bedrock's JSON format
 This section details how to configure a Bedrock daemon using a JSON
 file. The code bellow is an example of such a JSON configuration.
 
-.. literalinclude:: ../../../code/bedrock/example.json
+.. literalinclude:: ../../../code/bedrock/02_json/example.json
    :language: json
 
 Margo section (optional)
