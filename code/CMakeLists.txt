@@ -45,6 +45,8 @@ pkg_check_modules (SSG REQUIRED IMPORTED_TARGET ssg)
 pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
 # argobots
 pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
+# bedrock
+find_package (bedrock REQUIRED)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)
