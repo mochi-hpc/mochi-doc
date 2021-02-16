@@ -1,5 +1,5 @@
-Margo microservice template
-===========================
+Margo microservice template (C)
+===============================
 
 The Margo microservice template is available
 `here <https://xgitlab.cels.anl.gov/sds/templates/margo-microservice-template>`_.

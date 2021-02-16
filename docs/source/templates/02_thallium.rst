@@ -1,5 +1,5 @@
-Thallium microservice template
-==============================
+Thallium microservice template (C++)
+====================================
 
 The Thallium microservice template is available
 `here <https://xgitlab.cels.anl.gov/sds/templates/thallium-microservice-template>`_.
