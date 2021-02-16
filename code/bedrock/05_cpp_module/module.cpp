@@ -1,8 +1,3 @@
-/*
- * (C) 2020 The University of Chicago
- *
- * See COPYRIGHT in top-level directory.
- */
 #include <bedrock/AbstractServiceFactory.hpp>
 #include <iostream>
 
