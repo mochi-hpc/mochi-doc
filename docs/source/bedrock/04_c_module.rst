@@ -15,7 +15,8 @@ Module dependencies
 The first thing to declare in this module is the dependencies.
 This is the list of dependencies that your component's providers
 are expecting. It is expressed as an array of :code:`bedrock_dependency`
-structures. Each of the elements in this array has a dependency name,
+structures terminated by a :code:`BEDROCK_NO_MORE_DEPENDENCIES` entry.
+Each of the elements in this array has a dependency name,
 a type, and a flag. The name is what will identify the dependency
 in the JSON configuration file. For instance, our module here has
 two dependencies, *io* and *sdskv_ph*, hence the :code:`dependencies`

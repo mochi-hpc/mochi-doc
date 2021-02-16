@@ -9,7 +9,8 @@
 
 static struct bedrock_dependency ModuleA_dependencies[] = {
     { "io", "abt_io", BEDROCK_REQUIRED },
-    { "sdskv_ph", "sdskv", BEDROCK_ARRAY | BEDROCK_REQUIRED }
+    { "sdskv_ph", "sdskv", BEDROCK_ARRAY | BEDROCK_REQUIRED },
+    BEDROCK_NO_MORE_DEPENDENCIES
 };
 
 static int ModuleA_register_provider(
