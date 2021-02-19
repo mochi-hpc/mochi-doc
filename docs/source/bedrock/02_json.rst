@@ -87,13 +87,48 @@ bootstrap method, "join", lets a process join an existing group. The
 group file must already exist, and the "swim" parameters will be ignored
 and queried from existing members of the group.
 
-Libraries and providers (optional)
+Libraries, clients,  and providers
 ----------------------------------
 
 The :code:`libraries` section associates component (or "module") names with
 shared libraries to load. These libraries tell Bedrock how to instantiate
 a provider, a client, and provider handles of a given component type.
 The next tutorial details how to write these libraries.
+
+The :code:`clients` section is an array of client objects of the following form.
+
+.. code-block:: JSON
+
+   {
+        "name" : "<string>",
+        "type" : "<string>",
+        "config" : "<object>",
+        "dependencies" : {
+               "<key1>" : "<name1>",
+               "<key2>" : "<name2>"
+        }
+   }
+
+The :code:`name` will be the name by which the client can be referred to in
+other places of the configuration. The :code:`type` must be one of the module
+names listed in the :code:`libraries` section.
+:code:`config` should be a JSON object formatted to comply
+with the component's specific JSON format. It will be passed as-is to the
+component's client creation function. You should refer to the component's
+documentation to know what is expected from this configuration field.
+
+Finally the :code:`dependencies` entry is an object associating *dependency names*
+to *references*. Bedrock will resolve these references and pass them to the
+client creation function when calling it.
+
+.. note::
+   Bedrock can create clients as needed (e.g. when a provider depends on one or
+   depends on a provider handle), so there is usually no need to fill up manually
+   the :code:`clients` section of the configuration. The only reasons for doing
+   so would be (1) a client needs to be passed a specifid configuration, (2)
+   a client needs to be provided with required dependencies, (3) you want to
+   instantiate and use multiple clients of the same type.
+
 
 The :code:`providers` section is an array of provider objects of the following form.
 
@@ -129,7 +164,7 @@ provider creation function when calling it.
 Dependency resolution
 ---------------------
 
-The :code:`dependencies` section in a provider lists depdency names associated with
+The :code:`dependencies` section in a provider or client lists dependency names associated with
 values. These values can be one of the following.
 
 - The name of an SSG group (for SSG dependencies) will resolve into the correponding
@@ -137,10 +172,14 @@ values. These values can be one of the following.
 - The name of an ABT-IO instance (for ABT-IO dependencies) will resolve into the
   corresponding ABT-IO instance, defined in the :code:`abt_io` section of the
   configuration.
-- The name of another provider defined in the same JSON file (such provider must have
-  been defined before) will resolve to a handle to this provider;
+- The name of a client defined in the same JSON file;
+- For providers, the name of another provider defined in the same JSON file
+  (such provider must have been defined before) will resolve to a handle to this provider;
 - A string of the form :code:`"<type>:client"` where *<type>* is a type of component
-  will resolve into a handle for a client of the corresponding component type;
+  will resolve into a handle for a client of the corresponding component type. If a client
+  was already defined in the :code:`clients` section for the requested type, it will be
+  used, otherwise Bedrock will attempt to create one. If multiple clients of the same type
+  have been defined, the first one will be used;
 - A string of the form :code:`"<name>@<location>"` or :code:`"<type>:<id>@<location>"`
   will resolve into a provider handle pointing to a specific provider identified
   either by its *<name>* or by its *<type>* and provider *<id>* at the specified
@@ -156,3 +195,30 @@ may be listed as optional, some may be mandatory, in which case Bedrock will fai
 if the dependency isn't provided in the :code:`dependencies` section of the provider.
 Some dependencies may be an array, some may be a single string.
 
+.. important::
+   Clients are initialized before providers, hence they cannot depend on providers.
+
+
+Working with multiple clients
+-----------------------------
+
+Suppose we have a provider :code:`ProviderA`
+of type :code:`module_a`. Given the following provider handle specification:
+:code:`ProviderA@ssg://mygroup/0`, Bedrock will by default use the first client
+of type :code:`module_a` it finds to create the provider handle. If such a client
+does not exist, Bedrock will create a default one named :code:`__module_a_client__`.
+
+Let's now assume we have defined two clients :code:`ClientA1` and :code:`ClientA2`
+in the :code:`clients` section of our JSON file, Bedrock will use :code:`ClientA1`
+by default to create the provider handle. To sepcify that we want Bedrock to use
+:code:`ClientA2`, we can write the provider handle specification as follows:
+:code:`ClientA2->ProviderA@ssg://mygroup/0`.
+
+.. note::
+   When querying Bedrock's configuration, you will find that the :code:`clients`
+   section is present regardless of whether you initially provided id, and has been
+   completed with clients that Bedrock needed to create by itself. You will also
+   note that all the provider handle specifications have been resolved into the
+   following format: :code:`client->type:id@address` where *client* is the
+   name of the client used, *type* is the type of provider, *id* is the provider id,
+   and *address* is the Mercury address.

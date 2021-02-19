@@ -18,7 +18,7 @@ functions of our class, and some of the constructs differ
 slightly. For example, the :code:`bedrock::Dependency` class
 uses :code:`std::string` for the name and type of the dependency,
 and the arguments provided to the provider registration method
-is not opaque.
+and client initialization method is not opaque.
 
 The :code:`BEDROCK_REGISTER_MODULE_FACTORY` macro should be
 called in place of the C module's :code:`BEDROCK_REGISTER_MODULE`.
