@@ -2,9 +2,13 @@
 #include <abt-io.h>
 #include <string.h>
 
-static struct bedrock_dependency ModuleA_dependencies[] = {
+static struct bedrock_dependency ModuleA_provider_dependencies[] = {
     { "io", "abt_io", BEDROCK_REQUIRED },
     { "sdskv_ph", "sdskv", BEDROCK_ARRAY | BEDROCK_REQUIRED },
+    BEDROCK_NO_MORE_DEPENDENCIES
+};
+
+static struct bedrock_dependency ModuleA_client_dependencies[] = {
     BEDROCK_NO_MORE_DEPENDENCIES
 };
 
@@ -51,12 +55,11 @@ static char* ModuleA_get_provider_config(
 }
 
 static int ModuleA_init_client(
-        margo_instance_id mid,
+        bedrock_args_t args,
         bedrock_module_client_t* client)
 {
     *client = strdup("ModuleA:client");
     printf("Registered a client from module A\n");
-    printf(" -> mid = %p\n", (void*)mid);
     return BEDROCK_SUCCESS;
 }
 
@@ -66,6 +69,12 @@ static int ModuleA_finalize_client(
     free(client);
     printf("Finalized a client from module A\n");
     return BEDROCK_SUCCESS;
+}
+
+static char* ModuleA_get_client_config(
+        bedrock_module_client_t client) {
+    (void)client;
+    return strdup("{}");
 }
 
 static int ModuleA_create_provider_handle(
@@ -96,9 +105,11 @@ static struct bedrock_module ModuleA = {
     .get_provider_config     = ModuleA_get_provider_config,
     .init_client             = ModuleA_init_client,
     .finalize_client         = ModuleA_finalize_client,
+    .get_client_config       = ModuleA_get_client_config,
     .create_provider_handle  = ModuleA_create_provider_handle,
     .destroy_provider_handle = ModuleA_destroy_provider_handle,
-    .dependencies            = ModuleA_dependencies
+    .provider_dependencies   = ModuleA_provider_dependencies,
+    .client_dependencies     = ModuleA_client_dependencies
 };
 
 BEDROCK_REGISTER_MODULE(module_a, ModuleA)

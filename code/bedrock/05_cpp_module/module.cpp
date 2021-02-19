@@ -6,10 +6,10 @@ class ServiceBFactory : public bedrock::AbstractServiceFactory {
     public:
 
     ServiceBFactory() {
-        m_dependencies.push_back({ "ssg_group", "ssg", BEDROCK_REQUIRED });
-        m_dependencies.push_back({ "a_provider", "module_a", BEDROCK_REQUIRED });
-        m_dependencies.push_back({ "a_local", "module_a", BEDROCK_REQUIRED | BEDROCK_ARRAY});
-        m_dependencies.push_back({ "a_client", "module_a", BEDROCK_REQUIRED });
+        m_provider_dependencies.push_back({ "ssg_group", "ssg", BEDROCK_REQUIRED });
+        m_provider_dependencies.push_back({ "a_provider", "module_a", BEDROCK_REQUIRED });
+        m_provider_dependencies.push_back({ "a_local", "module_a", BEDROCK_REQUIRED | BEDROCK_ARRAY});
+        m_provider_dependencies.push_back({ "a_client", "module_a", BEDROCK_REQUIRED });
     }
 
     void* registerProvider(const bedrock::FactoryArgs& args) override {
@@ -43,8 +43,15 @@ class ServiceBFactory : public bedrock::AbstractServiceFactory {
         return "{}";
     }
 
-    void* initClient(margo_instance_id mid) override {
-        (void)mid;
+    std::string getClientConfig(void* client) override {
+        (void)client;
+        // auto c = static_cast<ClientB*>(client);
+        // return c->getConfig();
+        return "{}";
+    }
+
+    void* initClient(const bedrock::FactoryArgs& args) override {
+        (void)args;
         std::cout << "Initializing client from module B" << std::endl;
         return (void*)0x2;
     }
@@ -67,13 +74,18 @@ class ServiceBFactory : public bedrock::AbstractServiceFactory {
         std::cout << "Destroying provider handle from module B" << std::endl;
     }
 
-    const std::vector<bedrock::Dependency>& getDependencies() override {
-        return m_dependencies;
+    const std::vector<bedrock::Dependency>& getProviderDependencies() override {
+        return m_provider_dependencies;
+    }
+
+    const std::vector<bedrock::Dependency>& getClientDependencies() override {
+        return m_client_dependencies;
     }
 
     private:
 
-    std::vector<bedrock::Dependency> m_dependencies;
+    std::vector<bedrock::Dependency> m_provider_dependencies;
+    std::vector<bedrock::Dependency> m_client_dependencies;
 };
 
 BEDROCK_REGISTER_MODULE_FACTORY(module_b, ServiceBFactory)
