@@ -63,6 +63,14 @@
         "module_a" : "examples/libexample-module-a.so",
         "module_b" : "examples/libexample-module-b.so"
     },
+    "clients" : [
+        {
+            "name" : "ClientA",
+            "type" : "module_a",
+            "config" : {},
+            "dependencies" : {}
+        }
+    ],
     "providers" : [
         {
             "name" : "ProviderA",
