@@ -2,7 +2,7 @@ Thallium microservice template (C++)
 ====================================
 
 The Thallium microservice template is available
-`here <https://xgitlab.cels.anl.gov/sds/templates/thallium-microservice-template>`_.
+`here <https://github.com/mochi-hpc/thallium-microservice-template>`_.
 Though this project provides many examples of how to use the Thallium API, you may
 want to refer to the Thallium documentation for more detail.
 
@@ -81,7 +81,7 @@ shows how to setup your project:
 
 .. code-block:: console
 
-   git clone https://xgitlab.cels.anl.gov/sds/templates/thallium-microservice-template.git
+   git clone https://github.com/mochi-hpc/thallium-microservice-template.git
    mv thallium-microservice-template yellow
    cd yellow
    rm -rf .git
@@ -96,14 +96,14 @@ Building the project
 --------------------
 
 The project's dependencies may be build using `spack <https://spack.readthedocs.io/en/latest/>`_.
-You will need to have setup `sds-repo <https://xgitlab.cels.anl.gov/sds/sds-repo>`_ as external
+You will need to have setup `mochi-spack-packages <https://github.com/mochi-hpc/mochi-spack-packages>`_ as external
 namespace for spack, which can be done as follows.
 
 .. code-block:: console
 
    # from outside of your project directory
-   git clone git@xgitlab.cels.anl.gov:sds/sds-repo.git
-   spack repo add sds-repo
+   git clone https://github.com/mochi-hpc/mochi-spack-packages.git
+   spack repo add mochi-spack-packages
 
 The easiest way to setup the dependencies for this project is to create a spack environment
 using the *spack.yaml* file located at the root of the project, as follows.
