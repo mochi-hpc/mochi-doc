@@ -17,8 +17,8 @@ git reporitory and add it as a Spack namespace.
 
 .. code-block:: console
 
-   git clone https://xgitlab.cels.anl.gov/sds/sds-repo.git
-   spack repo add sds-repo
+   git clone https://github.com/mochi-hpc/mochi-spack-packages.git
+   spack repo add mochi-spack-packages
 
 You can then check that Spack can find Margo (for example) by typping:
 
@@ -31,12 +31,12 @@ You should see something like the following.
 .. code-block:: console
 
    AutotoolsPackage:   mochi-margo
-   
+
    Description:
        A library that provides Argobots bindings to the Mercury RPC
        implementation.
 
-   Homepage: https://xgitlab.cels.anl.gov/sds/margo
+   Homepage: https://github.com/mochi-hpc/mochi-margo
    ... (more lines follow) ...
 
 Installing the Mochi libraries
@@ -89,49 +89,45 @@ Using the Mochi libraries with cmake
 Within a cmake project, Thallium and Mercury can be found using:
 
 .. code-block:: console
-   
+
    find_package(mercury REQUIRED)
-   include_directories(${MERCURY_INCLUDE_DIR})
    find_package(thallium REQUIRED)
 
-To make cmake find Margo, Argobots, or ABT-IO, download
-`this file <https://xgitlab.cels.anl.gov/sds/mochi-doc/blob/master/code/cmake/xpkg-import.cmake>`_
-and place it in a *cmake* folder in your project.
-In the root CMakeLists.txt file of your project, add
-:code:`set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")`
-and :code:`include (xpkg-import)`. You can then find Margo, Argobots, and ABT-IO using the following:
+To make cmake find Margo, Argobots, ABT-IO, or SSG, you can use
+cmake's PkgConfig module:
 
 .. code-block:: console
 
-   xpkg_import_module (argobots REQUIRED argobots)
-   xpkg_import_module (margo REQUIRED margo)
-   xpkg_import_module (abtio REQUIRED abt-io)
-   xpkg_import_module (ssg REQUIRED ssg)
+   find_package (PkgConfig REQUIRED)
+   pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
+   pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
+   pkg_check_modules (ABTIO REQUIRED IMPORTED_TARGET abt-io)
+   pkg_check_modules (SSG REQUIRED IMPORTED_TARGET ssg)
 
 You can now link targets as follows.
 
 .. code-block:: console
-   
+
    # Code using Mercury
    add_executable(my_mercury_prog source.c)
    target_link_libraries(my_mercury_prog mercury)
 
    # Code using Margo
    add_executable(my_margo_prog source.c)
-   target_link_libraries(my_margo_prog margo)
+   target_link_libraries(my_margo_prog PkgConfig::MARGO)
 
    # Code using Thallium
    add_executable(my_thallium_prog source.cpp)
    target_link_libraries(my_thallium_prog thallium)
-   
+
    # Code using Argobots
    add_executable(my_abt_prog source.c)
-   target_link_libraries(my_abt_prog abt)
+   target_link_libraries(my_abt_prog PkgConfig::ABT)
 
    # Code using ABT-IO
    add_executable(my_abt_io_prog source.c)
-   target_link_libraries(my_abt_io_prog abt-io abt)
+   target_link_libraries(my_abt_io_prog PkgConfig::ABTIO)
 
    # Code using SSG
    add_executable(my_ssg_prog source.c)
-   target_link_libraries(my_ssg_prog ssg)
+   target_link_libraries(my_ssg_prog PkgConfig::SSG)
