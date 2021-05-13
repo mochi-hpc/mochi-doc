@@ -40,11 +40,36 @@ will query all the members of the group.
 
 
 The :code:`-i/--provider-id` flag may be used to specify a provider
-id other than 0. for instance:
+id other than 0. For instance:
 
 .. code-block:: console
 
    bedrock-query <protocol> -a <address> -i 42
+
+
+Using Jx9 queries
+-----------------
+
+Sometimes it may be useful to have Bedrock daemons execute some code
+to return only some specific information from their configuration.
+This can be done using the `jx9 language <https://jx9.symisc.net/jx9_lang.html>`_.
+From within a Jx9 script, the :code:`$__config__` variable contains
+the configuration of the Bedrock daemon. The client will be sent back
+the value returned by the script via its :code:`return` statement.
+
+For example, the following Jx9 script makes the daemon return only
+the names of the providers it manages.
+
+.. literalinclude:: ../../../code/bedrock/03_query/query.jx9
+   :language: php
+
+Calling :code:`bedrock-query` with the :code:`-j <script>` argument
+will read the Jx9 code from the provided script and send it to the
+server for execution. For exemple:
+
+.. code-block:: console
+
+   bedrock-query <protocol> -a <address> -j query.jx9
 
 
 Using a C++ program
