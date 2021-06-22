@@ -171,4 +171,4 @@ texinfo_documents = [
 todo_include_todos = True
 
 def setup(app):
-    app.add_stylesheet('custom.css')
+    app.add_css_file('custom.css')
