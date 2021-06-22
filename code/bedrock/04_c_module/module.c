@@ -23,10 +23,12 @@ static int ModuleA_register_provider(
     const char* name       = bedrock_args_get_name(args);
 
     abt_io_instance_id* io = bedrock_args_get_dependency(args, "io", 0);
+    (void)io; // not using it
     size_t num_databases   = bedrock_args_get_num_dependencies(args, "sdskv_ph");
-    int i;
+    unsigned i;
     for(i=0; i < num_databases; i++) {
         void* sdskv_ph = bedrock_args_get_dependency(args, "sdskv_ph", i);
+        (void)sdskv_ph; // not using it
         /* ... */
     }
 
@@ -58,6 +60,7 @@ static int ModuleA_init_client(
         bedrock_args_t args,
         bedrock_module_client_t* client)
 {
+    (void)args;
     *client = strdup("ModuleA:client");
     printf("Registered a client from module A\n");
     return BEDROCK_SUCCESS;
