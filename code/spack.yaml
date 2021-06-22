@@ -5,7 +5,7 @@ spack:
   - mochi-ssg
   - mochi-abt-io
   - mochi-bedrock
-  - mercury
+  - mercury~boostsys
   - argobots
   - cmake
   - mpich
