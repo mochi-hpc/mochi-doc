@@ -1,3 +1,5 @@
+![build](https://github.com/mochi-hpc/mochi-doc/actions/workflows/build.yml/badge.svg)
+
 # Mochi documentation
 
 This repository contains a Sphinx-based documentation
