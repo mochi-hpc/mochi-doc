@@ -8,6 +8,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Install mpich
+      run: |
+        sudo apt install mpich libmpich-dev
     - name: Add latest Spack release
       run: |
         git clone https://github.com/spack/spack.git /opt/spack &&
@@ -17,7 +20,8 @@ jobs:
         cd code &&
         eval `/opt/spack/bin/spack env activate --sh .` &&
         /opt/spack/bin/spack external find --not-buildable cmake &&
-        /opt/spack/bin/spack external find --not-buildable perl
+        /opt/spack/bin/spack external find --not-buildable perl &&
+        /opt/spack/bin/spack external find --not-buildable mpich
     - name: Add mochi-spack-packages
       run: |
         git clone https://github.com/mochi-hpc/mochi-spack-packages /opt/spack/mochi-spack-packages
