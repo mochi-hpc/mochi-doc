@@ -15,6 +15,7 @@ These can be installed as follows using Python's `pip`.
 ```
 pip install sphinx
 pip install sphinx_rtd_theme
+pip install sphinx_copybutton
 ```
 
 Once you have these dependencies installed, clone this

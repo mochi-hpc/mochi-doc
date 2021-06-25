@@ -10,8 +10,6 @@ int main(int argc, char** argv) {
         exit(0);
     }
 
-    std::string context_string = "response not unpacked";
-
     tl::engine myEngine("tcp", THALLIUM_CLIENT_MODE);
     tl::remote_procedure process = myEngine.define("process");
     tl::endpoint server = myEngine.lookup(argv[1]);
