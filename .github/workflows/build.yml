@@ -13,8 +13,7 @@ jobs:
         sudo apt install mpich libmpich-dev
     - name: Add latest Spack release
       run: |
-        git clone https://github.com/spack/spack.git /opt/spack &&
-        cd /opt/spack && git checkout releases/latest
+        git clone https://github.com/spack/spack.git /opt/spack
     - name: Find external packages
       run: |
         cd code &&
