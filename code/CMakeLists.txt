@@ -47,6 +47,8 @@ pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
 pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
 # bedrock
 find_package (bedrock REQUIRED)
+# yokan
+find_package (yokan REQUIRED)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)
@@ -55,3 +57,4 @@ add_subdirectory (thallium)
 add_subdirectory (abtio)
 add_subdirectory (ssg)
 add_subdirectory (bedrock)
+add_subdirectory (yokan)
