@@ -1,5 +1,6 @@
 #include "types.h"
 #include "alpha-client.h"
+#include <stdlib.h>
 
 struct alpha_client {
    margo_instance_id mid;

@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <ssg.h>
 
 static void my_membership_update_cb(void* uargs,

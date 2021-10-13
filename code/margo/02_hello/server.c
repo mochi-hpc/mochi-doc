@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <margo.h>
 
 static const int TOTAL_RPCS = 4;

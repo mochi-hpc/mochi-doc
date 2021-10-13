@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <mercury.h>
 #include "types.h"
 
@@ -96,7 +97,7 @@ hg_return_t lookup_callback(const struct hg_cb_info *callback_info)
     save_op->size = ftell(file);
     fseek(file, 0L, SEEK_SET);
     save_op->buffer = calloc(1, save_op->size);
-    fread(save_op->buffer,1,save_op->size,file);
+    size_t bytes_read = fread(save_op->buffer,1,save_op->size,file);
     fclose(file);
 
     hg_addr_t addr = callback_info->info.lookup.addr;
