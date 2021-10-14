@@ -1,5 +1,5 @@
-Simple Hello World RPC
-======================
+Simple Hello World RPC with Margo
+=================================
 
 The previous tutorial explained how to initialize a server and a client.
 This this tutoria, we will have the server register and RPC handler and

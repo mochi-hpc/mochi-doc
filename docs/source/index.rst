@@ -64,6 +64,9 @@ scheduling and placement of threads and tasks in a Mochi service.
 Other Mochi libraries/components
 --------------------------------
 
+**Yokan** is Mochi's main key/value storage service. It provides many
+backends and a rich API, including C, C++, and Python bindings.
+
 **ABT-IO** is a small library that can be used to offload POSIX
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.
@@ -96,6 +99,7 @@ Contents
    thallium.rst
    mercury.rst
    argobots.rst
+   yokan.rst
    abtio.rst
    ssg.rst
    templates.rst

@@ -22,3 +22,5 @@
 .toggle .header.open:after {
     content: " ▼";
 }
+
+div.btn>p { margin: 0; }

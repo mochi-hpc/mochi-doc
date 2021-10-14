@@ -1,3 +1,5 @@
+.. _margo-microservice-template:
+
 Margo microservice template (C)
 ===============================
 
