@@ -17,3 +17,4 @@ This section will walk you through a series of tutorials on how to use Yokan.
    yokan/01_init.rst
    yokan/02_config.rst
    yokan/03_basics.rst
+   yokan/04_multi.rst
