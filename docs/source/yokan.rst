@@ -18,3 +18,6 @@ This section will walk you through a series of tutorials on how to use Yokan.
    yokan/02_config.rst
    yokan/03_basics.rst
    yokan/04_multi.rst
+   yokan/05_modes.rst
+   yokan/06_backends.rst
+   yokan/07_bindings.rst
