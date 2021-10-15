@@ -18,6 +18,7 @@ The flags currently available are listed hereafter.
 - ``YOKAN_MODE_WAIT``: The operation will wait for the key to appear
   in the database instead of returning an error. Writers putting
   the key will need to use the ``YOKAN_MODE_NOTIFY`` mode.
+- ``YOKAN_MODE_NOTIFY``: See above.
 - ``YOKAN_MODE_NEW_ONLY``: Only put the key/value pair if the key did
   not exist.
 - ``YOKAN_MODE_EXIST_ONLY``: Only put the key/value pair if the key

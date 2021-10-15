@@ -50,6 +50,8 @@ We can now give this config file to Bedrock as follows.
    [2021-10-14 10:16:17.530] [info] Bedrock daemon now running at na+sm://8551-0
 
 
+We now have a Yokan provider running, with a *provider id* of 42.
+
 If you need to create a provider in C (either because you don't want to use Bedrock
 or because you want your provider to be embedded into an existing application), the
 following code shows how to do that.
