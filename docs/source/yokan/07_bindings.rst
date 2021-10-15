@@ -23,7 +23,8 @@ Python binding
 
 Yokan also provides Python bindings for its server, admin, and client
 libraries. The best way to understand their use is to look in the
-*tests/python* folder.
+*tests/python* folder. To enable this python binding, install Yokan
+with the ``+python`` variant in spack.
 
 The Python binding aims to encourage the user to think about performance
 first, before thinking about usability. We encourage users to implement
