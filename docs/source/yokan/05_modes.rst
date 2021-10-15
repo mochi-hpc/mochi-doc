@@ -2,9 +2,9 @@ Changing API semantics with modes
 =================================
 
 You may have noticed the :code:`YOKAN_MODE_DEFAULT` parameter
-passed to all of the client functions. This argument can be used
+passed to all client functions. This argument can be used
 to alter the semantics of the function. You may use multiple such
-mode by chaining them using bitwise "or".
+modes by chaining them using bitwise "or".
 
 The flags currently available are listed hereafter.
 
@@ -37,7 +37,7 @@ The flags currently available are listed hereafter.
 
 .. important::
 
-   Not all the backends support all the modes. If a backend doesn't
+   Not all backends support all modes. If a backend doesn't
    support a particular mode, the function will return :code:`YOKAN_ERR_MODE`.
    If a backend doesn't support a mode that you need, and you really want
    to use this backend, please let us know and we will try to add support for

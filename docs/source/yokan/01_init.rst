@@ -28,8 +28,8 @@ Instantiating a Yokan provider
 Yokan adopts the typical Mochi microservice architecture
 (used for instance in the :ref:`Margo microservice template<margo-microservice-template>`),
 with a *server* library providing the microservice's *provider* implementation,
-a *client* library providing access its capabilities (putting and getting key/value pairs),
-and an *admin* library providing control over the providers (creating and destroying databases)..
+a *client* library providing access to its capabilities (e.g., putting and getting key/value pairs),
+and an *admin* library providing control over the providers (creating and destroying databases).
 Hence the first thing we need to do is instantiate a provider.
 
 Since we have enabled Bedrock support, let's take advantage of that and write
@@ -41,7 +41,7 @@ instead of writing code).
 .. literalinclude:: ../../../code/yokan/01_init/bedrock.json
    :language: json
 
-We can now give it to Bedrock as follows.
+We can now give this config file to Bedrock as follows.
 
 .. code-block:: console
 
@@ -69,7 +69,7 @@ following code shows how to do that.
 Using the admin library to create a database
 --------------------------------------------
 
-Now that we have our server running, let's create some code
+Now that we have our server running, let's write some code
 using the *admin* library to create a database.
 
 .. container:: toggle
@@ -89,9 +89,9 @@ We then create a :code:`yk_admin_t` object, which we initialize
 with :code:`yk_admin_init`.
 
 By using :code:`yk_open_database`,
-the admin sends an RPC to the provider, requesting it to open
+the admin sends an RPC to the provider requesting it to open
 a database of type :code:`map`, which is an in-memory key/value
-store implemented using C++ `:code:`std::map`. Since this database
+store implemented using C++ :code:`std::map`. Since this database
 is in memory, this *open* operation will actually create it.
 
 The :code:`yk_open_database` function's last parameter is a pointer
@@ -115,7 +115,7 @@ Interacting with the database via the client interface
 ------------------------------------------------------
 
 Now let the fun start. We can use the client library to create a client
-object, a database handle, and start interacting with our database.
+object, create a database handle, and start interacting with our database.
 
 .. container:: toggle
 

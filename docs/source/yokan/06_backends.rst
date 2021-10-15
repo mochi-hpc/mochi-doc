@@ -2,7 +2,7 @@ Backends and their configurations
 =================================
 
 So far we have used the ``map`` backend for this tutorial.
-Yokan provides a number of backends, listed bellow, along
+Yokan provides a number of backends, listed below, along
 with some key information on their configuration.
 
 Note that the full configuration format of a backend can
@@ -11,7 +11,7 @@ context, then using the :ref:`bedrock-query` tool to retrieve the
 full configuration.
 
 Some configuration parameters expect a symbol name that will
-be looked up using ``dlsym` and ``dlopen``. These names can be written
+be looked up using ``dlsym`` and ``dlopen``. These names can be written
 in the form ``"symbol_name"`` to look them up in the currently
 loaded executable and libraries, or ``"libsome_library.so:symbol_name"``
 to look them up in an exernal library that needs to be loaded.
@@ -31,7 +31,7 @@ include the following.
   to false if you know that the database will never be accessed
   by multiple execution stream concurrently (either because only
   one client accesses it, or because only one execution stream
-  services RPC for it).
+  services RPCs for it).
 - ``comparator``: a function with signature
   ``bool (*)(const void*, size_t, const void*, size_t)`` that
   provides the *"less than"* comparison operator for two keys.
@@ -41,8 +41,8 @@ include the following.
   and ``node_allocator_config``.
 
 The memory allocators used by the Map backend can be customized
-using the ``allocators`` configuration. The keys and values allocator
-are used to allocate memory to store the keys and values respectively.
+using the ``allocators`` configuration. The keys and values allocators
+are used to allocate memory to store keys and values, respectively.
 The node allocator is used to allocate memory for the nodes in the map's
 underlying red-black tree. By default, an allocator that uses ``new`` and
 ``delete`` will be used, but if you know in advance that, for instance,
@@ -85,7 +85,7 @@ Set backend
 - Special requirements: none
 
 The Set backend uses C++'s ``std::set``. It is similar to the Map backend
-but does not store values. Trying to put anything else than zero-sized values
+but does not store values. Trying to put anything other than zero-sized values
 will result in an error. This backend is useful over the Map backend in that
 even if you were to store only zero-sized values in the Map backend, you would
 still have to store a ``size_t`` (generally 8 bytes) field for each value.
@@ -115,7 +115,7 @@ This backend uses `BerkeleyDB <https://www.oracle.com/uk/database/technologies/r
 to implement a key/value store backed by
 a local file system. Important configuration fields include the following.
 
-- ``type``: may be "btree" or "hash". The former provides a sorted.
+- ``type``: may be "btree" or "hash". The former provides a sorted
   key/value store, while the latter is unsorted and will not provide
   the ``list_*`` operations.
 - ``home``: path to the "home" of the BerkeleyDB environment (a "yokan"
@@ -194,7 +194,7 @@ Important configuration fields include the following.
 - ``error_if_exists``: fail to open the database if it exists.
 - ``path``: path to the database.
 - ``db_paths``: an array of JSON objects representing storage targets
-  to use to store the database files. Each such an object should
+  to use to store the database files. Each such object should
   have a ``path`` field and a ``target_size`` field.
 
 TKRZW backend
@@ -257,7 +257,7 @@ The second argument is the name of your backend class.
 
 Compile your .cpp file into a dynamic library. Then, when
 specifying the type of a database, use the syntax "library.so:name",
-there "library.so" is your dynamic library, and "name" is the name of
+where "library.so" is your dynamic library, and "name" is the name of
 your backend.
 
 Note that Yokan will use ``dlopen`` to load the library, so its lookup

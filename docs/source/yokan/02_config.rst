@@ -23,10 +23,10 @@ and *list* databases. This API is showcased in the code bellow.
        :language: cpp
 
 
-Depending on on the backend used, opening a database may create
+Depending on the backend used, opening a database may create
 files, or request to open existing files. Closing a database will
 make it inaccessible to clients. If the database was in memory,
-it will also erase its content. If it was backed up by files, it
+it will also erase its contents. If it was backed up by files, it
 will close those files. Destroying the database will not only
 close it, it will also erase all corresponding files from the
 unerlying file system.
@@ -41,7 +41,7 @@ Creating databases without an admin
 -----------------------------------
 
 In the previous tutorial we have hand-written an admin program
-to create a database. This is however not needed, as we could have
+to create a database. This is not needed, however, as we could have
 put the database definition directly in the Bedrock configuration
 file, as follows.
 

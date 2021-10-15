@@ -7,7 +7,7 @@ LevelDB, BerkeleyDB, LMDB, GDBM, Unqlite, and TKRZW.
 Yokan has been designed to offer as much flexibility as possible. Many of its
 internal components can be configured, from the storage backends to how buffers
 are allocated and cached. It is also easy to extend with new backends, should
-the user need specific capabilities, or for research purpose.
+the user need specific capabilities, or for research purposes.
 
 This section will walk you through a series of tutorials on how to use Yokan.
 

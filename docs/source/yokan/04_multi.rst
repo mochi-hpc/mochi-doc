@@ -34,7 +34,7 @@ Unpacked accesses
 -----------------
 
 The following program gives you an example of usage for all
-the unpacked functions.
+unpacked functions.
 
 .. container:: toggle
 
@@ -69,7 +69,7 @@ Packed accesses
 ---------------
 
 The following program gives you an example of usage for all
-the packed functions.
+packed functions.
 
 .. container:: toggle
 
