@@ -35,10 +35,23 @@ The flags currently available are listed hereafter.
   with YOKAN_MODE_IGNORE_KEYS, still send the last key.
 - ``YOKAN_MODE_LUA_FILTER``: Interpret the filter argument in :code:`list_keys(_packed)`
   and :code:`list_keyvals(_packed)` as Lua code.
+- ``YOKAN_MODE_IGNORE_DOCS``: Will make :code:`yk_doc_list` and :code:`yk_doc_list_packed`
+  only return the ids of documents satisfying the provided filter.
+- ``YOKAN_MODE_FILTER_VALUE``: This mode must be specified if the provided filter
+  requires the value. If not specified, some backends may elect to call the filter
+  function with a null value in place of the actual value.
+- ``YOKAN_MODE_LIB_FILTER``: Loads a custom filter from a shared library.
+  See the tutorial on filters for more information.
+- ``YOKAN_MODE_NO_RDMA``: Will make functions switch to a version of the RPCs
+  that don't use RDMA. Data will be packed within the RPC request and response.
+  While this can cause more copies than necessary, it can still be more efficient
+  in particular for small key/value pairs and small documents. Note that not all
+  the functions currently support this mode, it is simply considered as a hint.
 
 .. important::
 
-   Not all backends support all modes. If a backend doesn't
+   Not all backends support all modes, and not all the client functions support
+   all modes. If a backend doesn't
    support a particular mode, the function will return :code:`YOKAN_ERR_MODE`.
    If a backend doesn't support a mode that you need, and you really want
    to use this backend, please let us know and we will try to add support for

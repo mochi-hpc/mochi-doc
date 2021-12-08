@@ -1,7 +1,7 @@
 Yokan
 =====
 
-Yokan is a Mochi microservice that provides single-node key/value storage
+Yokan is a Mochi microservice that provides single-node key/value and document storage
 capabilities. It is based on Margo, and offers many backends, including RocksDB,
 LevelDB, BerkeleyDB, LMDB, GDBM, Unqlite, and TKRZW.
 Yokan has been designed to offer as much flexibility as possible. Many of its

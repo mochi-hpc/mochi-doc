@@ -243,9 +243,9 @@ Writing your own backend
 ========================
 
 Yokan aims to provide an easy way for researchers to implement and try
-their own backend key/value stores. To implement your own key/value
+their own backend. To implement your own key/value
 storage backend, look at *include/yokan/backend.hpp* and implement
-a child class of the ``KeyValueStoreInterface`` abstract class.
+a child class of the ``DatabaseInterface`` abstract class.
 You can take inspiration from *src/backends/map.cpp* to understand
 the semantics of each member function.
 
@@ -263,3 +263,12 @@ your backend.
 Note that Yokan will use ``dlopen`` to load the library, so its lookup
 rules apply (for instance ``dlopen`` will usually look for libraries
 in the ``LD_LIBRARY_PATH`` environment variable).
+
+.. important::
+   If you already implemented your backend's key/value storage functions
+   and your backend is sorted (i.e. provides the :code:`listKeys` and :code:`listKeyValues`
+   member functions), you can automatically support document storage
+   by making your class inherit from :code:`DocumentStoreMixin<DatabaseInterface>`
+   instead of :code:`DatabaseInterface`. This will immediately provide
+   implementations for the document storage on top of your key/value storage
+   implemetation (see *yokan/doc-mixin.hpp* for details).
