@@ -19,14 +19,17 @@ struct CustomKeyValueFilter : public yokan::KeyValueFilter {
 
     bool check(const void* key, size_t ksize,
                const void* val, size_t vsize) const override {
+        // This custom filter will check if the key size and
+        // value size have the same parity
         (void)key;
         (void)val;
-        return vsize % 2 == ((ksize % 2 == 0) ? 1 : 0);
+        return (vsize % 2) == (ksize % 2);
     }
 
     size_t keyCopy(
         void* dst, size_t max_dst_size,
         const void* key, size_t ksize) const override {
+        // This custom copy function will reverse the key
         if(max_dst_size < ksize) return YOKAN_SIZE_TOO_SMALL;
         for(size_t i=0; i < ksize; i++) {
             ((char*)dst)[i] = ((const char*)key)[ksize-i-1];
@@ -37,6 +40,8 @@ struct CustomKeyValueFilter : public yokan::KeyValueFilter {
     size_t valCopy(
         void* dst, size_t max_dst_size,
         const void* val, size_t vsize) const override {
+        // This custom copy function will append
+        // the user-provided filter argument to the value
         if(max_dst_size < vsize + m_to_append.size()) return YOKAN_SIZE_TOO_SMALL;
         std::memcpy(dst, val, vsize);
         std::memcpy((char*)dst+vsize, m_to_append.data(), m_to_append.size());
@@ -55,6 +60,7 @@ struct CustomDocFilter : public yokan::DocFilter {
     }
 
     bool check(yk_id_t id, const void* doc, size_t docsize) const override {
+        // This custom filter will only let through the document with an even id
         (void)doc;
         (void)docsize;
         return id % 2 == 0;
