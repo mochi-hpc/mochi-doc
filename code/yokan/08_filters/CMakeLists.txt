@@ -1,2 +1,2 @@
-add_executable (08_yokan_filter filter.cpp)
-target_link_libraries (08_yokan_filter yokan-client)
+add_library (my_custom_filter SHARED filter.cpp)
+target_link_libraries (my_custom_filter yokan-client)
