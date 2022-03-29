@@ -33,10 +33,7 @@ int main(int argc, char** argv)
     ret = ssg_group_id_load("mygroup.ssg", &num_addrs, &gid);
     assert(ret == SSG_SUCCESS);
 
-    ret = ssg_group_observe(mid, gid);
-    assert(ret == SSG_SUCCESS);
-
-    ret = ssg_group_unobserve(gid);
+    ret = ssg_group_refresh(mid, gid);
     assert(ret == SSG_SUCCESS);
 
     ret = ssg_group_destroy(gid);

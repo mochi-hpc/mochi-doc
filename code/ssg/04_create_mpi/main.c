@@ -38,9 +38,11 @@ int main(int argc, char** argv)
         .ssg_credential = -1
     };
 
-    ssg_group_id_t gid = ssg_group_create_mpi(
+    ssg_group_id_t gid;
+    ret = ssg_group_create_mpi(
             mid, "mygroup", MPI_COMM_WORLD,
-            &config, my_membership_update_cb, NULL);
+            &config, my_membership_update_cb, NULL, &gid);
+    assert(ret == SSG_SUCCESS);
 
     // ...
     // do stuff using the group

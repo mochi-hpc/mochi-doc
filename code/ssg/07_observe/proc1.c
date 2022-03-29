@@ -42,9 +42,11 @@ int main(int argc, char** argv)
         .ssg_credential = -1
     };
 
-    ssg_group_id_t gid = ssg_group_create(
+    ssg_group_id_t gid;
+    ret = ssg_group_create(
             mid, "mygroup", group_addr_strs, 1,
-            &config, my_membership_update_cb, NULL);
+            &config, my_membership_update_cb, NULL,
+            &gid);
 
     ret = ssg_group_id_store("mygroup.ssg", gid, 1);
 

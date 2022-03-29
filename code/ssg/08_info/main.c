@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <ssg.h>
+#include <stdlib.h>
 
 static void my_membership_update_cb(void* uargs,
         ssg_member_id_t member_id,
@@ -42,27 +43,36 @@ int main(int argc, char** argv)
         .ssg_credential = -1
     };
 
-    ssg_group_id_t gid = ssg_group_create(
+    ssg_group_id_t gid;
+    ret = ssg_group_create(
             mid, "mygroup", group_addr_strs, 1,
-            &config, my_membership_update_cb, NULL);
+            &config, my_membership_update_cb, NULL, &gid);
 
     // get the current process' member id
-    ssg_member_id_t self_id = ssg_get_self_id(mid);
+    ssg_member_id_t self_id;
+    ret = ssg_get_self_id(mid, &self_id);
     // get the group size
-    int size = ssg_get_group_size(gid);
+    int size;
+    ret = ssg_get_group_size(gid, &size);
     // get the address from a member id (here self_id)
-    hg_addr_t self_addr = ssg_get_group_member_addr(gid, self_id);
+    hg_addr_t self_addr;
+    ret = ssg_get_group_member_addr(gid, self_id, &self_addr);
     // get the rank of the current process in the group
-    int self_rank = ssg_get_group_self_rank(gid);
+    int self_rank;
+    ret = ssg_get_group_self_rank(gid, &self_rank);
     // get the rank from a member id (here self_id)
-    int rank = ssg_get_group_member_rank(gid, self_id);
+    int rank;
+    ret = ssg_get_group_member_rank(gid, self_id, &rank);
     // get a member id from a rank
-    ssg_member_id_t member_id = ssg_get_group_member_id_from_rank(gid, rank);
+    ssg_member_id_t member_id;
+    ret = ssg_get_group_member_id_from_rank(gid, rank, &member_id);
     // get an array of member ids from a range of ranks [0,size[
     ssg_member_id_t member_ids[size];
     ret = ssg_get_group_member_ids_from_range(gid, 0, size, member_ids);
     // get a string address from a rank
-    const char* addr_str = ssg_group_id_get_addr_str(gid, 0);
+    char* addr_str;
+    ret = ssg_get_group_member_addr_str(gid, 0, &addr_str);
+    free(addr_str);
 
     ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
