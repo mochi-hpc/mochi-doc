@@ -1,7 +1,7 @@
 Installing
 ==========
 
-The recommended way to install the Mochi libraries and dependencies 
+The recommended way to install the Mochi libraries and dependencies
 is to use `Spack <https://spack.readthedocs.io/en/latest/>`_.
 Spack is a package management tool designed to support multiple
 versions and configurations of software on a wide variety of
@@ -12,13 +12,21 @@ Installing Spack and the SDS repository
 
 First, you will need to install Spack as explained
 `here <https://spack.readthedocs.io/en/latest/getting_started.html>`_.
-Once Spack is installed and available in your path, clone the following
-git reporitory and add it as a Spack namespace.
+
+Mercury, Argobots, Margo, and Thallium are available as builtin
+packages in Spack. For all the other Mochi libraries, you will need
+to  clone the following git reporitory and add it as a Spack namespace.
 
 .. code-block:: console
 
    git clone https://github.com/mochi-hpc/mochi-spack-packages.git
    spack repo add mochi-spack-packages
+
+.. important::
+   The above reporitory may contain newer versions of Mercury,
+   Argobots, Margo, and Thallium than what is available in Spack
+   by default, so we recommend using it even if you will only
+   work with these libraries.
 
 You can then check that Spack can find Margo (for example) by typping:
 
@@ -67,10 +75,10 @@ Once installed, you can load Margo using the following command.
 
 .. code-block:: console
 
-   spack load -r mochi-margo
+   spack load mochi-margo
 
 This will load Margo and its dependencies (Mercury, Argobots, etc.).
-:code:`spack load -r mochi-thallium` will load Thallium and its dependencies
+:code:`spack load mochi-thallium` will load Thallium and its dependencies
 (Margo, Mercury, Argobots, etc.). You are now ready to use the Mochi libraries!
 
 Using the Mochi libraries with pkg-config
@@ -86,12 +94,14 @@ For examples:
 Using the Mochi libraries with cmake
 ------------------------------------
 
-Within a cmake project, Thallium and Mercury can be found using:
+Within a cmake project, Thallium, Mercury, Yokan, and Bedrock can be found using:
 
 .. code-block:: console
 
    find_package(mercury REQUIRED)
    find_package(thallium REQUIRED)
+   find_package(yokan REQUIRED)
+   find_package(bedrock REQUIRED)
 
 To make cmake find Margo, Argobots, ABT-IO, or SSG, you can use
 cmake's PkgConfig module:
@@ -131,3 +141,13 @@ You can now link targets as follows.
    # Code using SSG
    add_executable(my_ssg_prog source.c)
    target_link_libraries(my_ssg_prog PkgConfig::SSG)
+
+   # Code using Bedrock
+   add_executable(my_bedrock_prog source.cpp)
+   target_link_libraries(my_bedrock_prog bedrock-client)
+   # link against bedrock-server if you need an embedded server
+
+   # Code using Yokan
+   add_executable(my_yokan_prog source.cpp)
+   target_link_libraries(my_yokan_prog yokan-client yokan-server yokan-admin)
+   # select the relevant library to link against
