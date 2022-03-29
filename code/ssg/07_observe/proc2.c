@@ -21,11 +21,11 @@ static void my_membership_update_cb(void* uargs,
 
 int main(int argc, char** argv)
 {
-    int ret = ssg_init();
-    assert(ret == SSG_SUCCESS);
-
     margo_instance_id mid = margo_init("tcp", MARGO_SERVER_MODE, 1, 0);
     assert(mid);
+
+    int ret = ssg_init();
+    assert(ret == SSG_SUCCESS);
 
     ssg_group_id_t gid;
 
@@ -39,10 +39,10 @@ int main(int argc, char** argv)
     ret = ssg_group_destroy(gid);
     assert(ret == SSG_SUCCESS);
 
-    margo_finalize(mid);
-
     ret = ssg_finalize();
     assert(ret == SSG_SUCCESS);
+
+    margo_finalize(mid);
 
     return 0;
 }

@@ -25,16 +25,17 @@ int main(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
 
-    int ret = ssg_init();
-    assert(ret == SSG_SUCCESS);
-
     margo_instance_id mid = margo_init("tcp", MARGO_SERVER_MODE, 1, 0);
     assert(mid);
+
+    int ret = ssg_init();
+    assert(ret == SSG_SUCCESS);
 
     ssg_group_config_t config = {
         .swim_period_length_ms = 1000,
         .swim_suspect_timeout_periods = 5,
         .swim_subgroup_member_count = -1,
+        .swim_disabled = 0,
         .ssg_credential = -1
     };
 
@@ -51,10 +52,13 @@ int main(int argc, char** argv)
     ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 
-    margo_finalize(mid);
+    ret = ssg_group_destroy(gid);
+    assert(ret == SSG_SUCCESS);
 
     ret = ssg_finalize();
     assert(ret == SSG_SUCCESS);
+
+    margo_finalize(mid);
 
     MPI_Finalize();
 

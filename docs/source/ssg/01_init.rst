@@ -8,7 +8,7 @@ on it at initialization time.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)

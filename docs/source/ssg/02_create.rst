@@ -11,7 +11,7 @@ callback, and a pointer to user data for this callback.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)
@@ -48,12 +48,9 @@ The :code:`my_membership_update_cb()` function will be called whenever a members
 This membership change is indicated by the :code:`ssg_member_update_type_t` argument,
 and the :code:`ssg_member_id_t` argument indicates which member joined, left, or died.
 
-Destroying a group
-------------------
+Leaving and destroying a group
+------------------------------
 
 The :code:`ssg_group_leave()` function is used to notify other members that the caller is
-leaving the group, and to free the local resources associated with the group id.
-
-.. important::
-   SSG also provides :code:`ssg_group_destroy()`. This function is reserved for processes
-   that have opened a group id (e.g, to observe it) but are not members.
+leaving the group. The :code:`ssg_group_destroy()` is then used to destroy the internal
+data structures associated with the group.

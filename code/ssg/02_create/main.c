@@ -21,11 +21,11 @@ static void my_membership_update_cb(void* uargs,
 
 int main(int argc, char** argv)
 {
-    int ret = ssg_init();
-    assert(ret == SSG_SUCCESS);
-
     margo_instance_id mid = margo_init("tcp", MARGO_SERVER_MODE, 1, 0);
     assert(mid);
+
+    int ret = ssg_init();
+    assert(ret == SSG_SUCCESS);
 
     hg_addr_t my_addr;
     margo_addr_self(mid, &my_addr);
@@ -39,6 +39,7 @@ int main(int argc, char** argv)
         .swim_period_length_ms = 1000,
         .swim_suspect_timeout_periods = 5,
         .swim_subgroup_member_count = -1,
+        .swim_disabled = 0,
         .ssg_credential = -1
     };
 
@@ -56,10 +57,13 @@ int main(int argc, char** argv)
     ret = ssg_group_leave(gid);
     assert(ret == SSG_SUCCESS);
 
-    margo_finalize(mid);
+    ret = ssg_group_destroy(gid);
+    assert(ret == SSG_SUCCESS);
 
     ret = ssg_finalize();
     assert(ret == SSG_SUCCESS);
+
+    margo_finalize(mid);
 
     return 0;
 }
