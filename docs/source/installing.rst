@@ -7,8 +7,8 @@ Spack is a package management tool designed to support multiple
 versions and configurations of software on a wide variety of
 platforms and environments.
 
-Installing Spack and the SDS repository
----------------------------------------
+Installing Spack and the Mochi repository
+-----------------------------------------
 
 First, you will need to install Spack as explained
 `here <https://spack.readthedocs.io/en/latest/getting_started.html>`_.
