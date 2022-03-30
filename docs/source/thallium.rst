@@ -35,3 +35,4 @@ in place of the C++ threading library.
    thallium/13_abt_custom.rst
    thallium/14_async.rst
    thallium/16_context.rst
+   thallium/17_logging.rst
