@@ -8,7 +8,7 @@ the :code:`ssg_group_create_mpi` function as follows.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)

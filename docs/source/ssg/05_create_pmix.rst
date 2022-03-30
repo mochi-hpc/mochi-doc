@@ -9,7 +9,7 @@ function.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)

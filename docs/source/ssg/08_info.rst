@@ -2,13 +2,13 @@ Using information from a group
 ==============================
 
 Once a process is a member or an observer of a group,
-a number of operations may be done the resulting group id.
+a number of operations may be done with the group id.
 The code bellow illustrates most of them.
 
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)

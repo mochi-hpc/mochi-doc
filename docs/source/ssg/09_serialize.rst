@@ -9,7 +9,7 @@ using :code:`ssg_group_id_serialize()` and :code:`ssg_group_id_deserialize()`.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)

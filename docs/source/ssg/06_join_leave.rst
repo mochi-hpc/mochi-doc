@@ -15,7 +15,7 @@ of current member addresses to include in the file.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           proc1.c (show/hide)
@@ -29,7 +29,7 @@ Process 2, whose code is shown bellow, reads the group file using
 :code:`ssg_group_join()`. Note that this function takes a membership
 callback and user-data pointer, but does not include the group name
 nor the group configuration. These pieces of information are retrieved
-from the group itself.
+from the loaded group itself.
 
 The process sleeps for 2 seconds, then calls :code:`ssg_group_leave()`
 to leave the group. When running this code, you should see Process 1 display
@@ -38,7 +38,7 @@ messages upon Process 2 joining and leaving.
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           proc2.c (show/hide)
@@ -48,7 +48,7 @@ messages upon Process 2 joining and leaving.
 
 Note that :code:`ssg_group_join` and :code:`ssg_group_leave` both
 have a variant, :code:`ssg_group_join_target` and :code:`ssg_group_leave_target`,
-respectively, which can be used to specify to address of another member of
+respectively, which can be used to specify he address of another member of
 the group to inform of the process joining/leaving. The
 :code:`ssg_group_join` and :code:`ssg_group_leave` functions simply
 contact a random group member for this purpose.

@@ -1,14 +1,14 @@
-Creating a group from a file 
+Creating a group from a file
 ============================
 
-Should the list of members' addresses be available in a text file
+Should the list of member addresses be available in a text file
 (one address per line), the following code sample shows how to
 create a group from this file.
 
 .. container:: toggle
 
     .. container:: header
-    
+
        .. container:: btn btn-info
 
           main.c (show/hide)

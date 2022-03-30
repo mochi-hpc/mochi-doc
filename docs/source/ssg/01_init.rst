@@ -2,8 +2,7 @@ Initializing SSG
 ================
 
 The following code sample shows how to initialize and finalize
-SSG. Though SSG uses Margo for communications, it does not rely
-on it at initialization time.
+SSG.
 
 .. container:: toggle
 
@@ -15,3 +14,7 @@ on it at initialization time.
 
     .. literalinclude:: ../../../code/ssg/01_init/main.c
        :language: cpp
+
+.. important::
+   Though the Margo instance is not provided to the :code:`ssg_init`
+   function, this function still needs Margo to have been initialized.
