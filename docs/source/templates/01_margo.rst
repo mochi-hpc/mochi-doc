@@ -106,7 +106,7 @@ The *include* directory of this template project provides public header files.
 The implementation of all these functions is located in the *src* directory.
 The source also includes functionalities such as a small header-based logging library.
 The *src/dummy* directory provides a default implementation of a backend. This
-backend also exemplifies the use of the [json-c](https://github.com/json-c/json-c) library
+backend also exemplifies the use of the `json-c <https://github.com/json-c/json-c>`_ library
 for JSON-based resource configuration. We recommend that you implement a dummy backend for your
 service, as a way of testing application logic and RPCs without the burden of complex
 external dependencies. For instance, a dummy backend may be a backend that simply
@@ -118,7 +118,7 @@ The admin example will connect to this provider and have it create a resource, t
 print the resource id. The client example can be run next to interact with the resource.
 
 The *tests* directory contains a set of unit tests for your service.
-It relies on [µnit](https://nemequ.github.io/munit) (included in the repository),
+It relies on `µnit <https://nemequ.github.io/munit>`_ (included in the repository),
 a C unit-test library under an MIT license. Feel free to continue using it as you
 add more functionalities to your microservice; unit-testing is just good software
 development practice in general.
