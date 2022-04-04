@@ -79,18 +79,18 @@ Let's assume you want to create a microservice called "yellow", which manages
 a phone directory (association between names and phone numbers). The following
 shows how to setup your project:
 
-.. code-block:: console
+First, go to `template repository on github <https://github.com/mochi-hpc/thallium-microservice-template>`_
+and click "Use this template". Give it the name "yellow", and proceed.
+In your new repository, edit the *initial-setup.json* file to rename your service
+and your resources (e.g. rename "alpha" into "yellow" and "resource" into "phonebook").
+IMPORTANT: these names must be lower-case and without spaces,
+since they will be used in C code for identifiers, function names, etc.
 
-   git clone https://github.com/mochi-hpc/thallium-microservice-template.git
-   mv thallium-microservice-template yellow
-   cd yellow
-   rm -rf .git
-   python setup.py
-   $ Enter the name of your service: yellow
-   $ Enter the name of the resources (e.g., database): phonebook
+Editing *initial-setup.json* will trigger a github action. Wait a couple of minutes
+and you should see a new commit appear: github has renamed your files, functions, etc. by itself!
+It has also removed the COPYRIGHT file and the initial-setup.json file.
 
-The python script will edit and rename all the files, replacing *alpha* with *yellow*
-and *resource* with *phonebook* (with matching capitalization).
+Your repo is now ready to use!
 
 Building the project
 --------------------
@@ -111,7 +111,7 @@ using the *spack.yaml* file located at the root of the project, as follows.
 .. code-block:: console
 
    # create an anonymous environment
-   cd thallium-microservice-template
+   cd my_project
    spack env activate .
    spack install
 
@@ -120,7 +120,7 @@ or as follows.
 .. code-block:: console
 
    # create an environment named myenv
-   cd thallium-microservice-template
+   cd my_project
    spack env create myenv spack.yaml
    spack env activate myenv
    spack install
