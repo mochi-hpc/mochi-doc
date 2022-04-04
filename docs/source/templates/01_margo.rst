@@ -137,7 +137,7 @@ Let's assume you want to create a microservice called "yellow", which manages
 a phone directory (association between names and phone numbers). The following
 shows how to setup your project:
 
-First, go to [the template repository on github](https://github.com/mochi-hpc/margo-microservice-template.git)
+First, go to `template repository on github <https://github.com/mochi-hpc/margo-microservice-template>`_
 and click "Use this template". Give it the name "yellow", and proceed.
 In your new repository, edit the *initial-setup.json* file to rename your service
 and your resources. IMPORTANT: these names must be lower-case and without spaces,
