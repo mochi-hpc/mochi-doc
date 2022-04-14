@@ -23,7 +23,7 @@ view to a randomly-selected member.
 
           proc1.c (show/hide)
 
-    .. literalinclude:: ../../../code/ssg/07_observe/proc1.c
+    .. literalinclude:: ../../../code/ssg/07_refresh/proc1.c
        :language: cpp
 
 
@@ -35,7 +35,7 @@ view to a randomly-selected member.
 
           proc2.c (show/hide)
 
-    .. literalinclude:: ../../../code/ssg/07_observe/proc2.c
+    .. literalinclude:: ../../../code/ssg/07_refresh/proc2.c
        :language: cpp
 
 .. note::
