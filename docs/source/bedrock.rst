@@ -28,3 +28,4 @@ from deploying components, to writing Bedrock modules for your own components.
    bedrock/03_query.rst
    bedrock/04_c_module.rst
    bedrock/05_cpp_module.rst
+   bedrock/06_jx9.rst

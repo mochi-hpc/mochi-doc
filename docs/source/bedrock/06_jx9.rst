@@ -1,0 +1,28 @@
+Configuring Bedrock using Jx9
+=============================
+
+JSON configurations for Bedrock can very quickly become complicated
+to write by hand, especially when trying to list many execution
+streams for use in a many-core node, associated with as many pools
+and providers. This is where Jx9 can help again.
+
+By using the :code:`--jx9` argument of the :code:`bedrock` program,
+one can use a Jx9 program instead of a JSON file to generate the
+configuration.
+
+The code bellow is an example of such a Jx9-based configuration.
+It first initializes a base configuration, then uses a loop to
+add as many pools as requested in the :code:`argobots` section.
+
+.. literalinclude:: ../../../code/bedrock/06_jx9/example.jx9
+   :language: json
+
+Bedrock can use this file as follows.
+
+.. code-block:: console
+
+   bedrock ofi+tcp --jx9 -c example.jx9 --jx9-context num_extra_pools=4
+
+The :code:`--jx9-context` argument allows setting variables before
+the Jx9 script is executed, in the form of coma-separated assignments
+(e.g. :code:`x=1,y=2.5,z="abc"` ).
