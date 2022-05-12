@@ -139,10 +139,17 @@ shows how to setup your project:
 
 First, go to `template repository on github <https://github.com/mochi-hpc/margo-microservice-template>`_
 and click "Use this template". Give it the name "yellow", and proceed.
-In your new repository, edit the *initial-setup.json* file to rename your service
-and your resources (e.g. rename "alpha" into "yellow" and "resource" into "phonebook"). 
-IMPORTANT: these names must be lower-case and without spaces,
-since they will be used in C code for identifiers, function names, etc.
+
+.. important::
+   Before the next step, go to your new repository's Settings,
+   then Actions, General, and allow write permissions for workflows.
+
+Edit the *initial-setup.json* file to rename your service
+and your resources (e.g. rename "alpha" into "yellow" and "resource" into "phonebook").
+
+.. important::
+   These names must be lower-case and without spaces,
+   since they will be used in C code for identifiers, function names, etc.
 
 Editing *initial-setup.json* will trigger a github action. Wait a couple of minutes
 and you should see a new commit appear: github has renamed your files, functions, etc. by itself!
