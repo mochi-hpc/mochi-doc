@@ -4,8 +4,8 @@ Using Mochi in conjunction with MPI
 There is no problem using Mochi libraries alongside MPI.
 However, some precautions must be taken. If you are using
 MPI in conjunction with either Thallium or Margo, and witness
-your code hanging, this page might be for you. This is a
-common mistake was have seen countless time. In the following,
+your code hanging, this page might be for you. There are
+common mistakes was have seen countless time. In the following,
 we will take Margo as an example, although the same applies
 to Thallium.
 
@@ -32,8 +32,9 @@ Understanding *when* the progress loop is running
 -------------------------------------------------
 
 In a client program, if the progress loop doesn't have its own ES,
-it will execute whenever :code:`margo_forward`, :code:`margo_provider_forward`,
-or :code:`margo_wait` are called. These are the functions that need to wait
+it will execute whenever functions like :code:`margo_forward`,
+:code:`margo_provider_forward`, or :code:`margo_wait` are called.
+These are the functions that need to wait
 for the completion of a Mercury operation before returning. Hence, they
 have to run the progress loop until such completion happens.
 If the client is also using MPI, this generally does not
