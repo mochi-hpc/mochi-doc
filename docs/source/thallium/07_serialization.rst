@@ -29,6 +29,11 @@ Provided that those data members are basic types, user-defined
 types with a :code:`serialize` method, or STL containers of a
 serializable type, Thallium will know how to serialize the class.
 
+.. important::
+   Thallium needs classes used as RPC argument/response to be
+   default-constructible (i.e. provide a constructor that takes
+   no argument).
+
 Asymmetric serialization
 ------------------------
 
