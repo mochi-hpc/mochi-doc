@@ -47,3 +47,9 @@ Contrary to the server, this program will exit normally.
 Client engine are not supposed to wait for anything.
 We use :code:`THALLIUM_CLIENT_MODE` to specify that the engine is a client.
 We can simply provide the protocol, here "tcp", since a client is not receiving on any address.
+
+.. important::
+   A thallium engine initialized as a server (i.e. expected to receive RPCs) can also be used
+   as a client (i.e. expected to send RPCs). There is no need to initialize multiple engines
+   in the same process, and it is often a bad idea to do so as their respective
+   progress loops will compete for network resources in an unpredictable manner.
