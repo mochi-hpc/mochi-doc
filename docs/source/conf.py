@@ -187,7 +187,7 @@ def generate_thallium_api():
     # Move xml folder
     import shutil
     shutil.move('mochi-thallium-main/doc/xml',
-                'thallium/xml')
+                'thallium')
     # Remove mochi-thallium.zip and mochi-thallium-main
     os.remove('mochi-thallium.zip')
     shutil.rmtree('mochi-thallium-main')
