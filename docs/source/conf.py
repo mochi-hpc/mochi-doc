@@ -166,11 +166,6 @@ texinfo_documents = [
 
 here = os.path.dirname(os.path.realpath(__file__))
 
-breathe_default_project = 'thallium'
-breathe_projects = {
-    'thallium': os.path.join(here, 'thallium', 'xml')
-}
-
 def generate_thallium_api():
     # Download thallium as an archive
     import urllib.request
@@ -187,7 +182,7 @@ def generate_thallium_api():
     # Move xml folder
     import shutil
     shutil.move('mochi-thallium-main/doc/xml',
-                'thallium')
+                'thallium/doxygen')
     # Remove mochi-thallium.zip and mochi-thallium-main
     os.remove('mochi-thallium.zip')
     shutil.rmtree('mochi-thallium-main')
@@ -256,6 +251,11 @@ def generate_thallium_api():
         f.write(template.render(classes=classes))
 
 generate_thallium_api()
+
+breathe_default_project = 'thallium'
+breathe_projects = {
+    'thallium': os.path.join(here, 'thallium', 'doxygen')
+}
 
 # -- Options for todo extension ----------------------------------------------
 
