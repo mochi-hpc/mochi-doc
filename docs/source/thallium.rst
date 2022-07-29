@@ -38,3 +38,4 @@ in place of the C++ threading library.
    thallium/17_logging.rst
    thallium/18_timed_cb.rst
    thallium/19_config.rst
+   thallium/api.rst

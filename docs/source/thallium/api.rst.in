@@ -1,0 +1,11 @@
+API Documentation
+=================
+
+{% for c in classes %}
+{{ c }}
+------
+
+.. doxygenclass:: {{ c }}
+   :members:
+
+{% endfor %}
