@@ -181,6 +181,7 @@ def generate_thallium_api():
     subprocess.call('cd mochi-thallium-main && doxygen', shell=True)
     # Move xml folder
     import shutil
+    shutil.rmtree('thallium/doxygen', ignore_errors=True)
     shutil.move('mochi-thallium-main/doc/xml',
                 'thallium/doxygen')
     # Remove mochi-thallium.zip and mochi-thallium-main
