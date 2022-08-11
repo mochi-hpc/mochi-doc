@@ -251,11 +251,35 @@ def generate_thallium_api():
     with open('thallium/api.rst', 'w+') as f:
         f.write(template.render(classes=classes))
 
+def generate_margo_api():
+    # Download margo as an archive
+    import urllib.request
+    urllib.request.urlretrieve(
+        'https://github.com/mochi-hpc/mochi-margo/archive/refs/heads/main.zip',
+        'mochi-margo.zip')
+    # Unzip the file
+    import zipfile
+    with zipfile.ZipFile('mochi-margo.zip', 'r') as zip_ref:
+        zip_ref.extractall('.')
+    # Call doxygen
+    import subprocess
+    subprocess.call('cd mochi-margo-main && doxygen', shell=True)
+    # Move xml folder
+    import shutil
+    shutil.rmtree('margo/doxygen', ignore_errors=True)
+    shutil.move('mochi-margo-main/doc/xml',
+                'margo/doxygen')
+    # Remove mochi-margo.zip and mochi-margo-main
+    os.remove('mochi-margo.zip')
+    shutil.rmtree('mochi-margo-main')
+
 generate_thallium_api()
+generate_margo_api()
 
 breathe_default_project = 'thallium'
 breathe_projects = {
-    'thallium': os.path.join(here, 'thallium', 'doxygen')
+    'thallium': os.path.join(here, 'thallium', 'doxygen'),
+    'margo': os.path.join(here, 'margo', 'doxygen')
 }
 
 # -- Options for todo extension ----------------------------------------------
