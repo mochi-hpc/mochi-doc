@@ -11,3 +11,4 @@ with the Mochi libraries.
    general/01_mpi.rst
    general/02_threads.rst
    general/03_rpc_model.rst
+   general/04_debugging.rst

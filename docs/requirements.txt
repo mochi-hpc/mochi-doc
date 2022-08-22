@@ -1,2 +1,5 @@
 sphinx_copybutton
 recommonmark
+breathe
+sphinx_rtd_theme
+Jinja2

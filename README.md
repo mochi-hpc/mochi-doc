@@ -8,7 +8,7 @@ ABT-IO, and SSG, as well as corresponding code examples.
 
 ## Building the documentation
 
-To build and/orcontribute to this documentation, make sure
+To build and/or contribute to this documentation, make sure
 that you have Sphinx installed as well as the ReadTheDoc theme.
 These can be installed as follows using Python's `pip`.
 

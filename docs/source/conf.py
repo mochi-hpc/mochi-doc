@@ -12,9 +12,6 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
 import sys
 import os
 sys.path.insert(0, os.path.abspath('..'))
@@ -41,6 +38,7 @@ release = ''
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'breathe',
     'recommonmark',
     'sphinx.ext.todo',
     'sphinx_copybutton',
@@ -165,6 +163,124 @@ texinfo_documents = [
 
 
 # -- Extension configuration -------------------------------------------------
+
+here = os.path.dirname(os.path.realpath(__file__))
+
+def generate_thallium_api():
+    # Download thallium as an archive
+    import urllib.request
+    urllib.request.urlretrieve(
+        'https://github.com/mochi-hpc/mochi-thallium/archive/refs/heads/main.zip',
+        'mochi-thallium.zip')
+    # Unzip the file
+    import zipfile
+    with zipfile.ZipFile('mochi-thallium.zip', 'r') as zip_ref:
+        zip_ref.extractall('.')
+    # All doxygen
+    import subprocess
+    subprocess.call('cd mochi-thallium-main && doxygen', shell=True)
+    # Move xml folder
+    import shutil
+    shutil.rmtree('thallium/doxygen', ignore_errors=True)
+    shutil.move('mochi-thallium-main/doc/xml',
+                'thallium/doxygen')
+    # Remove mochi-thallium.zip and mochi-thallium-main
+    os.remove('mochi-thallium.zip')
+    shutil.rmtree('mochi-thallium-main')
+    # TODO: get the class names from the XML files themselves
+    classes = [
+            'thallium::abt',
+            'thallium::abt_exception',
+            'thallium::anonymous',
+            'thallium::async_response',
+            'thallium::barrier',
+            'thallium::barrier_exception',
+            'thallium::bulk',
+            'thallium::bulk_segment',
+            'thallium::callable_remote_procedure_with_context',
+            'thallium::condition_variable',
+            'thallium::condition_variable_exception',
+            'thallium::endpoint',
+            'thallium::engine',
+            'thallium::eventual',
+            'thallium::eventual<void>',
+            'thallium::eventual_exception',
+            'thallium::exception',
+            'thallium::future',
+            'thallium::future_exception',
+            'thallium::logger',
+            'thallium::managed',
+            'thallium::margo_exception',
+            'thallium::mutex',
+            'thallium::mutex_exception',
+            'thallium::output_archive',
+            'thallium::packed_data',
+            'thallium::pool',
+            'thallium::pool_exception',
+            'thallium::proc_input_archive',
+            'thallium::proc_output_archive',
+            'thallium::provider',
+            'thallium::provider_handle',
+            'thallium::recursive_mutex',
+            'thallium::remote_bulk',
+            'thallium::remote_procedure',
+            'thallium::request_with_context',
+            'thallium::rwlock',
+            'thallium::rwlock_exception',
+            'thallium::scheduler',
+            'thallium::scheduler_exception',
+            'thallium::self',
+            'thallium::self_exception',
+            'thallium::task',
+            'thallium::task_exception',
+            'thallium::thread',
+            'thallium::thread_exception',
+            'thallium::timed_callback',
+            'thallium::timeout',
+            'thallium::timer',
+            'thallium::timer_exception',
+            'thallium::xstream',
+            'thallium::xstream_barrier',
+            'thallium::xstream_barrier_exception',
+            'thallium::xstream_exception'
+    ]
+    # Generate API from template
+    import jinja2
+    environment = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
+    template = environment.get_template('thallium/api.rst.in')
+    with open('thallium/api.rst', 'w+') as f:
+        f.write(template.render(classes=classes))
+
+def generate_margo_api():
+    # Download margo as an archive
+    import urllib.request
+    urllib.request.urlretrieve(
+        'https://github.com/mochi-hpc/mochi-margo/archive/refs/heads/main.zip',
+        'mochi-margo.zip')
+    # Unzip the file
+    import zipfile
+    with zipfile.ZipFile('mochi-margo.zip', 'r') as zip_ref:
+        zip_ref.extractall('.')
+    # Call doxygen
+    import subprocess
+    subprocess.call('cd mochi-margo-main && doxygen', shell=True)
+    # Move xml folder
+    import shutil
+    shutil.rmtree('margo/doxygen', ignore_errors=True)
+    shutil.move('mochi-margo-main/doc/xml',
+                'margo/doxygen')
+    # Remove mochi-margo.zip and mochi-margo-main
+    os.remove('mochi-margo.zip')
+    shutil.rmtree('mochi-margo-main')
+
+generate_thallium_api()
+generate_margo_api()
+
+breathe_default_project = 'thallium'
+breathe_projects = {
+    'thallium': os.path.join(here, 'thallium', 'doxygen'),
+    'margo': os.path.join(here, 'margo', 'doxygen')
+}
 
 # -- Options for todo extension ----------------------------------------------
 
