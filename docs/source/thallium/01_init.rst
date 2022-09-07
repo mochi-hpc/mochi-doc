@@ -17,11 +17,10 @@ You can compile this program with the following command (using GCC):
 
 .. code-block:: console
 
-   g++ -std=c++14 -o myServer myServer.cpp -lthallium -lmargo -lmercury -labt
+   g++ -std=c++14 -o myServer myServer.cpp -lmargo -lmercury -labt
 
 The first argument of the constructor is the server's protocol (tcp).
-You can also provide a full address (e.g. *tcp://127.0.0.1:1234*) in particular
-if you want to force using a particular port number. You can refer to the
+You can refer to the
 `Mercury documentation <http://mercury-hpc.github.io/documentation/>`_
 to see a list of available protocols. The second argument,
 :code:`THALLIUM_SERVER_MODE`, indicates that this engine is a server.
@@ -41,7 +40,7 @@ You can compile this program with the following command (using GCC):
 
 .. code-block:: console
 
-   g++ -std=c++14 -o myServer myServer.cpp -lthallium -lmargo -lmercury -labt
+   g++ -std=c++14 -o myServer myServer.cpp -lmargo -lmercury -labt
 
 Contrary to the server, this program will exit normally.
 Client engine are not supposed to wait for anything.
