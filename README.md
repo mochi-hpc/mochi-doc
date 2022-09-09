@@ -8,14 +8,23 @@ ABT-IO, and SSG, as well as corresponding code examples.
 
 ## Building the documentation
 
-To build and/or contribute to this documentation, make sure
-that you have Sphinx installed as well as the ReadTheDoc theme.
-These can be installed as follows using Python's `pip`.
+To build and/or contribute to this documentation, you must have a Sphinx and
+a few related extensions installed.  These can be installed as follows using
+Python's `pip`.
 
 ```
 pip install sphinx
 pip install sphinx_rtd_theme
 pip install sphinx_copybutton
+pip install recommonmark
+pip install breathe
+```
+
+You must also install the `doxygen` documentation system.  This is likely
+available in your platform's primary package manager.  For example on Ubuntu:
+
+```
+sudo apt install doxygen
 ```
 
 Once you have these dependencies installed, clone this
