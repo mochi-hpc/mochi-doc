@@ -7,6 +7,28 @@ Spack is a package management tool designed to support multiple
 versions and configurations of software on a wide variety of
 platforms and environments.
 
+Hello Mochi
+-----------
+
+.. important::
+   `Hello Mochi
+   <https://wordpress.cels.anl.gov/mochi/wp-content/uploads/sites/51/2022/09/hello-mochi.pdf>`_
+   should be considered beta quality at this time.  Please report feedback
+   to the public mailing list or Slack space (links for these can be found
+   on the right column of the `Mochi web site
+   <https://www.mcs.anl.gov/research/projects/mochi/>`_).
+
+In addition to the general installation documentation provided on this
+Read the Docs page, you can also find a more detailed getting
+started document called `Hello Mochi <https://wordpress.cels.anl.gov/mochi/wp-content/uploads/sites/51/2022/09/hello-mochi.pdf>`_.
+
+Hello Mochi is a methodical, step-by-step procedure for setting up a Mochi
+environment on a new platform.  Each step includes a demonstration artifact
+that can be used to either validate the configuration or provide diagnostic
+information for support purposes.  Hello Mochi may be particularly helpful
+if you are uncertain about how to configure the network fabric on your
+platform.
+
 Installing Spack and the Mochi repository
 -----------------------------------------
 
