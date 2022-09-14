@@ -1,14 +1,27 @@
 Installing
 ==========
 
+This page provides general documentation for installation of Mochi.
+
+.. note::
+
+    There is also a more detailed step-by-step getting started guide available
+    on the :ref:`Hello Mochi page<hello-mochi-label>`. *Hello Mochi* should be
+    considered a beta preview at this time, but it may be particularly helpful
+    if you are uncertain about how to configure the network fabric on your
+    platform.  It provides a methodical, step-by-step procedure for setting up a
+    Mochi environment on a new platform.  Each step includes a demonstration
+    artifact that can be used to either validate the configuration or provide
+    diagnostic information for support purposes.
+
+Installing Spack and the Mochi repository
+-----------------------------------------
+
 The recommended way to install the Mochi libraries and dependencies
 is to use `Spack <https://spack.readthedocs.io/en/latest/>`_.
 Spack is a package management tool designed to support multiple
 versions and configurations of software on a wide variety of
 platforms and environments.
-
-Installing Spack and the Mochi repository
------------------------------------------
 
 First, you will need to install Spack as explained
 `here <https://spack.readthedocs.io/en/latest/getting_started.html>`_.

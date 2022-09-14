@@ -95,6 +95,7 @@ Contents
    :maxdepth: 2
 
    installing.rst
+   hello-mochi.rst
    margo.rst
    thallium.rst
    mercury.rst
