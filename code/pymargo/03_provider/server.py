@@ -5,7 +5,7 @@ from pymargo.core import Engine, Handle, provider, \
 @provider(service_name="my_service")
 class MyProvider:
 
-    @remote()
+    @remote
     def say_hello(self, handle, firstname, lastname):
         print(f"Hello {firstname} {lastname}!")
         handle.respond(f"Good bye {firstname}")

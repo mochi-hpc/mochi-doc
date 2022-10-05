@@ -16,7 +16,7 @@ prints them, and returns a string.
    :language: python
 
 The :code:`Engine`'s constructor takes the protocol as the first
-arguments. Additional argument may be provided:
+argument. Additional arguments may be provided:
 
 - :code:`mode`: :code:`pymargo.client` or :code:`pymargo.server`,
   to indicate whether the engine will be used as a client or a
@@ -32,14 +32,14 @@ arguments. Additional argument may be provided:
 We then call :code:`engine.register` to associate an RPC name with
 a function. Since in Python everything is an object, you can pass
 any callable to the :code:`engine.register` function, including
-methods bound to instances, or instances of objects with a `__call__`
+methods bound to instances, or instances of objects with a :code:`__call__`
 method.
 
 The :code:`register` function also accepts the following optional
 arguments:
 
-- :code:`provider_id`: an integer (equal or greater than 0 and less than 65535)
-  specifying a provider id. This argument is used when working with providers.
+- :code:`provider_id`: an integer equal or greater than 0 and less than 65535.
+  This argument is used when working with providers.
 - :code:`disable_response`: a boolean indicating that the RPC will not send
   a response back.
 
@@ -50,14 +50,15 @@ This address is here converted into a string when printed.
 The call to :code:`enable_remote_shutdown` on the engine will allow a remote
 process to ask our server to shutdown.
 
-Looking at the :code:`hello` function, we find that the first argument
+Looking at the :code:`hello` function, the first argument
 must be a :code:`Handle` object. The rest of the arguments and their numbers
-can be anything, as long as their type is
+can be anything, as long as their types are
 `pickleable <https://docs.python.org/3/library/pickle.html>`_.
-The :code:`Handle` object is used to call :code:`respond`. Any object can
-be passed to :code:`respond`, again as long as its type is pickleable.
-Here, our function takes two argument (firstname and lastname) of
-expected type :code:`str`, and will respond with a string.
+The :code:`Handle` object is used to call :code:`respond`, among other things.
+:code:`handle.address` can be used to get the address of the sender.
+Any object can be passed to :code:`respond`, again as long as its type
+is pickleable. Here, our function takes two argument (firstname and lastname)
+of expected type :code:`str`, and will respond with a string.
 
 Note that the :code:`Engine` is used as a context manager (:code:`with` statement),
 this context will automatically call :code:`finalize` on the engine
@@ -78,7 +79,7 @@ We then use the engine's :code:`lookup` function to convert a string address
 
 We call :code:`register` with only the name of the RPC.
 This function returns a :code:`RemoteFunction` object.
-By calling :code`:on(Address)` on this object, we get a :code:`CallableRemoteFunction`
+By calling :code:`on(Address)` on this object, we get a :code:`CallableRemoteFunction`
 with a :code:`__call__` operator that we can call. The code shows how
 arguments (positional and keywords) will be sent to the server. Here :code:`firstname`
 is provided as positional, while :code:`lastname` is provided as a keyword argument.
@@ -90,13 +91,14 @@ asking it to shutdown.
 .. important::
    Do not use the argument names :code:`blocking` and :code:`timeout`
    when defining RPCs (or if you do, make sure you use them as positional
-   argument when invoking the RPC). These argument keys are used by
+   arguments when invoking the RPC). These argument keys are used by
    PyMargo to control the behavior of the call (more on that later).
 
 .. note::
    Python installs a signal handler to catch keyboard interrupts, but
    this signal handler cannot run when the server is blocked on
-   :code:`wait_for_finalize`, hence Ctrl-C won't kill your server.
+   :code:`wait_for_finalize` or on C/C++ code more generally.
+   Hence Ctrl-C won't kill your server.
    Due to the interactions between the GIL and Argobots, it is also
    possible that a program does not terminate after an exception is
    raised. To kill such a program, you will have to resort to :code:`kill -9`.

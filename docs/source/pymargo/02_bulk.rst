@@ -27,10 +27,10 @@ This object represents a handle to a region of memory exposed
 by the client. The :code:`do_bulk_transfer` function first
 creates a :code:`bytes` buffer of the same size to use as target
 for a PULL operation. It creates a local :code:`Bulk` object
-using the engine's :code:`create_bulk` function, then use
+using the engine's :code:`create_bulk` function, then uses
 :code:`transfer` to pull the data from the client's memory to
 the server's buffer. Note that this transfer function can
-transfer to and from any part of the origin and local buffer
+transfer to and from any part of the origin and local buffers
 by specifying different offsets.
 
 On the client side, we also create a :code:`Bulk` object from
@@ -38,7 +38,7 @@ a local buffer, and pass it as argument to the RPC.
 
 .. note::
    In the code above we have used :code:`bytes` objects as buffers.
-   The ::code:`create_bulk` function can however work with any
+   The :code:`create_bulk` function can however work with any
    object that satisfies the
    `buffer protocol <https://docs.python.org/3/c-api/buffer.html>`_,
    such as :code:`bytearray`, :code:`array.array`, numpy arrays, etc.,
