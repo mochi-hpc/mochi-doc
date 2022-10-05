@@ -7,7 +7,6 @@ spack:
   - mochi-ssg
   - mochi-abt-io
   - mochi-bedrock
-  - py-mochi-margo
   - mpich
   - argobots
   - mochi-yokan+bedrock+python+lua
