@@ -27,11 +27,11 @@ PyMargo. We highly recommend that you read the Margo tutorials first.
    to the following scenarios.
 
    - You want to write a Python client interface for a Mochi service
-   written in C/C++ (in this case we recommend that you look at
-   how Yokan does this, for instance);
+     written in C/C++ (in this case we recommend that you look at
+     how Yokan does this, for instance);
    - You want to write a Mochi service based on a Python library that
-   does not have a C or C++ equivalent, and you are ready to work
-   with Python's constraints.
+     does not have a C or C++ equivalent, and you are ready to work
+     with Python's constraints.
 
 
 PyMargo can be installed using spack, just like any other Mochi library,
