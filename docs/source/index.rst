@@ -51,6 +51,9 @@ programming model may not be necessary at first, for simple Margo or Thallium
 services, but may become useful to optimize performance or customize the
 scheduling and placement of threads and tasks in a Mochi service.
 
+**PyMargo** is a Python binding for the Margo library, allowing the development
+of Mochi services in Python.
+
 .. note::
    The tutorials for each of these libraries are independent of one another.
    Feel free to start with the most relevant for you.
@@ -100,6 +103,7 @@ Contents
    thallium.rst
    mercury.rst
    argobots.rst
+   pymargo.rst
    yokan.rst
    abtio.rst
    ssg.rst
