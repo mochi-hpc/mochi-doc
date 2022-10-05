@@ -1,6 +1,6 @@
-docutils==0.16
+sphinx>=4.3.0
 sphinx_copybutton
 recommonmark
 breathe
-sphinx_rtd_theme
+sphinx_rtd_theme>=0.5.1
 Jinja2
