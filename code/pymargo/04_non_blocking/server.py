@@ -30,7 +30,7 @@ class Receiver:
         req.wait() # block until response is sent
 
 if __name__ == "__main__":
-    with Engine('tcp') as engine:
+    with Engine("tcp") as engine:
         receiver = Receiver(engine)
         engine.register("do_bulk_transfer", receiver.do_bulk_transfer)
         print(f"Service running at {engine.address}")

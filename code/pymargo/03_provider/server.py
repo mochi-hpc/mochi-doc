@@ -20,7 +20,7 @@ class MyProvider:
 
 
 if __name__ == "__main__":
-    with Engine('tcp') as engine:
+    with Engine("tcp") as engine:
         provider = MyProvider()
         engine.register_provider(provider, provider_id=42)
         print(f"Service running at {engine.address}")

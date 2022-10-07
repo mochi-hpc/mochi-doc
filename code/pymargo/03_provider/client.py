@@ -3,7 +3,7 @@ from pymargo.core import Engine, MargoException
 import pymargo
 
 if __name__ == "__main__":
-    with Engine('tcp', mode=pymargo.client) as engine:
+    with Engine("tcp", mode=pymargo.client) as engine:
         hello = engine.register("my_service_say_hello")
         address = engine.lookup(sys.argv[1])
         try:

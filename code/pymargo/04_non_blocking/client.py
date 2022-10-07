@@ -3,7 +3,7 @@ from pymargo.core import Engine
 import pymargo
 
 if __name__ == "__main__":
-    with Engine('tcp', mode=pymargo.client) as engine:
+    with Engine("tcp", mode=pymargo.client) as engine:
         do_bulk_transfer = engine.register("do_bulk_transfer")
         address = engine.lookup(sys.argv[1])
         buffer = b"This is a bytes buffer"

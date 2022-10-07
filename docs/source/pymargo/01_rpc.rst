@@ -80,10 +80,13 @@ We then use the engine's :code:`lookup` function to convert a string address
 We call :code:`register` with only the name of the RPC.
 This function returns a :code:`RemoteFunction` object.
 By calling :code:`on(Address)` on this object, we get a :code:`CallableRemoteFunction`
-with a :code:`__call__` operator that we can call. The code shows how
-arguments (positional and keywords) will be sent to the server. Here :code:`firstname`
-is provided as positional, while :code:`lastname` is provided as a keyword argument.
-The returned value is the object passed to :code:`handle.respond` in the server.
+with a :code:`__call__` operator that we can call. Said address is obtained by
+calling :code:`engine.lookup` on a string address (here taken from :code:`sys.argv[1]`).
+The code shows how arguments (positional and keywords) will be sent to the server
+when passed to the :code:`__call__` operator of the :code:`CallableRemoteFunction`.
+Here :code:`firstname` is provided as positional, while :code:`lastname`
+is provided as a keyword argument. The returned value is the object passed to
+:code:`handle.respond` in the server.
 
 Finally, :code:`address.shutdown()` sends a specific message to our server
 asking it to shutdown.

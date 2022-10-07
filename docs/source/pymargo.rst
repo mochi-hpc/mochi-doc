@@ -5,14 +5,14 @@ PyMargo is a python binding for Margo, with an object-oriented
 interface similar to that of thallium.
 
 This section will walk you through a series of tutorials on how to use
-PyMargo. We highly recommend that you read the Margo tutorials first.
+PyMargo. We highly recommend that you read the :ref:`Margo` tutorials first.
 
 .. important::
 
    While working with Mochi in Python can be convenient, please keep
    in mind that Python has a major limitation: its global interpreter
    lock (GIL). The GIL ensures that only one thread at a time executes
-   Python code, which drastically limits concurrency opportunities
+   Python code, which drastically limits parallelization opportunities
    in Mochi. For instance, no more than one RPC written in Python will
    be executed at any time, even if you specified multiple execution
    streams in your Margo configuration.
@@ -34,7 +34,7 @@ PyMargo. We highly recommend that you read the Margo tutorials first.
      with Python's constraints.
 
 
-PyMargo can be installed using spack, just like any other Mochi library,
+PyMargo can be :ref:`installed using spack <Installing>`, just like any other Mochi library,
 using :code:`spack install py-mochi-margo`.
 
 .. toctree::
