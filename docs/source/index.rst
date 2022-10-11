@@ -110,6 +110,7 @@ Contents
    templates.rst
    bedrock.rst
    general.rst
+   interop.rst
 
 
 Indices and tables
