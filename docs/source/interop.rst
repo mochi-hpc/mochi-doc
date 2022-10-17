@@ -12,7 +12,7 @@ between Margo constructs and Thallium and PyMargo classes.
   margo_instance_id         engine                       Engine
   hg_addr_t                 endpoint                     Address
   hg_bulk_t                 bulk                         Bulk
-  hg_handle_t (sender)      callable_remote_procedure    CallableRemoteFucntion
+  hg_handle_t (sender)      callable_remote_procedure    CallableRemoteFunction
   hg_handle_t (receiver)    request                      Handle
   margo_request             async_response               Request
  ========================= ============================ =========================
@@ -21,16 +21,17 @@ between Margo constructs and Thallium and PyMargo classes.
 From Margo to Thallium
 ----------------------
 
-The :code:`engine` and :code:`endpoint` classes provide a
-constructor to create an instance using their Margo counterpart.
+The Thallium :code:`engine` and :code:`endpoint` classes provide
+constructors that will create instances from their Margo counterparts.
 To construct a Thallium :code:`bulk` from a Margo :code:`hg_bulk_t`,
-you can use :code:`engine::wrap()`.
-From Thallium to Margo, :code:`engine::get_margo_instance()`,
-:code:`endpoint::get_addr()`, and :code:`bulk::get_bulk()` return the
+you can use :code:`engine::wrap()`.  It is also possible to retrieve the
+underlying Margo constructs from Thallium.
+The :code:`engine::get_margo_instance()`,
+:code:`endpoint::get_addr()`, and :code:`bulk::get_bulk()` functions return the
 object's internal :code:`margo_instance_id`, :code:`hg_addr_t`, and
 :code:`hg_bulk_t` respectively.
 
-There is no convertion mechanism (but generally no need for them)
+There is no conversion mechanism (but generally no need for them)
 between :code:`hg_handle_t` and :code:`callable_remote_procedure` or
 :code:`request`, and between :code:`async_response` and
 :code:`margo_request`.
