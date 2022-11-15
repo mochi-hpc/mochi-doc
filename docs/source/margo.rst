@@ -36,4 +36,5 @@ in understanding other Margo-based services.
    margo/09_config.rst
    margo/10_logging.rst
    margo/11_timers.rst
+   margo/12_profiling.rst
    margo/api.rst
