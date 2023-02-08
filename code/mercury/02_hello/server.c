@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     assert(hg_class != NULL);
 
     char hostname[128];
-    hg_size_t hostname_size;
+    hg_size_t hostname_size = 128;
     hg_addr_t self_addr;
     HG_Addr_self(hg_class, &self_addr);
     HG_Addr_to_string(hg_class, hostname, &hostname_size, self_addr);
