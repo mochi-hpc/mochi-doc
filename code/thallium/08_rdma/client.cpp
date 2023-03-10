@@ -6,7 +6,7 @@ namespace tl = thallium;
 int main(int argc, char** argv) {
 
     tl::engine myEngine("tcp", MARGO_CLIENT_MODE);
-    tl::remote_procedure remote_do_rdma = myEngine.define("do_rdma").disable_response();
+    tl::remote_procedure remote_do_rdma = myEngine.define("do_rdma");
     tl::endpoint server_endpoint = myEngine.lookup("tcp://127.0.0.1:1234");
 
     std::string buffer = "Matthieu";
