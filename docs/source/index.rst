@@ -70,6 +70,10 @@ Other Mochi libraries/components
 **Yokan** is Mochi's main key/value storage service. It provides many
 backends and a rich API, including C, C++, and Python bindings.
 
+**Bake** is Mochi's main bulk storage service. It provides ways to
+store raw data in local devices such as SSDs or persistent memory
+devices.
+
 **ABT-IO** is a small library that can be used to offload POSIX
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.
@@ -105,6 +109,7 @@ Contents
    argobots.rst
    pymargo.rst
    yokan.rst
+   bake.rst
    abtio.rst
    ssg.rst
    templates.rst
