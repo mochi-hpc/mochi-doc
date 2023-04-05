@@ -30,8 +30,8 @@ set (BUILD_SHARED_LIBS "OFF" CACHE BOOL "Build a shared library")
 # pkg-config, for non-cmake dependencies
 find_package (PkgConfig REQUIRED)
 # MPI and PMIx (both optional) for SSG
-find_package(MPI)
-find_package(PMIx)
+find_package (MPI)
+find_package (PMIx)
 # mercury
 find_package (mercury REQUIRED)
 #include_directories(${MERCURY_INCLUDE_DIR})
@@ -49,6 +49,9 @@ pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
 find_package (bedrock REQUIRED)
 # yokan
 find_package (yokan REQUIRED)
+# bake
+pkg_check_modules (BAKE_SERVER REQUIRED IMPORTED_TARGET bake-server)
+pkg_check_modules (BAKE_CLIENT REQUIRED IMPORTED_TARGET bake-client)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)

@@ -1,12 +1,13 @@
 spack:
   specs:
   - cmake
-  - mercury~boostsys
+  - mercury~boostsys ^libfabric fabrics=tcp,rxm
   - mochi-thallium
   - mochi-margo
   - mochi-ssg
   - mochi-abt-io
   - mochi-bedrock
+  - mochi-bake
   - mpich
   - argobots
   - mochi-yokan+bedrock+python+lua
