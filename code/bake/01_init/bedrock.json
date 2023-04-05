@@ -1,0 +1,22 @@
+{
+    "libraries": {
+        "bake": "libbake-bedrock.so"
+    },
+    "providers": [
+        {
+            "name" : "my_bake_provider",
+            "type" : "bake",
+            "provider_id" : 42,
+            "pool" : "__primary__",
+            "config" : {
+                "pipeline_enable":true,
+                "pmem_backend":{
+                    "targets":[
+                        "/dev/shm/mytarget.dat"
+                    ]
+                }
+            },
+            "dependencies" : {}
+        }
+    ]
+}

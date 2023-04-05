@@ -13,7 +13,6 @@ spack:
   - mochi-yokan+bedrock+python+lua
   concretizer:
     unify: true
-    reuse: false
   modules:
     prefix_inspections:
       lib: [LD_LIBRARY_PATH]
