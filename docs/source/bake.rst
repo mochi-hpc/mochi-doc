@@ -10,4 +10,4 @@ This section will walk you through a series of tutorials on how to use Bake.
 .. toctree::
    :maxdepth: 1
 
-   yokan/01_init.rst
+   bake/01_init.rst
