@@ -11,3 +11,4 @@ This section will walk you through a series of tutorials on how to use Bake.
    :maxdepth: 1
 
    bake/01_init.rst
+   bake/02_client.rst
