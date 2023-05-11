@@ -1,3 +1,5 @@
+.. _MargoBulk:
+
 Transferring data over RDMA
 ===========================
 

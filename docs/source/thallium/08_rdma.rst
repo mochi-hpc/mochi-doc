@@ -1,3 +1,5 @@
+.. _ThalliumBulk:
+
 Transferring data over RDMA
 ===========================
 

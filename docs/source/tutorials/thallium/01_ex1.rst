@@ -1,0 +1,133 @@
+.. |cbox| raw:: html
+
+    <input type="checkbox">
+
+Exercise 1: simple RPC and RDMA using Thallium
+==============================================
+
+.. note::
+
+   The instructions in these exercises have a checkbox |cbox| that
+   you can click on to help you keep track of your progress. These
+   checkboxes are not connected to any action, they are just there for
+   you to mark your progress.
+
+The code for this exercise has been cloned in :code:`thallium-tutorial-exercises`
+in your development environment.
+
+|cbox| The :code:`src` directory provides a :code:`client.cpp` client code,
+a :code:`server.cpp` server code, a :code:`types.hpp` header defining
+some types, and a :code:`phonebook.hpp` file containing an
+implementation of a phonebook using an :code:`std::unordered_map`.
+
+In this exercise we will make the server manage a phonebook and service
+two kinds of RPCs: adding a new entry, and looking up a phone number
+associated with a name.
+
+|cbox| Let's start by setting up the spack environment and building the existing code:
+
+.. code-block:: console
+
+   spack env create thallium-tuto-env spack.yaml
+   spack env activate thallium-tuto-env
+   spack install
+   mkdir build
+   cd build
+   cmake ..
+   make
+
+This will create the client and server programs.
+
+|cbox| You can test your client and server programs by opening two terminals
+(make sure you have run :code:`spack env activate thallium-tuto-env` in
+them to activate your spack environment) and running the following
+from the :code:`build` directory.
+
+For the server:
+
+.. code-block:: console
+
+   src/server na+sm
+
+This will start the server and print its address. :code:`na+sm`
+(the shared memory transport) may be changed to tcp if you run this
+code on multiple machines connected via an Ethernet network.
+
+For the client:
+
+.. code-block:: console
+
+   src/client na+sm <server-address>
+
+Copying :code:`<server-address>` from the standard output of the
+server command. The server is setup to run indefinitely.
+You may kill it with Ctrl-C.
+
+|cbox| Looking at the API in :code:`phonebook.hpp`, edit :code:`server.cpp`
+to instanciate a phonebook in :code:`main()` (see comment **(1)**).
+
+|cbox| Our two RPCs, which we will call *"insert"* and *"lookup"*, will need
+argument and return types. Edit the :code:`types.hpp` file to add the
+necessary type definitions for these RPCs, for instance an :code:`entry`
+class containing a :code:`string` field and a :code:`uint64_t` field
+(see comment **(2)** in the file).
+
+.. note::
+
+   You may need to include :code:`thallium/serialization/stl/string.hpp`
+   so that Thallium knows how to serialize strings.
+
+|cbox| Edit :code:`server.cpp` to add the definitions and declarations of the
+lambda functions for our two RPCs. Feel free to copy/paste and modify
+the existing :code:`sum` RPC (comments **(3)** and **(4)**).
+
+|cbox| Edit :code:`client.cpp` and use the existing code as an example to
+register the two RPCs here as well (comment **(5)**).
+
+|cbox| Try out your code by calling these insert and lookup functions a
+few times in the client.
+
+Bonus: using RDMA to transfer larger amounts of data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Do this bonus part only if you have time, or as an exercise later.
+In this part, we will add a :code:`lookup_multi` RPC that uses RDMA
+to send multiple names at once and return the array of associated
+phone numbers (in practice this would be too little data to call
+for the use of RDMA, but we will just pretent).
+For this, you may use the example on :ref:`ThalliumBulk`.
+
+We assume that the names to lookup are in a :code:`std::vector<std::string>`
+on the client.
+
+|cbox| You will need to create two bulk handles (:code:`tl::bulk`) on the client
+and two on the server. On the client, the first will expose the names as
+read-only (remember that :code:`engine::expose` can take a vector of
+non-contiguous segments, but you will need to use :code:`name.size()+1` as the
+size of each segment to keep the null terminator of each name), and the second
+will expose the output array as write only. The :code:`engine::expose` function
+can be used to create these bulk handles. It takes an :code:`std::vector<std::pair<void*, size_t>>`
+of segments (represented by their address and size).
+The address of the memory of an :code:`std::string` str can be obtained
+using :code:`str.data()` (which should then be cast to :code:`void*`).
+
+|cbox| You will need to transfer the two bulk handles in the RPC arguments,
+and since names can have a varying size, you will have to also transfer
+the total size of the bulk handle wrapping them, so that the server
+knows how much memory to allocate for its local buffer.
+
+|cbox| On the server side, you will need to allocate two buffers; one to
+receive the names (you can use an :code:`std::vector<char>` which you
+resize to the size required to receive all the names; they will end up
+in this contiguous buffer, separated by null characters) via a *pull* operation,
+the other to send the phone numbers via a *push* (you can use an
+:code:`std::vector<uint64_t>` for this one).
+
+|cbox| You will need to create two bulk instances to expose these buffers.
+
+|cbox| After having transferred the names (:code:`remote_names_bulk >> local_names_bulk`),
+they will be in the server's contiguous buffers. You can rely on the null-terminators
+to know where one name ends and the next starts, lookup each name in the phonebook,
+fill the :code:`std::vector<uint64_t>` buffer allocated for the phone numbers,
+then transfer the content of this local buffer to the client
+(:code:`remote_numbers_bulk << local_numbers_bulk`).

@@ -1,0 +1,133 @@
+.. |cbox| raw:: html
+
+    <input type="checkbox">
+
+Exercise 2: A proper phonebook Mochi component
+==============================================
+
+In this exercise, we will use the
+`Thallium microservice template <https://github.com/mochi-hpc/thallium-microservice-template>`_
+to develop a proper phonebook microservice.
+
+|cbox| Click on the green **"Use this template"** button and select
+**"Create a new repository"**. Give the repository a name (e.g. *"phonebook"*).
+Put the repository on "private" if you wish, then click on
+**"Create repository from template"**.
+
+|cbox| Click on **Settings > Actions > General**, and set the Workflow permissions to
+**"Read and write permissions"**, then click **Save** in the *Workflow Permissions*
+section (there are save buttons for each section that will save only the
+modifications made to that section).
+
+|cbox| Go back to the root of the code (in your browser), and edit
+:code:`initial-setup.json`. Change *"alpha"* to a service name of your
+choosing (this name will also be used as namespace for your API,
+so choose something short, e.g. **YP**, for yellow pages.
+In the following, we will assume this is the name you used).
+Change *"resource"* to the name of the resource we are going to manage,
+here *"phonebook"*. Click on the green **"Commit changes"** button.
+
+|cbox| Wait a little and refresh the page. You might see a brown dot indicating
+a workflow action is in progress. Or you might get a 404, which means
+the workflow completed: as part of the GitHub workflow that sets up your
+code, it will delete :code:`initial-setup.json`.
+
+.. note::
+
+   Other github workflows will run to test your code and upload a coverage report to *codecov.io*
+   whenever you push commits to GitHub. These workflows will not work properly
+   if you have made the repository private, so you may receive emails from
+   GitHub about some failed workflows. Simply ignore them.
+
+|cbox| Clone your code in the :code:`mochi-tutorial` directory on your machine,
+then create a Spack environment and build the code like you did in Exercise 1,
+using the :code:`spack.yaml` file at the root of your new project.
+Create a :code:`build` directory, *cd* into it, and build the code (:code:`cmake ..`).
+You may want to use the flag :code:`-DENABLE_TESTS=ON` when calling cmake to
+make sure that the tests are also built.
+
+|cbox| It is now time to edit the code to make it do what we want. The template
+provides the implementation of two RPCs, *"hello"* and *"sum"*. These
+RPCs are defined in a way that is very different from Exercise 1.
+Instead of using lambdas, they are defined as member functions of the
+:code:`ProviderImpl` class in :code:`src/ProviderImpl.hpp`.
+
+.. note::
+   
+   The architecture of this project uses the PImpl technique (pointer to implementation),
+   where user-facing classes (e.g. :code:`Client`, :code:`PhonebookHandle`, etc.) only
+   have a pointer field along with public member functions, and the actual data associated
+   with an instance is in a private class (e.g. :code:`ClientImpl`, :code:`PhonebookHandleImpl`).
+   While this technique adds a small overhead in function calls, it also better decouples
+   the API of your service from its actual implementation.
+
+|cbox| :code:`include/YP/Client.hpp` contains the :code:`Client` class, which will be used to
+register the RPCs and contact servers. There is nothing to modify in this file.
+
+|cbox| :code:`include/YP/PhonebookHandle.hpp` declares a :code:`PhonebookHandle` class, which
+represents a phonebook managed by a remote server. This file is also where the relevant
+client interface will be defined. Go ahead and add declarations for the
+:code:`insert` and a :code:`lookup` member functions.
+
+|cbox| :code:`src/ClientImpl.hpp` contains the definition of the :code:`ClientImpl` structure,
+which hides the actual data associated with a :code:`Client` instance. Go ahead and
+add two :code:`tl::remote_procedure` fields to represent the :code:`insert` and :code:`lookup`
+RPCs, and initialize them in the constructor.
+
+|cbox| :code:`src/ResourceHandle.cpp` contains the implementation of the :code:`ResourceHandle`'s
+member functions. Go ahead and implement the :code:`insert` and :code:`lookup` functions.
+You can copy the :code:`computeSum` function and adapt it accordingly.
+
+.. note::
+
+   The template proposes that all the RPCs wrap their result in a :code:`RequestResult<T>`
+   instance. You can view this class like a variant that will either store a :code:`T`
+   instance or an error string if the operation failed.
+   If you implement your own service, feel free to handle errors differently.
+
+.. note::
+
+   The template handles non-blocking RPCs by adding an optional :code:`AsyncRequest`
+   pointer to each member function. Feel free to remove it
+   (along with the code path that deals with it) from your :code:`insert` and
+   :code:`lookup` functions. You can circle back to them later if you want, as an exercise.
+
+|cbox| At this point, feel free to compile your code to make sure it builds fine.
+You won't be able to test it yet since there is no server-side implementation
+of our RPCs, so let's focus on the server library next.
+
+|cbox| :code:`include/YP/Backend.hpp` contains the definition of a backend,
+i.e. the abstract class that a phonebook implementation must inherit from.
+Add the proper :code:`insert` and :code:`lookup` pure virtual methods to
+this structure, following the model of the :code:`computeSum` function.
+
+|cbox| :code:`src/dummy/DummyBackend.hpp` and :code:`src/dummy/DummyBackend.cpp`
+contain a *"dummy"* implementation of such a backend in the form of a
+:code:`DummyPhonebook` class. Add an :code:`std::unordered_map<std::string,uint64_t>`
+field to this class, as well as the :code:`insert` and :code:`lookup` functions
+and their implementation.
+
+|cbox| :code:`src/ProviderImpl.hpp` contains the implementation of our provider.
+While it still follows the Pimpl idiom, with the :code:`Provider` class
+containing a pointer to a :code:`ProviderImpl` instance, you will notice
+that RPC functions are actually defined as member functions of the
+:code:`ProviderImpl` class. This is because in Thallium, providers
+can expose their own member functions as RPC. Go ahead and add the two
+:code:`tl::remote_procedure` fields for your :code:`insert` and :code:`lookup`
+RPCs. Don't forget to add their initialization in the constructor and
+to deregister them in the destructor!
+
+|cbox| Still in :code:`src/ProviderImpl.hpp`, implement the two :code:`insertRPC`
+and :code:`lookupRPC` member functions by taking example on the :code:`computeSumRPC`
+member function.
+
+|cbox| At this point, you can make sure your code builds fine.
+Your microservice is ready! If you have time, feel free to look into the
+tests folder, in particular the :code:`ResourceTest.cpp` file, and edit it
+(replacing calls to the :code:`computeSum` RPC) to try out your new functionalities.
+
+|cbox| In practice, the next steps at this point would be to (1) add more tests,
+(2) remove everything related to the "hello" and "sum" RPCs (because obviously
+a phonebook is not a calculator), and (3) implement more complex backends
+by copying the code of the **"dummy"** backend and changing it to use external
+libraries or more complicated implementations.

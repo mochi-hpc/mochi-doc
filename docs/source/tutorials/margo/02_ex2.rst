@@ -21,7 +21,7 @@ Put the repository on "private" if you wish, then click on **"Create repository 
 |cbox| Click on **Settings > Actions > General**, and set the Workflow permissions to
 **"Read and write permissions"**, then click **"Save"** in the *Workflow Permissions*
 section (there are save buttons for each section that will save only the
-modifications made to that section)
+modifications made to that section).
 
 |cbox| Go back to the root of the code (on Github in your browser), and edit
 :code:`initial-setup.json`. Change *"alpha"* to a service name of your
