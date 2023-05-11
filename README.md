@@ -20,6 +20,14 @@ pip install recommonmark
 pip install breathe
 ```
 
+Alternatively, those required packages may also be available in your
+platform's primary package manager.  For example, in Ubuntu 23.04 you could
+do the following instead of using pip:
+
+```
+sudo apt install python3-breathe python3-recommonmark python3-sphinx-copybutton python3-sphinx-rtd-theme
+```
+
 You must also install the `doxygen` documentation system.  This is likely
 available in your platform's primary package manager.  For example on Ubuntu:
 
