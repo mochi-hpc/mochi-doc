@@ -114,8 +114,8 @@ Contents
    ssg.rst
    templates.rst
    bedrock.rst
-   general.rst
    interop.rst
+   misc.rst
 
 
 Indices and tables
