@@ -1,0 +1,143 @@
+.. |cbox| raw:: html
+
+    <input type="checkbox">
+
+Exercise 2: a proper phonebook Mochi component
+==============================================
+
+.. important::
+
+   This exercise (as well as Exercise 3) does not need the
+   :code:`margo-tutorial-exercises` repository used in Exercise 1.
+
+In this exercise, we will use the
+`Margo microservice template <https://github.com/mochi-hpc/margo-microservice-template/>`_
+to develop a proper phonebook microservice.
+
+|cbox| Click on the green **"Use this template"** button and select
+**"Create a new repository"**. Give the repository a name (e.g. *"phonebook"*).
+Put the repository on "private" if you wish, then click on **"Create repository from template"**.
+
+|cbox| Click on **Settings > Actions > General**, and set the Workflow permissions to
+**"Read and write permissions"**, then click **"Save"** in the *Workflow Permissions*
+section (there are save buttons for each section that will save only the
+modifications made to that section)
+
+|cbox| Go back to the root of the code (on Github in your browser), and edit
+:code:`initial-setup.json`. Change *"alpha"* to a service name of your
+choosing (this name will also be used to prefix your API functions,
+so choose something short, e.g. **YP**, for yellow pages. In the following,
+we will assume this is the name you used). Change *"resource"* to the name
+of the resource we are going to manage, here *"phonebook"*.
+Click on the green **"Commit changes"** button.
+
+|cbox| Wait a little and refresh the page. You might see a brown dot indicating
+a workflow action is in progress. Or you might get a 404, which means
+the workflow completed: as part of the GitHub workflow that sets up your
+code, it will delete :code:`initial-setup.json`.
+
+.. note::
+
+   Other github workflows will run to test your code and upload a coverage report to *codecov.io*
+   whenever you push commits to GitHub. These workflows will not work properly
+   if you have made the repository private, so you may receive emails from
+   GitHub about some failed workflows. Simply ignore them.
+
+|cbox| Clone your code in the :code:`mochi-tutorial` directory on your machine,
+then create a Spack environment and build the code like you did in Exercise 1,
+using the :code:`spack.yaml` file at the root of your new project.
+Create a :code:`build` directory, *cd* into it, and build the code (:code:`cmake ..`).
+You may want to use the flag :code:`-DENABLE_TESTS=ON` when calling cmake to
+make sure that the tests are also built.
+
+|cbox| It is now time to edit the code to make it do what we want.
+The template provides the implementation of two RPCs, *"hello"* and *"sum"*.
+You will recognize the latter as the same as provided in Exercise 1.
+This can be helpful to reproduce what you have coded in Exercise 1
+in the context of this new exercise.
+
+|cbox| :code:`include/YP/YP-client.h` contains the functions required to
+create and free a :code:`YP_client` object, which will be used to
+register the RPCs and contact servers. There is nothing to modify in this file.
+
+|cbox| :code:`include/YP/YP-phonebook.h` declares a :code:`YP_phonebook_handle_t`
+type, which represents a phonebook managed by a remote server. This file
+is also where the client interface will be defined. Go ahead and add
+declarations for a :code:`YP_insert` and a :code:`YP_lookup` functions,
+following what you did in Ex 1.
+
+|cbox| :code:`src/client.h` contains the definition of the :code:`YP_client`
+structure. Go ahead and add two :code:`hg_id_t` RPC ids to represent
+the insert and lookup.
+
+|cbox| Before looking further into the client implementation, open :code:`src/types.h`
+and add the type definitions for our RPCs (:code:`insert_in_t`, :code:`insert_out_t`,
+:code:`lookup_in_t`, :code:`lookup_out_t`, etc.).
+Take the example of the :code:`sum_*` structures for that.
+
+|cbox| :code:`src/client.c` contains the implementation of the client-side
+functions. In :code:`YP_client_init`, add the registration of our two new RPCs.
+
+|cbox| Still in :code:`src/client.c` and using code from Ex 1 (or by copying
+and adapting the content of the :code:`YP_compute_sum` function),
+implement the client-side function that sends the insert and lookup RPCs to the server.
+
+|cbox| At this point, feel free to compile your code to make sure it builds fine.
+You won't be able to test it yet since there is no server-side implementation
+of our RPCs, so let's focus on the server library next.
+
+|cbox| :code:`include/YP/YP-backend.h` contains the definition of a backend,
+i.e. the interface that a phonebook implementation must satisfy.
+Add the proper insert and lookup function pointers to this structure.
+
+|cbox| :code:`src/dummy/dummy-backend.c` contains a *"dummy"* implementation of
+such a backend. Copy the :code:`phonebook.h` file from the Ex 1 to the
+dummy folder, and include it in :code:`dummy-backend.c`. Add a
+:code:`phonebook_t phonebook` field to the :code:`dummy_context` structure,
+then edit (1) :code:`dummy_create_phonebook` and :code:`dummy_open_phonebook`
+to add set this field (using :code:`phonebook_new()`), and
+(2) :code:`dummy_close_phonebook` and :code:`dummy_destroy_phonebook`
+to call :code:`phonebook_delete()`.
+
+|cbox| Still in the same file, add the implementation of the :code:`dummy_insert` and
+:code:`dummy_lookup` functions and add the function pointers in the
+:code:`static YP_backend_impl dummy_backend` structure definition.
+
+|cbox| :code:`src/provider.h` contains the state of a phonebook provider.
+Edit the :code:`YP_provider` structure to add the :code:`hg_id_t`
+for our two new RPCs, just like you did for the client.
+
+|cbox| :code:`src/provider.c` contains the implementation of the provider
+functions. Find the :code:`YP_provider_register` function and add
+the registration of your new RPCs by taking the existing RPCs
+as examples. Such registration involves (1) calling :code:`MARGO_REGISTER_PROVIDER`
+with the appropriate arguments, (2) calling :code:`margo_register_data`
+to associate the provider with the RPC, and (3) setting the RPC ID
+in the provider structure.
+
+|cbox| Still in :code:`src/provider.c`, find the :code:`YP_finalize_provider`
+function and add the calls necessary to deregister the two new RPCs.
+
+.. note::
+
+   You will first need to add declarations of your new RPCs, at the
+   beginning of the file, where :code:`DECLARE_MARGO_RPC_HANDLER` is used.
+
+|cbox| We can now implement the functions that will handle the RPCs.
+In the same file, find the :code:`YP_sum_ult` function, copy it
+(including the :code:`DEFINE_MARGO_RPC_HANDLER` line that follows it)
+and edit it to transform it into a :code:`YP_insert_ult` function,
+then do the same with a :code:`YP_lookup_ult` function.
+
+|cbox| At this point, you can make sure your code builds fine.
+Your microservice is ready! If you have time, feel free to look
+into the tests folder, in particular the :code:`test-client.c` file,
+and edit it (replacing calls to the *"sum"* RPC) to try out your
+new functionalities.
+
+|cbox| In practice, the next steps at this point would be to
+(1) add more tests, (2) remove everything related to the *"hello"*
+and *"sum"* RPCs (because obviously a phonebook is not a calculator),
+and (3) implement more complex backends by copying the code of the
+*"dummy"* backend and changing it to use external libraries or
+more complicated implementations.

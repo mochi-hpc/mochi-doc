@@ -116,6 +116,7 @@ Contents
    bedrock.rst
    interop.rst
    misc.rst
+   tutorials.rst
 
 
 Indices and tables

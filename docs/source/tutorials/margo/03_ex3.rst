@@ -1,0 +1,215 @@
+.. |cbox| raw:: html
+
+    <input type="checkbox">
+
+Exercise 3: using Bedrock and composing with other services
+===========================================================
+
+In this exercise we will use Bedrock to deploy a daemon
+containing an instance of our phonebook provider. We will then
+implement a phonebook backend that uses Yokan, and organize
+the composition of the two within the same daemon.
+Everything in this exercise relies on the codebase from Exercise 2,
+however you don't need to have completed Exercise 2 to do this exercise.
+
+|cbox| First, make sure that the Spack environment from Exercise 2 is activated.
+
+|cbox| From the :code:`build` directory, re-run cmake as follows.
+
+.. code-block:: console
+
+   cmake .. -DENABLE_TESTS=ON -DENABLE_BEDROCK=ON
+   make
+
+This time a **libYP-bedrock-module.so** is being built. This is the
+Bedrock module for our phonebook service, i.e. the library that
+tells Bedrock how to instanciate and use our phonebook provider.
+
+|cbox| To make sure Bedrock finds this library, execute the following
+command from the build directory.
+
+.. code-block:: console
+
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/src
+
+|cbox| :code:`examples/bedrock-config.json` is an example of Bedrock
+configuration that spins up a phonebook provider with provider ID 42.
+This provider manages one phonebook of type *"dummy"*. You can try
+our this configuration using the bedrock program as follows.
+
+.. code-block:: console
+
+   bedrock na+sm -c ../examples/bedrock-config.json
+
+You can copy the address printed by bedrock on the last line of its log,
+and in another terminal (don't forget to activate your spack environment),
+run the following command.
+
+.. code-block:: console
+
+   bedrock-query na+sm -a <copied-address> -p
+
+You will see the current configuration of the service, including a
+phonebook provider that manages a phonebook. Bedrock has completed the
+input configuration with a lot of information about Mercury, Argobots, etc.
+These information can be very useful to communicate to Mochi developers
+when you try to find out what's wrong with your service.
+
+|cbox| We will now add Yokan in our service. To add Yokan as dependency to
+our spack environment, run the following command.
+
+.. code-block:: console
+
+   spack add mochi-yokan+bedrock
+   spack install
+
+This will install Yokan. You can also edit :code:`spack.yaml` at
+the root of your project to add :code:`mochi-yokan+bedrock` in the list
+of specs.
+
+|cbox| Edit :code:`CMakeLists.txt` to add :code:`find_package(yokan REQUIRED)`
+(e.g. after the call to :code:`find_package(PkgConfig REQUIRED)`).
+
+.. note::
+
+   When developing your own service, don't forget to also edit
+   the :code:`src/*.cmake.in` and :code:`src/*.pc.in` files to add
+   relevant dependencies there. Those are the files used by cmake
+   and pkg-config respectively to search for dependencies when
+   people are using your code.
+
+|cbox| Edit :code:`src/CMakeLists.txt` to add :code:`yokan-client` as a
+dependency for the :code:`YP-server` library (i.e. find the call
+to :code:`target_link_libraries` for :code:`YP-server` and add :code:`yokan-client`
+in the list of public dependencies).
+
+|cbox| From the :code:`build` directory, re-run :code:`cmake ..` to make it find Yokan.
+
+|cbox| Open :code:`examples/bedrock-config.json` and add the Yokan
+library in the libraries section.
+
+.. code-block:: json
+
+   "yokan": "libyokan-bedrock-module.so"
+
+|cbox| In this file as well, we will instanciate a Yokan provider with a Yokan database.
+In the providers section, before the phonebook provider, add the following provider definition.
+
+.. code-block:: json
+
+   {
+     "type": "yokan",
+     "name": "my-yokan-provider",
+     "provider_id": 123,
+     "config": {
+       "databases": [
+         {
+           "type": "map",
+           "name": "my-db"
+         }
+       ]
+     }
+   },
+
+|cbox| If you re-run :code:`bedrock` with this new configuration then
+call :code:`bedrock-query`, you should be able to confirm that
+your Bedrock daemon is now running two providers: one YP provider
+and one Yokan provider. Of course, these two don't know about each
+other, they simply share the resources of the same process.
+We will now introduce a dependency between YP and Yokan.
+
+|cbox| Edit :code:`src/bedrock-module.c` and find the :code:`struct bedrock_module`
+definition at the end. Its :code:`provider_dependencies` field is where we
+will be able to introduce this dependency on Yokan. Before the declaration
+of the :code:`bedrock_module` structure, add the following declaration:
+
+.. code-block:: c
+
+   static struct bedrock_dependency provider_dependencies[] = {
+       { "yokan_ph", "yokan", BEDROCK_REQUIRED },
+       BEDROCK_NO_MORE_DEPENDENCIES
+   };
+
+The first field, :code:`"yokan_ph"`, is the name by which YP
+will reference this dependency. :code:`"yokan"` is the type of dependency.
+:code:`BEDROCK_REQUIRED` indicates that this dependency is required.
+
+|cbox| You can now assign the field in the :code:`bedrock_module` structure.
+
+.. code-block:: c
+
+   .provider_dependencies = provider_dependencies
+
+|cbox| If you rebuild your code now and re-run the Bedrock configuration,
+it will display an error message:
+
+.. code-block:: console
+
+   [critical] Missing dependency yokan_ph in configuration
+
+So let's fix that by going again into :code:`examples/bedrock-config.json`,
+and add the following in the field in the definition of our YP provider.
+
+.. code-block:: json
+
+   "dependencies": {
+     "yokan_ph": "yokan:123@local"
+   }
+
+You can also use :code:`"my-yokan-provider"` instead of :code:`"yokan:123"`.
+Now Bedrock should restart accepting your configuration.
+
+|cbox| In :code:`include/YP/YP-server.h`, include the :code:`yokan/provider-handle.h`
+header and add a :code:`yokan_provider_handle_t yokan_ph` field in the
+:code:`YP_provider_args` structure.
+
+|cbox| Edit :code:`src/bedrock-module.c` once again. This time we will look at the
+:code:`YP_register_provider` function at the beginning of the file. Use
+:code:`bedrock_args_get_dependency(args, "yokan_ph", 0);` to retrieve a
+pointer to a Yokan provider handle (:code:`yoken_provider_handle_t`),
+which you can now use to set the corresponding field in the :code:`YP_args`
+structure. You have successfully injected a Yokan dependency into the YP provider!
+
+The rest of this exercise will be less directed. The goal is now to pass
+this provider handle down to the dummy phonebook so that it can use
+Yokan as an implementation of a key/value store instead of relying on
+the :code:`phonebook.h` implementation. You should now be familiar
+enough with the code to make the necessary changes bellow without
+too much guidance. Keep the
+`API of Yokan <https://github.com/mochi-hpc/mochi-yokan/blob/main/include/yokan/database.h>`_
+open in a web browser for reference.
+
+|cbox| To add and keep a reference to the Yokan provider handle in the :code:`YP_provider`
+structure (in :code:`src/provider.h`), you will need to copy the provided
+:code:`yokan_provider_handle_t` in :code:`YP_provider_register`, and free
+this copy in :code:`YP_finalize_provider` (in :code:`src/provider.c`).
+:code:`yokan_provider_handle_t` is a public structure with no
+:code:`yokan_provider_handle_ref_incr` function. You will have to manually copy
+its fields, and call :code:`margo_addr_ref_incr` on the :code:`hg_addr_t` field to
+increase the reference count of the address (and call :code:`margo_addr_free` on
+it in :code:`YP_finalize_provider`).
+
+|cbox| To be able to pass the Yokan provider handle down to a backend
+(e.g. a dummy phonebook), you will need to change the signature of
+the functions that create and open a phonebook (in :code:`include/YP/YP-backend.h`).
+
+|cbox| This then implies changing their implementation (in :code:`src/dummy/dummy-backend.c`).
+
+|cbox| You will need to tell your dummy phonebook backend which database to use.
+Yokan databases can be identified by a name, so you may want to implement
+a way to look for the name of this database in the configuration passed
+to the phonebook (in the :code:`dummy_create_phonebook` and
+:code:`dummy_open_phonebook` functions in :code:`src/dummy/dummy-backend.c`).
+
+|cbox| Once a backend knows the name of the database it should use, you can use
+:code:`yk_database_find_by_name` to look for its ID, then :code:`yk_database_handle_create`
+to create a handle for the database (don't forget to call :code:`yk_database_handle_release`
+when you no longer need it, e.g. when closing/destroying the dummy backend).
+
+|cbox| In the insert and lookup functions of the dummy phonebook, you may
+now use :code:`yk_put` and :code:`yk_get` to put and get phone numbers.
+
+|cbox| In practice, you could copy the dummy backend implementation into a new
+type of backend that specifically uses Yokan. Don't hesitate to implement
+multiple backends for your service, with different dependencies or different
+strategies for solving the same problem.
