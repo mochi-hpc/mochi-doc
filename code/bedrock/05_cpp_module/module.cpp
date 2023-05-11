@@ -21,8 +21,8 @@ class ServiceBFactory : public bedrock::AbstractServiceFactory {
         std::cout << " -> name        = " << args.name << std::endl;
         for(auto& dep : args.dependencies) {
             std::cout << "dependency " << dep.first << " -> [ ";
-            for(auto& s : dep.second) {
-                std::cout << s.spec << " (" << s.handle << "), ";
+            for(auto& s : dep.second.dependencies) {
+                std::cout << s->getName() << " (" << s->getHandle<void*>() << "), ";
             }
             std::cout << " ]" << std::endl;
         }
