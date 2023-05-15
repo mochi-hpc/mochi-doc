@@ -54,10 +54,15 @@ code, it will delete :code:`initial-setup.json`.
 
 |cbox| Clone your code in the :code:`mochi-tutorial` directory on your machine,
 then create a Spack environment and build the code like you did in Exercise 1,
-using the :code:`spack.yaml` file at the root of your new project.
-Create a :code:`build` directory, *cd* into it, and build the code (:code:`cmake ..`).
+using the :code:`spack.yaml` file at the root of your new project
+(:code:`spack env create ex2 spack.yaml`, :code:`spack env activate ex2`, :code:`spack install`).
+Create a :code:`build` directory, *cd* into it, and build the code (:code:`cmake .. -DENABLE_TESTS=ON`).
 You may want to use the flag :code:`-DENABLE_TESTS=ON` when calling cmake to
 make sure that the tests are also built.
+
+.. note::
+   The :code:`cmake` will download `Catch2 <https://github.com/catchorg/Catch2>`_
+   as part of the build process, :code:`make` will build it.
 
 |cbox| It is now time to edit the code to make it do what we want. The template
 provides the implementation of two RPCs, *"hello"* and *"sum"*. These
