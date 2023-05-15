@@ -32,8 +32,8 @@ Option 1 (preferred): create a development environment using Docker
    architecture.
 
    If you are not sure about your host CPU architecture, one symptom of
-   using a mismatched image is a `WARNING: The requested image's platform does
-   not match the detected host platform` message when you run the `docker
+   using a mismatched image is a :code:`WARNING: The requested image's platform does
+   not match the detected host platform` message when you run the :code:`docker
    run` command below.
 
 You need to first have Docker installed on your machine;
