@@ -205,12 +205,18 @@ lambdas in the :code:`__PhonebookBackendRegistration` class down the file).
 :code:`src/dummy/DummyBackend.hpp` accordingly.
 
 |cbox| You will need to tell your dummy phonebook backend which database to use.
-Yokan databases can be identified by a name, so you may want to implement
-a way to look for the name of this database in the configuration passed to the phonebook.
+Yokan databases can be identified by a name, so you may want to
+look for the name of this database in the configuration passed to the phonebook
+(:code:`std::string db_name = config["db_name"].get<std::string>();`),
+using the :code:`engine` to create a :code:`yokan::Client`
+(:code:`yokan::Client yk_client{engine.get_margo_instance_()};`) and use
+this :code:`yokan::Client::findDatabaseByName()` with the appropriate arguments.
+(:code:`tl::provider_handle::provider_id()` and :code:`tl::provider_handle::get_addr()`
+can be useful to obtain the provider handle's provider ID and :code:`hg_addr_t`
+respectively).
 
-|cbox| Once a backend knows the name of the database it should use, you can use
-:code:`yokan::Client::findDatabaseByName` to look for the database and obtain a
-:code:`yokan::Database` instance that you can store in the :code:`DummyBackend` class.
+|cbox| :code:`yokan::Client::findDatabaseByName` returns a :code:`yokan::Database`
+instance that you can store in the :code:`DummyBackend` class.
 
 |cbox| In the :code:`insert` and :code:`lookup` functions of the dummy phonebook,
 you may now use the put and get methods of this :code:`yokan::Database` instance
