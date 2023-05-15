@@ -56,22 +56,22 @@ code, it will delete :code:`initial-setup.json`.
 then create a Spack environment and build the code like you did in Exercise 1,
 using the :code:`spack.yaml` file at the root of your new project
 (:code:`spack env create ex2 spack.yaml`, :code:`spack env activate ex2`, :code:`spack install`).
-Create a :code:`build` directory, *cd* into it, and build the code (:code:`cmake .. -DENABLE_TESTS=ON`).
+Create a :code:`build` directory, *cd* into it, and build the code
+(:code:`cmake .. -DENABLE_TESTS=ON` then :code:`make`).
 You may want to use the flag :code:`-DENABLE_TESTS=ON` when calling cmake to
-make sure that the tests are also built.
+make sure that the tests are also built. You can run the tests with :code:`make test`.
 
 .. note::
    The :code:`cmake` will download `Catch2 <https://github.com/catchorg/Catch2>`_
    as part of the build process, :code:`make` will build it.
 
-|cbox| It is now time to edit the code to make it do what we want. The template
-provides the implementation of two RPCs, *"hello"* and *"sum"*. These
-RPCs are defined in a way that is very different from Exercise 1.
+The template provides the implementation of two RPCs, *"hello"* and *"sum"*.
+These RPCs are defined in a way that is very different from Exercise 1.
 Instead of using lambdas, they are defined as member functions of the
 :code:`ProviderImpl` class in :code:`src/ProviderImpl.hpp`.
 
 .. note::
-   
+
    The architecture of this project uses the PImpl technique (pointer to implementation),
    where user-facing classes (e.g. :code:`Client`, :code:`PhonebookHandle`, etc.) only
    have a pointer field along with public member functions, and the actual data associated
@@ -84,7 +84,7 @@ register the RPCs and contact servers. There is nothing to modify in this file.
 
 |cbox| :code:`include/YP/PhonebookHandle.hpp` declares a :code:`PhonebookHandle` class, which
 represents a phonebook managed by a remote server. This file is also where the relevant
-client interface will be defined. Go ahead and add declarations for the
+client interface will be defined. Go ahead and add declarations for an
 :code:`insert` and a :code:`lookup` member functions.
 
 |cbox| :code:`src/ClientImpl.hpp` contains the definition of the :code:`ClientImpl` structure,
@@ -92,7 +92,7 @@ which hides the actual data associated with a :code:`Client` instance. Go ahead 
 add two :code:`tl::remote_procedure` fields to represent the :code:`insert` and :code:`lookup`
 RPCs, and initialize them in the constructor.
 
-|cbox| :code:`src/ResourceHandle.cpp` contains the implementation of the :code:`ResourceHandle`'s
+|cbox| :code:`src/PhonebookHandle.cpp` contains the implementation of the :code:`ResourceHandle`'s
 member functions. Go ahead and implement the :code:`insert` and :code:`lookup` functions.
 You can copy the :code:`computeSum` function and adapt it accordingly.
 
@@ -141,8 +141,9 @@ member function.
 
 |cbox| At this point, you can make sure your code builds fine.
 Your microservice is ready! If you have time, feel free to look into the
-tests folder, in particular the :code:`ResourceTest.cpp` file, and edit it
-(replacing calls to the :code:`computeSum` RPC) to try out your new functionalities.
+tests folder, in particular the :code:`PhonebookTest.cpp` file, and edit it
+(replacing calls to the :code:`computeSum` RPC) to try out your new functionalities
+and test them (:code:`make test`).
 
 |cbox| In practice, the next steps at this point would be to (1) add more tests,
 (2) remove everything related to the "hello" and "sum" RPCs (because obviously

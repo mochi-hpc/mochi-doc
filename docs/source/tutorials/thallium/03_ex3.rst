@@ -12,7 +12,8 @@ of the two within the same daemon. Everything in this exercise
 relies on the codebase from Exercise 2, however you don't need to
 have completed Exercise 2 to do this exercise.
 
-|cbox| First, make sure that the Spack environment from Exercise 2 is activated.
+|cbox| First, make sure that the Spack environment from Exercise 2 is activated
+(:code:`spack env status` should show you in which environment you are).
 
 |cbox| From the build directory, re-run cmake as follows.
 
@@ -63,10 +64,16 @@ To add Yokan as dependency to our spack environment, run the following command.
    spack add mochi-yokan+bedrock
    spack install
 
-This will install Yokan. You can also edit :code:`spack.yaml` at the root
-of your project to add :code:`mochi-yokan+bedrock` in the list of specs.
+This will install Yokan.
 
-|cbox| Edit :code:`CMakeLists.txt` to add :code:`find_package(yokan REQUIRED)`
+.. important::
+   :code:`spack add` will add the dependency to your active environment,
+   but you should also make sure to list this new dependency in the list of
+   specs in :code:`spack.yaml` at the root of your project so that it is
+   taken into account next time you want to build a new environment from it.
+
+|cbox| Edit :code:`CMakeLists.txt` at the root of your project
+to add :code:`find_package(yokan REQUIRED)`
 (e.g. after the call to :code:`find_package(thallium REQUIRED)`).
 
 .. note::
@@ -106,6 +113,10 @@ In the providers section, before the phonebook provider, add the following provi
        ]
      }
    },
+
+.. important::
+   It is important that the Yokan provider be defined before the YP provider because
+   the former will be a dependency of the latter.
 
 |cbox| If you re-run :code:`bedrock` with this new configuration then call
 :code:`bedrock-query`, you should be able to confirm that your Bedrock

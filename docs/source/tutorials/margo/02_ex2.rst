@@ -59,7 +59,7 @@ using the :code:`spack.yaml` file at the root of your new project
 :code:`spack install`).
 Create a :code:`build` directory, *cd* into it, and build the code (:code:`cmake .. -DENABLE_TESTS=ON`).
 You may want to use the flag :code:`-DENABLE_TESTS=ON` when calling cmake to
-make sure that the tests are also built.
+make sure that the tests are also built. You can run tests using :code:`make test`.
 
 .. note::
    The :code:`cmake` will download `Catch2 <https://github.com/catchorg/Catch2>`_

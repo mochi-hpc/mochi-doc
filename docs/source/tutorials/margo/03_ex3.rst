@@ -63,9 +63,13 @@ our spack environment, run the following command.
    spack add mochi-yokan+bedrock
    spack install
 
-This will install Yokan. You can also edit :code:`spack.yaml` at
-the root of your project to add :code:`mochi-yokan+bedrock` in the list
-of specs.
+This will install Yokan.
+
+.. important::
+     :code:`spack add` will add the dependency to your active environment,
+     but you should also make sure to list this new dependency in the list of
+     specs in :code:`spack.yaml` at the root of your project so that it is
+     taken into account next time you want to build a new environment from it.
 
 |cbox| Edit :code:`CMakeLists.txt` to add :code:`find_package(yokan REQUIRED)`
 (e.g. after the call to :code:`find_package(PkgConfig REQUIRED)`).
