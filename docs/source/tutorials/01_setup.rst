@@ -21,6 +21,21 @@ native environment, please skip to **Option 2**.
 Option 1 (preferred): create a development environment using Docker
 -------------------------------------------------------------------
 
+.. note::
+
+   The Docker instructions here rely on a pre-built container image that was
+   built for x86_64 platforms.  If your host machine has a different CPU
+   architecture (for example, an Apple M1) then you may need to create your own image from scratch to ensure that the tutorial environment works correctly.
+   Please see the `instructions for building a Docker image from scratch
+   <https://github.com/mochi-hpc-experiments/mochi-docker/tree/main/mochi-tutorial#option-2-building-your-own-image>`_
+   for more information on how to build an image appropriate for your
+   architecture.
+
+   If you are not sure about your host CPU architecture, one symptom of
+   using a mismatched image is a :code:`WARNING: The requested image's platform does
+   not match the detected host platform` message when you run the :code:`docker
+   run` command below.
+
 You need to first have Docker installed on your machine;
 please see the `Docker installation instructions for your platform <https://docs.docker.com/get-docker/>`_.
 Once Docker is installed, you can use the following commands to download a preconfigured image:
@@ -69,6 +84,7 @@ tutorial exercise files.
 
    mochi@d3c9c489a2c1:~$ ls mochi-tutorial
    margo-tutorial-exercises
+   thallium-tutorial-exercises
 
 We recommand that you open multiple shells while following these exercises,
 so that you can build the code, run a server and run a client in different terminals
