@@ -77,16 +77,16 @@ The server is setup to run indefinitely. You may kill it with Ctrl-C.
    end of your command.
 
 Now inspect the server.c file.  One important data structure to take note of
-is the `server_data` struct.  It contains the state of the example service.
+is the :code:`server_data` struct.  It contains the state of the example service.
 Anything added to this structure will be maintained across the lifetime of
 the service and can (optionally) be manipulated by via RPCs.  This is where
 we will maintain the phonebook data structure for this hands-on exercise.
 
 You an also see that individual RPCs are registered using the
-`MARGO_REGISTER()` macro, as in the "sum" example.  Note that this example
-also calls the `margo_register_data()` function immediately after the RPC is
-registered.  The purpose of `margo_register_data()` is to associate state
-(in this case the `server_data` struct instance) with RPCs so that RPC
+:code:`MARGO_REGISTER()` macro, as in the "sum" example.  Note that this example
+also calls the :code:`margo_register_data()` function immediately after the RPC is
+registered.  The purpose of :code:`margo_register_data()` is to associate state
+(in this case the :code:`server_data` struct instance) with RPCs so that RPC
 handlers can retrieve that pointer later without relying on a global
 variable.  This convention makes it safe for a server daemon to run multiple
 copies of the same provider without interfering with each other.  Any new
@@ -97,9 +97,9 @@ register that data pointer.
 manipulating a phonebook data structure.  Your task now is to add new RPCs
 to the server that will allow
 remote clients to manipulate a phonebook as well.  You will need to include
-`phonebook.h` in server.c so that the service has access to the phonebook API.   Next you must initiate a single phonebook instance for the service to maintain.  Edit :code:`server.c` to add the creation of a phonebook
-object (i.e., a call to `phonebook_new()`) and its destruction (i.e., a call
-to `phonebook_delete()`) when the server terminates.  This phonebook should
+:code:`phonebook.h` in server.c so that the service has access to the phonebook API.   Next you must initiate a single phonebook instance for the service to maintain.  Edit :code:`server.c` to add the creation of a phonebook
+object (i.e., a call to :code:`phonebook_new()`) and its destruction (i.e., a call
+to :code:`phonebook_delete()`) when the server terminates.  This phonebook should
 be added as a field to the :code:`server_data` structure and to the
 :code:`svr_data` instance (see comments **(1)** to **(3)** in
 :code:`server.c`).
