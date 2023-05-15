@@ -106,5 +106,5 @@ sure that you have the Mochi namespace available for Spack to use. This can be d
 What's next ?
 -------------
 
-You are now ready to carry on with either the Margo or the Thallium exercises.
+You are now ready to carry on with either the :ref:`MargoExercises` or the :ref:`ThalliumExercises`.
 Choose one depending on your preferred programming language (C or C++ respectively).

@@ -1,3 +1,5 @@
+.. _MargoExercises:
+
 Margo exercises
 ===============
 

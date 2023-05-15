@@ -1,3 +1,5 @@
+.. _ThalliumExercises:
+
 Thallium exercises
 ==================
 
