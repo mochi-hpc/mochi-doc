@@ -60,7 +60,7 @@ For the client:
 
 .. code-block:: console
 
-   src/client na+sm <server-address>
+   src/client <server-address>
 
 Copy :code:`<server-address>` from the standard output of the server command.
 The server is setup to run indefinitely. You may kill it with Ctrl-C.
@@ -76,20 +76,52 @@ The server is setup to run indefinitely. You may kill it with Ctrl-C.
    it to the client, other your shell will interpret the semicolumn as the
    end of your command.
 
-|cbox| Looking at the API in :code:`phonebook.h`, edit :code:`server.c` to add the
-creation of a phonebook object and its destruction when the server terminates.
-This phonebook should be added as a field to the :code:`server_data` structure
-and to the :code:`svr_data` instance (see comments **(1)** to **(3)** in
-:code:`server.c`). This instance is attached to RPCs using :code:`margo_register_data`
-so the phonebook can be accessed inside RPCs.
+Now inspect the server.c file.  One important data structure to take note of
+is the `server_data` struct.  It contains the state of the example service.
+Anything added to this structure will be maintained across the lifetime of
+the service and can (optionally) be manipulated by via RPCs.  This is where
+we will maintain the phonebook data structure for this hands-on exercise.
 
-|cbox| Our two RPCs, which we will call "insert" and "lookup", will need argument
-and return types. Edit the :code:`types.h` file to add the necessary type definitions
+You an also see that individual RPCs are registered using the
+`MARGO_REGISTER()` macro, as in the "sum" example.  Note that this example
+also calls the `margo_register_data()` function immediately after the RPC is
+registered.  The purpose of `margo_register_data()` is to associate state
+(in this case the `server_data` struct instance) with RPCs so that RPC
+handlers can retrieve that pointer later without relying on a global
+variable.  This convention makes it safe for a server daemon to run multiple
+copies of the same provider without interfering with each other.  Any new
+RPCs we add that manipulate the phonebook state will similarly need to
+register that data pointer.
+
+|cbox| Look at the API in :code:`phonebook.h`.  This is a local API for
+manipulating a phonebook data structure.  Your task now is to add new RPCs
+to the server that will allow
+remote clients to manipulate a phonebook as well.  You will need to include
+`phonebook.h` in server.c so that the service has access to the phonebook API.   Next you must initiate a single phonebook instance for the service to maintain.  Edit :code:`server.c` to add the creation of a phonebook
+object (i.e., a call to `phonebook_new()`) and its destruction (i.e., a call
+to `phonebook_delete()`) when the server terminates.  This phonebook should
+be added as a field to the :code:`server_data` structure and to the
+:code:`svr_data` instance (see comments **(1)** to **(3)** in
+:code:`server.c`).
+
+|cbox| Your next task is to add two new RPCs, which we will call "insert" and "lookup".  Begin by defining their input and output argument types.  This is done using `MERCURY_GEN_PROC()` macros of the following form:
+
+.. code-block:: c
+
+   MERCURY_GEN_PROC(rpc_name,
+      ((type)(arg1))\
+      ((type)(arg2))\
+      ...
+      ((type)(argN)))
+
+Edit the :code:`types.h` file to add the necessary type definitions
 for these RPCs (:code:`insert_in_t`, :code:`insert_out_t`, :code:`lookup_in_t`
 and :code:`lookup_out_t`, see comment **(4)**). Do so using the Mercury macros,
 following the model of the :code:`sum_in_t` and :code:`sum_out_t` types.
+Recall that we will use a uint64_t type to represent phone numbers.
+
 *Hint: Mercury represents null-terminated strings with the type :code:`hg_string_t`,
-whose serialization routines are defined in the :code:`mercury_proc_string.h` header.*
+whose serialization routines are defined in the :code:`mercury_proc_string.h` header.  You must include this header in types.h to gain access to this type definition.*
 
 .. note::
 
