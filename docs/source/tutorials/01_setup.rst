@@ -24,7 +24,7 @@ Option 1 (preferred): create a development environment using Docker
 .. note::
 
    The Docker instructions here rely on a pre-built container image that was
-   built for x86_64 platforms.  If you host machine has a different CPU
+   built for x86_64 platforms.  If your host machine has a different CPU
    architecture (for example, an Apple M1) then you may need to create your own image from scratch to ensure that the tutorial environment works correctly.
    Please see the `instructions for building a Docker image from scratch
    <https://github.com/mochi-hpc-experiments/mochi-docker/tree/main/mochi-tutorial#option-2-building-your-own-image>`_
