@@ -5,6 +5,19 @@
 Exercise 2: A proper phonebook Mochi component
 ==============================================
 
+.. important::
+
+   This exercise (as well as Exercise 3) does not need the
+   :code:`thallium-tutorial-exercises` repository used in Exercise 1.
+
+.. important::
+   If you come from Exercise 1, make sure to deactivate the Spack
+   environment before starting this exercise (we will build a new one,
+   which we will also use in Exercise 3). This can be done with
+   :code:`spack env deactivate` in any terminal in which you had
+   activated the environment. You can check whether an environment
+   is active using :code:`spack env status`.
+
 In this exercise, we will use the
 `Thallium microservice template <https://github.com/mochi-hpc/thallium-microservice-template>`_
 to develop a proper phonebook microservice.

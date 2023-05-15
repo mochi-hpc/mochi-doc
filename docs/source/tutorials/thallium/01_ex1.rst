@@ -14,6 +14,11 @@ Exercise 1: simple RPC and RDMA using Thallium
 
 The code for this exercise has been cloned in :code:`thallium-tutorial-exercises`
 in your development environment.
+In a terminal connected to your docker container, make sure you are in the
+appropriate directory.
+
+.. code-block:: console
+   cd margo-tutorial/margo-tutorial-exercises
 
 |cbox| The :code:`src` directory provides a :code:`client.cpp` client code,
 a :code:`server.cpp` server code, a :code:`types.hpp` header defining
@@ -67,22 +72,45 @@ You may kill it with Ctrl-C.
 to instanciate a phonebook in :code:`main()` (see comment **(1)**).
 
 |cbox| Our two RPCs, which we will call *"insert"* and *"lookup"*, will need
-argument and return types. Edit the :code:`types.hpp` file to add the
-necessary type definitions for these RPCs, for instance an :code:`entry`
-class containing a :code:`string` field and a :code:`uint64_t` field
-(see comment **(2)** in the file).
+argument and return types. While you could pass an :code:`std::string` and
+an :code:`uint64_t` directly to your RPC, in this tutorial we will define a
+class encapsulating them to showcase custom serialization.
+Edit the :code:`types.hpp` file to add an :code:`entry`
+class, which will be used as input argument for the *insert* RPC,
+ontaining a :code:`std::string name` field and a :code:`uint64_t number` field
+(see comment **(2)** in the file). Look at the :code:`vector3d` class
+as an example and define a :code:`serialize` template function in
+your own classes following this model.
 
 .. note::
 
    You may need to include :code:`thallium/serialization/stl/string.hpp`
    so that Thallium knows how to serialize strings.
 
+To summarize:
+
+* The *insert* RPC will take an :code:`entry` as input and respond with
+  an :code:`uint32_t` error code (0 representing a successful operation).
+* The *lookup* RPC will take an :code:`std::string` as input and respond
+  with a :code:`uint64_t` (we will assume as a phone number of 0 represents
+  a failed lookup).
+
 |cbox| Edit :code:`server.cpp` to add the definitions and declarations of the
 lambda functions for our two RPCs. Feel free to copy/paste and modify
 the existing :code:`sum` RPC (comments **(3)** and **(4)**).
 
+.. important::
+   Thallium relies on templates and type deduction to know what to serialize
+   and how when sending RPC arguments and responses. If you
+   write :code:`req.respond(0)`, C++ will infer that you want to send an :code:`int`.
+   If your client expects an :code:`uint64_t` as a response, this will cause
+   serialization issues. It is always recommanded to explicitely define the
+   variable that will be returned, e.g. :code:`uint64_t ret = 0; req.respond(ret)`.
+
 |cbox| Edit :code:`client.cpp` and use the existing code as an example to
-register the two RPCs here as well (comment **(5)**).
+register the two RPCs here as well (comment **(5)**). *Make sure that the client
+uses the same types as the server for RPC inputs and output. Failing to do so
+will cause serialization issues.*
 
 |cbox| Try out your code by calling these insert and lookup functions a
 few times in the client.

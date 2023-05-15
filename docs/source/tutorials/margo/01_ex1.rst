@@ -14,6 +14,11 @@ Exercise 1: simple RPC and RDMA using Margo
 
 The code for this exercise has been cloned in :code:`margo-tutorial-exercises`
 in your development environment.
+In a terminal connected to your docker container, make sure you are in the
+appropriate directory.
+
+.. code-block:: console
+   cd margo-tutorial/margo-tutorial-exercises
 
 The :code:`src` directory provides a :code:`client.c` client code,
 a :code:`server.c` server code, a :code:`types.h` header defining RPC
