@@ -120,8 +120,13 @@ and :code:`lookup_out_t`, see comment **(4)**). Do so using the Mercury macros,
 following the model of the :code:`sum_in_t` and :code:`sum_out_t` types.
 Recall that we will use a uint64_t type to represent phone numbers.
 
-*Hint: Mercury represents null-terminated strings with the type :code:`hg_string_t`,
-whose serialization routines are defined in the :code:`mercury_proc_string.h` header.  You must include this header in types.h to gain access to this type definition.*
+*Hint: Mercury represents null-terminated strings with the type
+:code:`hg_string_t` and :code:`hg_const_string_t`.  These are defined in
+:code:`mercury_proc_string.h`, so you will need to include that header in
+types.h in order to add string types to your RPC arguments.  The only
+difference between the two is type checking; the latter expects to encode
+const string arguments.  We recommend that you use the `hg_const_string_t`
+for insert in order to align with the client-side API.
 
 .. note::
 
@@ -131,9 +136,14 @@ whose serialization routines are defined in the :code:`mercury_proc_string.h` he
 
 .. note::
 
-   If you only have half an hour to work on this problem, focus on the insert RPC
-   and ignore the lookup RPC. You can circle back to these instructions for the
-   latter if you have enough time.
+   If you only have half an hour to work on this problem, focus on the
+   insert RPC first.  You can come back and fill in the lookup RPC later as
+   time permits.  It may also be helpful to stub in the new RPC handlers to
+   begin with such that they do nothing except call  :code:`margo_info()`,
+   which is a logging function that you can use in a manner similar to
+   :code:`printf()`.  This will enable you to validate that the RPC is being
+   registered and executed as expected end-to-end from the client before
+   filling in the phonebook logic.
 
 |cbox| Edit :code:`server.c` to add the definitions and declarations of the handlers for
 our two RPCs (see comment **(5)** and **(6)**). Feel free to copy/paste and modify
@@ -141,18 +151,29 @@ the existing :code:`sum` RPC. Don't forget to register your RPCs with the margo
 instance in main (comment **(7)**), and don't forget to call :code:`margo_register_data`
 to associate the server data with the RPC.
 
-|cbox| Edit :code:`client.c` and use the existing code as an example to (1) register the
-two RPCs here as well (comment **(8)**), and (2) define two insert and lookup
-functions that will take a :code:`margo_instance_id` alongside the necessary
-arguments to create an :code:`hg_handle_t`, forward it to the server with
-the proper arguments, and receive the response (comment **(9)**).
-These functions will need to call :code:`margo_create` to create the :code:`hg_handle_t`
-handle for the RPC, :code:`margo_forward` to forward it to the server,
-:code:`margo_get_output` to retrieve the response from the server,
-:code:`margo_free_output` to free this response, and :code:`margo_destroy`
-to destroy the :code:`hg_handle_t` handle.
+|cbox| Edit :code:`client.c` and use the existing code as an example to (1)
+register the two new RPCs here as well (comment **(8)**).  Observe that the
+same :code:`MARGO_REGISTER()` function is used on both the client and the
+server and that the name argument must match.  The only difference is that
+the client sets the handler function (last argument) to NULL because this
+client will only issue RPCs, and never service them.  Next define two
+insert and lookup convenience functions.  Example prototypes are given in
+comment **(9)**.  These functions need to mimic the logic within the
+:code:`for` loop that issues "sum" RPCs in the existing code.  Rather than
+hardcoding these steps directly in :code:`main()`, we want the insert and
+lookup functions to contain the logic to create an :code:`hg_handle_t`,
+forward it to the server with the proper arguments, and receive the
+response.  Note that you will need to change the input and output types to
+match your new RPCs (for example, :code:`insert_in_t` and
+:code:`insert_out_t` in place of :code:`sum_in_t` and :code:`sum_out_t`,
+with fields set accordingly).
+These client-side convenience functions will need to call :code:`margo_create`
+to create the :code:`hg_handle_t` handle for the RPC, :code:`margo_forward`
+to forward it to the server, :code:`margo_get_output` to retrieve the
+response from the server, :code:`margo_free_output` to free this response,
+and :code:`margo_destroy` to destroy the :code:`hg_handle_t` handle.
 
-|cbox| Try out your code by calling insert and lookup a few times in main (comment (10)).
+|cbox| Try out your code by calling insert and lookup a few times in main (comment (10)).  Note that you can use the same :code:`svr_addr` as was being used to issue the example "sum" RPCs, as long as you use it before it is destroyed with the :code:`margo_addr_free()`.
 
 Bonus: using RDMA to transfer larger amounts of data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
