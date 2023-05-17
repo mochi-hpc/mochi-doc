@@ -175,6 +175,9 @@ variable to find the dependency to Yokan as follows.
    yk_provider_handle_t yokan_ph =
      it->second.dependencies[0]->getHandle<yk_provider_handle_t>();
 
+You will need to include :code:`yokan/provider-handle.h` to get the definition
+of :code:`yk_provider_handle_t`.
+
 |cbox| You can convert this :code:`yokan_ph` into a thallium provider handle as
 follows before passing it to the :code:`Provider` constructor.
 
