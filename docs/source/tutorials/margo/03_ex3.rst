@@ -174,14 +174,31 @@ pointer to a Yokan provider handle (:code:`yoken_provider_handle_t`),
 which you can now use to set the corresponding field in the :code:`YP_args`
 structure. You have successfully injected a Yokan dependency into the YP provider!
 
-The rest of this exercise will be less directed. The goal is now to pass
-this provider handle down to the dummy phonebook so that it can use
-Yokan as an implementation of a key/value store instead of relying on
-the :code:`phonebook.h` implementation. You should now be familiar
+Bonus: continuing to wire YP with Yokan
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+At this point, you have learned what this exercise aimed for you to learn,
+namely how to write a Bedrock module, a Bedrock configuration with multiple
+providers, and how to manage dependencies in Bedrock configurations and
+Bedrock modules.
+
+This bonus section invites you to complete the dependency injection of
+Yokan into YP. It is a lot more complicated and a lot less guided, hence
+feel free to stop there and ignore this bonus section.
+
+The goal is now to pass this Yokan provider handle down to the dummy phonebook
+so that it can use Yokan as an implementation of a key/value store instead of
+relying on the :code:`phonebook.h` implementation. You should now be familiar
 enough with the code to make the necessary changes bellow without
 too much guidance. Keep the
 `API of Yokan <https://github.com/mochi-hpc/mochi-yokan/blob/main/include/yokan/database.h>`_
 open in a web browser for reference.
+
+|cbox| First, you will need to register a Yokan provider in your
+tests (:code:`tests/test-admin.cpp` and :code:`tests/test-client.cpp`) and
+make sure it manages at least one database by passing it an appropriate
+configuration string. Here we are doing manually what Bedrock would normally do
+from a JSON configuration file.
 
 |cbox| To add and keep a reference to the Yokan provider handle in the :code:`YP_provider`
 structure (in :code:`src/provider.h`), you will need to copy the provided

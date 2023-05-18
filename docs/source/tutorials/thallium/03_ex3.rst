@@ -156,15 +156,6 @@ following in the field in the definition of our YP provider.
 You can also use :code:`"my-yokan-provider"` instead of :code:`"yokan:123"`.
 Now Bedrock should restart accepting your configuration.
 
-|cbox| In :code:`src/ProviderImpl.hpp` add a :code:`const tl::provider_handle& yokan_ph`
-argument to the constructor. Add a corresponding :code:`m_yokan_ph` field to
-the class and assign the provided constructor argument to it.
-
-|cbox| In :code:`include/YP/Provier.hpp`, add a :code:`const tl::provider_handle& yokan_ph`
-argument to the two constructors. In :code:`src/Provider.cpp` change the signature
-of the constructor accordingly as well as the call to the underlying
-:code:`ProviderImpl` constructor.
-
 |cbox| Edit :code:`src/BedrockModule.cpp` once again. This time we will look at the
 :code:`registerProvider` function at the beginning of the file. Use the args
 variable to find the dependency to Yokan as follows.
@@ -177,6 +168,36 @@ variable to find the dependency to Yokan as follows.
 
 You will need to include :code:`yokan/provider-handle.h` to get the definition
 of :code:`yk_provider_handle_t`.
+
+You have now retrieved a Yokan provider handle pointing to your Yokan provider,
+in the context of registering a YP provider.
+
+Bonus: continuing to wire YP with Yokan
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+At this point, you have learned what this exercise aimed for you to learn,
+namely how to write a Bedrock module, a Bedrock configuration with multiple
+providers, and how to manage dependencies in Bedrock configurations and
+Bedrock modules.
+
+This bonus section invites you to complete the dependency injection of
+Yokan into YP. It is a lot more complicated and a lot less guided, hence
+feel free to stop there and ignore this bonus section.
+
+|cbox| First, you will need to instanciate a :code:`yk::Provider` in your
+tests (:code:`tests/AdminTest.cpp` and :code:`tests/PhonebookTest.cpp`) and
+make sure it manages at least one database by passing it an appropriate
+configuration string. Here we are doing manually what Bedrock would normally do
+from a JSON configuration file.
+
+|cbox| In :code:`src/ProviderImpl.hpp` add a :code:`const tl::provider_handle& yokan_ph`
+argument to the constructor. Add a corresponding :code:`m_yokan_ph` field to
+the class and assign the provided constructor argument to it.
+
+|cbox| In :code:`include/YP/Provier.hpp`, add a :code:`const tl::provider_handle& yokan_ph`
+argument to the two constructors. In :code:`src/Provider.cpp` change the signature
+of the constructor accordingly as well as the call to the underlying
+:code:`ProviderImpl` constructor.
 
 |cbox| You can convert this :code:`yokan_ph` into a thallium provider handle as
 follows before passing it to the :code:`Provider` constructor.
