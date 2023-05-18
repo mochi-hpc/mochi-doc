@@ -92,3 +92,17 @@ or
    void load(A& ar, MyType& x) {
      ...
    }
+
+Type checking
+-------------
+
+Contrary to Margo, where types (structures) and their serialization function
+will generally be defined in a header file shared by the client and the server,
+Thallium's template based serialization leaves the user open to the risk of
+a type mismatch between the client and the server. During development, we
+recommand to build your code with :code:`-DTHALLIUM_DEBUG_RPC_TYPES`, or if you
+use cmake, to link your binaries/libraries against the :code:`thallium_check_types`
+target using :code:`target_link_libraries (mylib PRIVATE thallium_check_types)`.
+This flag will make thallium add the name of the type it is serializing to the
+serialization buffer. This adds an overhead but allows the receiving end to check
+that the name of the types match, and to print an error if they don't.
