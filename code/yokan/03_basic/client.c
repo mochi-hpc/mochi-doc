@@ -6,10 +6,12 @@
 #include <yokan/client.h>
 #include <yokan/database.h>
 
+static yk_return_t keyvalue_callback(void*, size_t, const void*, size_t, const void*, size_t);
+
 int main(int argc, char** argv)
 {
-    if(argc != 4) {
-        fprintf(stderr, "Usage: %s <address> <provider id> <database id>\n", argv[0]);
+    if(argc != 3) {
+        fprintf(stderr, "Usage: %s <address> <provider id>\n", argv[0]);
         exit(-1);
     }
     margo_instance_id mid = margo_init("na+sm", MARGO_CLIENT_MODE, 0, 0);
@@ -22,16 +24,13 @@ int main(int argc, char** argv)
 
     yk_return_t ret;
     yk_client_t client = YOKAN_CLIENT_NULL;
-    yk_database_id_t db_id;
 
     ret = yk_client_init(mid, &client);
     assert(ret == YOKAN_SUCCESS);
 
-    yk_database_id_from_string(argv[3], &db_id);
-
     yk_database_handle_t db_handle = YOKAN_DATABASE_HANDLE_NULL;
     ret = yk_database_handle_create(
-        client, server_addr, provider_id, db_id, &db_handle);
+        client, server_addr, provider_id, true, &db_handle);
     assert(ret == YOKAN_SUCCESS);
 
     const char* key = "matthieu";
@@ -66,6 +65,11 @@ int main(int argc, char** argv)
     assert(ret == YOKAN_SUCCESS);
     free(value_out);
 
+    /* getting the value associated with a key using a callback */
+    ret = yk_fetch(db_handle, YOKAN_MODE_DEFAULT,
+                   key, strlen(key), keyvalue_callback, NULL);
+    assert(ret == YOKAN_SUCCESS);
+
     /* deleting a key/value pair */
     ret = yk_erase(db_handle, YOKAN_MODE_DEFAULT, key, strlen(key));
 
@@ -78,4 +82,14 @@ int main(int argc, char** argv)
     margo_finalize(mid);
 
     return 0;
+}
+
+static yk_return_t keyvalue_callback(
+        void* uargs, size_t i,
+        const void* key, size_t ksize,
+        const void* val, size_t vsize) {
+    (void)uargs;
+    (void)i;
+    printf("Inside callback: %.*s => %.*s\n",
+           (int)ksize, (const char*)key, (int)vsize, (const char*)val);
 }

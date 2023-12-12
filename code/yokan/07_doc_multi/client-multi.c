@@ -9,8 +9,8 @@
 
 int main(int argc, char** argv)
 {
-    if(argc != 4) {
-        fprintf(stderr, "Usage: %s <address> <provider id> <database id>\n", argv[0]);
+    if(argc != 3) {
+        fprintf(stderr, "Usage: %s <address> <provider id>\n", argv[0]);
         exit(-1);
     }
     margo_instance_id mid = margo_init("na+sm", MARGO_CLIENT_MODE, 0, 0);
@@ -23,16 +23,13 @@ int main(int argc, char** argv)
 
     yk_return_t ret;
     yk_client_t client = YOKAN_CLIENT_NULL;
-    yk_database_id_t db_id;
 
     ret = yk_client_init(mid, &client);
     assert(ret == YOKAN_SUCCESS);
 
-    yk_database_id_from_string(argv[3], &db_id);
-
     yk_database_handle_t db_handle = YOKAN_DATABASE_HANDLE_NULL;
     ret = yk_database_handle_create(
-        client, server_addr, provider_id, db_id, &db_handle);
+        client, server_addr, provider_id, true, &db_handle);
     assert(ret == YOKAN_SUCCESS);
 
     /* create a collection in the database */

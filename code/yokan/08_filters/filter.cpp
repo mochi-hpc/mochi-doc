@@ -26,6 +26,17 @@ struct CustomKeyValueFilter : public yokan::KeyValueFilter {
         return (vsize % 2) == (ksize % 2);
     }
 
+    size_t keySizeFrom(const void* key, size_t ksize) const override {
+        (void)key;
+        return ksize;
+    }
+
+    size_t valSizeFrom(
+        const void* val, size_t vsize) const override {
+        (void)val;
+        return vsize + m_to_append.size();
+    }
+
     size_t keyCopy(
         void* dst, size_t max_dst_size,
         const void* key, size_t ksize) const override {
@@ -64,6 +75,25 @@ struct CustomDocFilter : public yokan::DocFilter {
         (void)doc;
         (void)docsize;
         return id % 2 == 0;
+    }
+
+    size_t docSizeFrom(const void* val, size_t vsize) const override {
+        (void)val;
+        return vsize;
+    }
+
+    /**
+     * @brief Copy the document to the target destination. This copy may
+     * be implemented differently depending on the mode, and may alter
+     * the content of the document.
+     * This function should return the size actually copied.
+     */
+    virtual size_t docCopy(
+        void* dst, size_t max_dst_size,
+        const void* val, size_t vsize) const {
+        vsize = std::min(vsize, max_dst_size);
+        std::memcpy(dst, val, vsize);
+        return vsize;
     }
 };
 YOKAN_REGISTER_DOC_FILTER(custom_doc, CustomDocFilter);

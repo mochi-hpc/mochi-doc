@@ -18,7 +18,10 @@ int main(int argc, char** argv)
     margo_set_log_level(mid, MARGO_LOG_INFO);
     margo_info(mid, "Server running at address %s", addr_str);
 
-    yk_return_t ret = yk_provider_register(mid, 42, NULL, YOKAN_PROVIDER_IGNORE);
+    const char* config = "{\"database\":{\"type\":\"map\",\"config\":{}}}";
+
+    yk_return_t ret = yk_provider_register(
+        mid, 42, config, NULL, YOKAN_PROVIDER_IGNORE);
     assert(ret == YOKAN_SUCCESS);
 
     margo_wait_for_finalize(mid);
