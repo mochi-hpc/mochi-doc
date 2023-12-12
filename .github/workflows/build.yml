@@ -21,7 +21,7 @@ jobs:
         spack -e code install --fail-fast
     - name: Show Spack installed packages for debugging
       run: |
-        find -e code find -dlv
+        spack -e code find -dlv
     - name: Build all the examples
       run: |
         eval `spack env activate --sh code`
