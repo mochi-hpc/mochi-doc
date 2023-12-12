@@ -21,7 +21,7 @@ the `yk_client_t` C equivalent.
 Python binding
 --------------
 
-Yokan also provides Python bindings for its server, admin, and client
+Yokan also provides Python bindings for its server and client
 libraries. The best way to understand their use is to look in the
 *tests/python* folder. To enable this python binding, install Yokan
 with the ``+python`` variant in spack.

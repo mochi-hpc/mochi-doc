@@ -18,6 +18,7 @@ In a terminal connected to your docker container, make sure you are in the
 appropriate directory.
 
 .. code-block:: console
+
    cd margo-tutorial/margo-tutorial-exercises
 
 |cbox| The :code:`src` directory provides a :code:`client.cpp` client code,

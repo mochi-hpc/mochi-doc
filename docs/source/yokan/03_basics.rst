@@ -27,6 +27,7 @@ single key/value pairs:
 - :code:`yk_exists`: checks whether the given key is in the database.
 - :code:`yk_length`: gets the length of the value associated with a given key.
 - :code:`yk_get`: gets the value associated with the given key.
+- :code:`yk_fetch`: gets the value associated with the given key using a functional style.
 - :code:`yk_erase`: erases the key/value pair associated with the given key.
 
 These functions are extensively documented in the *yokan/database.h* header.

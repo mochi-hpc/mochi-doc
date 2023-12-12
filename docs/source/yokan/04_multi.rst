@@ -57,6 +57,7 @@ These functions are the following.
 - :code:`yk_length_multi`: retrieves the length of the values associated
   with a set of keys.
 - :code:`yk_get_multi`: retrieves the values associated with a set of keys.
+- :code:`yk_fetch_multi`: retrieves the values associated with a set of keys.
 - :code:`yk_list_keys`: lists a specified number of keys, starting after
   the specified lower bound.
 - :code:`yk_list_keyvals`: same as :code:`yk_list_keyvals` but also returns
