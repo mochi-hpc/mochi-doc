@@ -49,9 +49,6 @@ pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
 find_package (bedrock REQUIRED)
 # yokan
 find_package (yokan REQUIRED)
-# bake
-pkg_check_modules (BAKE_SERVER REQUIRED IMPORTED_TARGET bake-server)
-pkg_check_modules (BAKE_CLIENT REQUIRED IMPORTED_TARGET bake-client)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)
@@ -61,4 +58,3 @@ add_subdirectory (abtio)
 add_subdirectory (ssg)
 add_subdirectory (bedrock)
 add_subdirectory (yokan)
-add_subdirectory (bake)
