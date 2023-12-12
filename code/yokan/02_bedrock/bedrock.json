@@ -1,0 +1,20 @@
+{
+    "libraries": {
+        "yokan": "libyokan-bedrock-module.so"
+    },
+    "providers": [
+        {
+            "name" : "my_yokan_provider",
+            "type" : "yokan",
+            "provider_id" : 42,
+            "pool" : "__primary__",
+            "config" : {
+                "database": {
+                    "type": "map",
+                    "config": {}
+                }
+            },
+            "dependencies" : {}
+        }
+    ]
+}
