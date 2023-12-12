@@ -109,7 +109,6 @@ Contents
    argobots.rst
    pymargo.rst
    yokan.rst
-   bake.rst
    abtio.rst
    ssg.rst
    templates.rst
