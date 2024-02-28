@@ -70,14 +70,16 @@ struct CustomDocFilter : public yokan::DocFilter {
         (void)data;
     }
 
-    bool check(yk_id_t id, const void* doc, size_t docsize) const override {
+    bool check(const char* collection, yk_id_t id, const void* doc, size_t docsize) const override {
         // This custom filter will only let through the document with an even id
+        (void)collection;
         (void)doc;
         (void)docsize;
         return id % 2 == 0;
     }
 
-    size_t docSizeFrom(const void* val, size_t vsize) const override {
+    size_t docSizeFrom(const char* collection, const void* val, size_t vsize) const override {
+        (void)collection;
         (void)val;
         return vsize;
     }
@@ -89,6 +91,7 @@ struct CustomDocFilter : public yokan::DocFilter {
      * This function should return the size actually copied.
      */
     virtual size_t docCopy(
+        const char* collection,
         void* dst, size_t max_dst_size,
         const void* val, size_t vsize) const {
         vsize = std::min(vsize, max_dst_size);
