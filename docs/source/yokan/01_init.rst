@@ -20,7 +20,7 @@ in Yokan, but feel free to try these tutorials with other backends!
 In the following sections, the code can be compiled and linked against the *yokan-server*,
 *yokan-client* and libraries, which can be found either by calling
 :code:`find_package(yokan)` in CMake, or :code:`pkg-config --libs --cflags yokan-server`
-(respectively :code:`yokan-client``) with PkgConfig.
+(respectively :code:`yokan-client`) with PkgConfig.
 
 Instantiating a Yokan provider
 ------------------------------
@@ -29,7 +29,7 @@ Yokan adopts the typical Mochi microservice architecture
 (used for instance in the :ref:`Margo microservice template<margo-microservice-template>`),
 with a *server* library providing the microservice's *provider* implementation,
 and a *client* library providing access to its capabilities (e.g., putting and getting key/value pairs).
-Hence the first thing we need to do is instantiate a provider.
+A provider is what holds a database, hence the first thing we need to do is instantiate a provider.
 
 Since we have enabled Bedrock support, let's take advantage of that and write
 a *config.json* file for Bedrock to use (if you are not familiar with Bedrock,
@@ -37,7 +37,7 @@ I highly recommand you to read the :ref:`Bedrock` section. Using Bedrock will sa
 you development time since it allows you to bootstrap a Mochi service using a JSON file
 instead of writing code).
 
-.. literalinclude:: ../../../code/yokan/02_config/bedrock.json
+.. literalinclude:: ../../../code/yokan/02_bedrock/bedrock.json
    :language: json
 
 We can now give this config file to Bedrock as follows.
