@@ -48,7 +48,7 @@ The list of available I/O operations is the following.
    We highly recommend using the :code:`pwrite` and :code:`pread` wrappers
    rather than the :code:`write`, :code:`read`, and :code:`lseek` wrappers.
    The former functions include explicit offsets with each operation, while
-   the latter rely on implicit file positioning which will be unreliably and
+   the latter rely on implicit file positioning which will be unreliable and
    unpredictable if current I/O operations are in flight.  ABT-IO inherently
    does not serialize or otherwise enforce ordering among concurrent
    operations.

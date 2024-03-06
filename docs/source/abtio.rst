@@ -6,9 +6,9 @@ functions.  The wrappers are prefixed with :code:`abt_io_` as in
 :code:`abt_io_open()`, :code:`abt_io_read()`, and :code:`abt_io_write()`.
 These wrapper functions have the same arguments and semantics as their POSIX
 counterparts, except that the underlying I/O operations are offloaded to
-internal resources be executed asynchronously.  ABT-IO presents both a
+internal resources to be executed asynchronously.  ABT-IO presents both a
 blocking API and a non-blocking API to callers.  In the former case, the
-calling calling thread is suspended so that other user-level threads may
+calling thread is suspended so that other user-level threads may
 gracefully execute until the I/O operation is complete.
 
 Rationale
@@ -30,7 +30,9 @@ they can be executed there on behalf of the caller without perturbing the
 caller's user-level thread scheduling.  This also enables I/O concurrency to
 be tuned independently from the caller's level of execution concurrency.
 
-ABT-IO may also optionally be configured to use `io_uring <https://kernel.dk/io_uring.pdf>`_ on supported platforms to further accelerate I/O performance.
+ABT-IO may also optionally be configured to use
+`io_uring <https://kernel.dk/io_uring.pdf>`_ on supported platforms to
+further accelerate I/O performance.
 
 References
 ----------

@@ -10,7 +10,8 @@ for handling I/O operations.
        :language: cpp
 
 More advanced tuning and configuration options can be controlled using the
-:code:`abt_io_init_ext` function rather than :code:`abt_io_init`.  It accepts a json-formatted configuration specifier that supports the following parameters:
+:code:`abt_io_init_ext` function rather than :code:`abt_io_init`.
+It accepts a json-formatted configuration specifier that supports the following parameters.
 
 .. code-block:: c
 
