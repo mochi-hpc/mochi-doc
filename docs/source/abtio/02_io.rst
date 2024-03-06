@@ -1,3 +1,5 @@
+.. _abtio_issuing:
+
 Issuing I/O operations
 ======================
 
@@ -27,13 +29,26 @@ The list of available I/O operations is the following.
 +-----------------+------------------------------+
 | abt_io_close    | close                        |
 +-----------------+------------------------------+
+| abt_io_ftruncate| ftruncate                    |
++-----------------+------------------------------+
+| abt_io_truncate | truncate                     |
++-----------------+------------------------------+
+| abt_io_lseek    | lseek                        |
++-----------------+------------------------------+
+| abt_io_fdatasync| fdatasync                    |
++-----------------+------------------------------+
+| abt_io_fallocate| fallocate                    |
++-----------------+------------------------------+
+| abt_io_stat     | stat                         |
++-----------------+------------------------------+
+| abt_io_statfs   | statfs                       |
++-----------------+------------------------------+
 
 .. important::
-   We highly recommend using the :code:`pwrite` and :code:`pread`
-   wrappers rather than the :code:`write` and :code:`read` wrappers,
-   especially if you either post I/O operations from multiple ES,
-   or setup ABT-IO to execute I/O operations in multiple ES.
-   :code:`abt_io_read` and :code:`abt_io_write` rely on the file
-   descriptor's internal cursor, and Argobots cannot guarantee
-   the order of I/O operations posted, which may lead to 
-   unpredictable reordering.
+   We highly recommend using the :code:`pwrite` and :code:`pread` wrappers
+   rather than the :code:`write`, :code:`read`, and :code:`lseek` wrappers.
+   The former functions include explicit offsets with each operation, while
+   the latter rely on implicit file positioning which will be unreliable and
+   unpredictable if current I/O operations are in flight.  ABT-IO inherently
+   does not serialize or otherwise enforce ordering among concurrent
+   operations.
