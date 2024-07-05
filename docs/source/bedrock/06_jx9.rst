@@ -42,7 +42,7 @@ the Jx9 script is executed, in the form of coma-separated assignments
 TOML
 ----
 
-Bedrock understand TOML configuration files using the :code:`--toml` argument
+Bedrock understands TOML configuration files using the :code:`--toml` argument
 of the :code:`bedrock` program. The code bellow is an example of such a
 TOML configuration.
 
