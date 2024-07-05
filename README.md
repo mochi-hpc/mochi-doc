@@ -10,22 +10,12 @@ ABT-IO, and SSG, as well as corresponding code examples.
 
 To build and/or contribute to this documentation, you must have a Sphinx and
 a few related extensions installed.  These can be installed as follows using
-Python's `pip`.
+Python's `pip` and `venv`. From the cloned repository, run the following commands.
 
 ```
-pip install sphinx
-pip install sphinx_rtd_theme
-pip install sphinx_copybutton
-pip install recommonmark
-pip install breathe
-```
-
-Alternatively, those required packages may also be available in your
-platform's primary package manager.  For example, in Ubuntu 23.04 you could
-do the following instead of using pip:
-
-```
-sudo apt install python3-breathe python3-recommonmark python3-sphinx-copybutton python3-sphinx-rtd-theme
+python3 -m venv venv
+source venv/bin/activate
+pip install -r docs/requirements.txt
 ```
 
 You must also install the `doxygen` documentation system.  This is likely
@@ -35,11 +25,9 @@ available in your platform's primary package manager.  For example on Ubuntu:
 sudo apt install doxygen
 ```
 
-Once you have these dependencies installed, clone this
-repository and cd into it. You can change the documentation
-by editing the files in the source subdirectory (these files
-use the .rst format). You can build the documentation
-using the following command.
+Once you have these dependencies installed, you can change the documentation
+by editing the files in the source subdirectory (these files use the .rst format).
+You can build the documentation using the following command.
 
 ```
 cd docs
