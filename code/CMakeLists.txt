@@ -46,7 +46,7 @@ pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
 # argobots
 pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
 # bedrock
-find_package (bedrock REQUIRED)
+find_package (bedrock-module-api REQUIRED)
 # yokan
 find_package (yokan REQUIRED)
 
