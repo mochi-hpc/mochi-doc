@@ -13,5 +13,7 @@ int main(int argc, char** argv) {
     myEngine.define("hello", hello).disable_response();
     std::cout << "Server running at address " << myEngine.self() << std::endl;
 
+    myEngine.wait_for_finalize();
+
     return 0;
 }

@@ -36,10 +36,6 @@ class my_sum_provider : public tl::provider<my_sum_provider> {
         define("hello", &my_sum_provider::hello);
         define("print", &my_sum_provider::print, tl::ignore_return_value());
     }
-
-    ~my_sum_provider() {
-        get_engine().wait_for_finalize();
-    }
 };
 
 int main(int argc, char** argv) {
@@ -49,6 +45,7 @@ int main(int argc, char** argv) {
     std::cout << "Server running at address " << myEngine.self()
         << " with provider id " << provider_id << std::endl;
     my_sum_provider myProvider(myEngine, provider_id);
-    
+    myEngine.wait_for_finalize();
+
     return 0;
 }

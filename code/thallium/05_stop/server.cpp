@@ -16,5 +16,7 @@ int main(int argc, char** argv) {
 
     myEngine.define("sum", sum);
 
+    myEngine.wait_for_finalize();
+
     return 0;
 }

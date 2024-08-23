@@ -12,8 +12,6 @@ int main(int argc, char** argv) {
 
     tl::abt scope;
 
-    tl::engine myEngine("tcp", THALLIUM_SERVER_MODE);
-
     std::vector<tl::managed<tl::xstream>> ess;
     tl::managed<tl::pool> myPool = tl::pool::create(tl::pool::access::spmc);
     for(int i=0; i < 4; i++) {
@@ -21,10 +19,15 @@ int main(int argc, char** argv) {
             = tl::xstream::create(tl::scheduler::predef::deflt, *myPool);
         ess.push_back(std::move(es));
     }
-    std::cout << "Server running at address " << myEngine.self() << std::endl;
-    myEngine.define("sum", sum, 0, *myPool);
 
-    myEngine.wait_for_finalize();
+    {
+        tl::engine myEngine("tcp", THALLIUM_SERVER_MODE);
+
+        std::cout << "Server running at address " << myEngine.self() << std::endl;
+        myEngine.define("sum", sum, 0, *myPool);
+
+        myEngine.wait_for_finalize();
+    }
 
     for(int i=0; i < 4; i++) {
         ess[i]->join();

@@ -23,4 +23,6 @@ int main(int argc, char** argv) {
             req.respond();
         };
     myEngine.define("do_rdma",f);
+
+    myEngine.wait_for_finalize();
 }
