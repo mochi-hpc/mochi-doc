@@ -26,6 +26,5 @@ from deploying components, to writing Bedrock modules for your own components.
    bedrock/01_start.rst
    bedrock/02_json.rst
    bedrock/03_query.rst
-   bedrock/04_c_module.rst
-   bedrock/05_cpp_module.rst
+   bedrock/04_module.rst
    bedrock/06_jx9.rst

@@ -5,7 +5,7 @@
 cmake_minimum_required (VERSION 3.12)
 project (mochi-doc C CXX)
 
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 enable_testing ()
 
 # add our cmake module directory to the path
@@ -49,6 +49,8 @@ pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
 find_package (bedrock-module-api REQUIRED)
 # yokan
 find_package (yokan REQUIRED)
+# flock
+find_package (flock REQUIRED)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)

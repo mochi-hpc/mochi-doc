@@ -5,6 +5,7 @@ spack:
   - mochi-thallium
   - mochi-margo
   - mochi-ssg+mpi ^mpich
+  - mochi-flock
   - mochi-abt-io
   - mochi-bedrock
   - argobots

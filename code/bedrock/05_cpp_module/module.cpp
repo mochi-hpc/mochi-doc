@@ -1,91 +1,86 @@
-#include <bedrock/AbstractServiceFactory.hpp>
+/*
+ * (C) 2020 The University of Chicago
+ *
+ * See COPYRIGHT in top-level directory.
+ */
+#include <bedrock/AbstractComponent.hpp>
 #include <iostream>
 
-class ServiceBFactory : public bedrock::AbstractServiceFactory {
+struct MyProvider {};
+
+class MyComponent : public bedrock::AbstractComponent {
+
+    std::unique_ptr<MyProvider> m_provider;
 
     public:
 
-    ServiceBFactory() {
-        m_provider_dependencies.push_back({ "ssg_group", "ssg", BEDROCK_REQUIRED });
-        m_provider_dependencies.push_back({ "a_provider", "module_a", BEDROCK_REQUIRED });
-        m_provider_dependencies.push_back({ "a_local", "module_a", BEDROCK_REQUIRED | BEDROCK_ARRAY});
-        m_provider_dependencies.push_back({ "a_client", "module_a", BEDROCK_REQUIRED });
-    }
+    MyComponent()
+    : m_provider{std::make_unique<MyProvider>()} {}
 
-    void* registerProvider(const bedrock::FactoryArgs& args) override {
-        std::cout << "Registering a provider from module B" << std::endl;
-        std::cout << " -> mid         = " << (void*)args.mid << std::endl;
-        std::cout << " -> provider_id = " << args.provider_id << std::endl;
-        std::cout << " -> pool        = " << (void*)args.pool << std::endl;
-        std::cout << " -> config      = " << args.config << std::endl;
-        std::cout << " -> name        = " << args.name << std::endl;
-        for(auto& dep : args.dependencies) {
-            std::cout << "dependency " << dep.first << " -> [ ";
-            for(auto& s : dep.second.dependencies) {
-                std::cout << s->getName() << " (" << s->getHandle<void*>() << "), ";
-            }
-            std::cout << " ]" << std::endl;
-        }
-        return (void*)0x1; // new ProviderB(...)
-    }
-
-    void deregisterProvider(void* provider) override {
-        (void)provider;
-        std::cout << "Deregistring provider from module B" << std::endl;
-        // auto p = static_cast<ProviderB*>(provider);
-        // delete p;
-    }
-
-    std::string getProviderConfig(void* provider) override {
-        (void)provider;
-        // auto p = static_cast<ProviderB*>(provider);
-        // return p->getConfig();
-        return "{}";
-    }
-
-    std::string getClientConfig(void* client) override {
-        (void)client;
-        // auto c = static_cast<ClientB*>(client);
-        // return c->getConfig();
-        return "{}";
-    }
-
-    void* initClient(const bedrock::FactoryArgs& args) override {
+    static std::vector<bedrock::Dependency>
+        GetDependencies(const bedrock::ComponentArgs& args) {
         (void)args;
-        std::cout << "Initializing client from module B" << std::endl;
-        return (void*)0x2;
+        std::vector<bedrock::Dependency> deps = {
+            { "pool", "pool", true, false, true },
+            { "kv_store", "yokan", true, true, false }
+        };
+        return deps;
     }
 
-    void finalizeClient(void* client) override {
-        (void)client;
-        std::cout << "Finalizing client from module B" << std::endl;
+    static std::shared_ptr<bedrock::AbstractComponent>
+        Register(const bedrock::ComponentArgs& args) {
+            std::cout << "Registering a MyComponent" << std::endl;
+            std::cout << " -> mid = " << (void*)args.engine.get_margo_instance() << std::endl;
+            std::cout << " -> provider id = " << args.provider_id << std::endl;
+            std::cout << " -> config = " << args.config << std::endl;
+            std::cout << " -> name = " << args.name << std::endl;
+            std::cout << " -> tags = ";
+            for(auto& t : args.tags) std::cout << t << " ";
+            std::cout << std::endl;
+            auto pool_it = args.dependencies.find("pool");
+            auto pool = pool_it->second[0]->getHandle<thallium::pool>();
+            return std::make_shared<MyComponent>();
     }
 
-    void* createProviderHandle(void* client, hg_addr_t address, uint16_t provider_id) override {
-        (void)client;
-        (void)address;
-        (void)provider_id;
-        std::cout << "Creating a provider handle from module B" << std::endl;
-        return (void*)0x3;
+    void* getHandle() override {
+        return static_cast<void*>(m_provider.get());
     }
 
-    void destroyProviderHandle(void* providerHandle) override {
-        (void)providerHandle;
-        std::cout << "Destroying provider handle from module B" << std::endl;
+    /* optional */
+    std::string getConfig() override {
+        return "{}";
     }
 
-    const std::vector<bedrock::Dependency>& getProviderDependencies() override {
-        return m_provider_dependencies;
+    /* optional */
+    void changeDependency(
+            const std::string& dep_name,
+            const bedrock::NamedDependencyList& dependencies) override {
+        throw bedrock::Exception{"Operation not supported"};
     }
 
-    const std::vector<bedrock::Dependency>& getClientDependencies() override {
-        return m_client_dependencies;
+    /* optional */
+    void migrate(
+            const std::string& dest_addr,
+            uint16_t dest_component_id,
+            const std::string& options_json,
+            bool remove_source) override {
+        throw bedrock::Exception{"Operation not supported"};
     }
 
-    private:
+    /* optional */
+    void snapshot(
+            const std::string& dest_path,
+            const std::string& options_json,
+            bool remove_source) override {
+        throw bedrock::Exception{"Operation not supported"};
+    }
 
-    std::vector<bedrock::Dependency> m_provider_dependencies;
-    std::vector<bedrock::Dependency> m_client_dependencies;
+    /* optional */
+    void restore(
+            const std::string& src_path,
+            const char* options_json) override {
+        throw bedrock::Exception{"Operation not supported"};
+    }
 };
 
-BEDROCK_REGISTER_MODULE_FACTORY(module_b, ServiceBFactory)
+BEDROCK_REGISTER_COMPONENT_TYPE(my_module, MyComponent)
