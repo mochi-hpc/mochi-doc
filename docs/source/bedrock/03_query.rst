@@ -30,13 +30,13 @@ Multiple addresses can be passed, e.g.:
    bedrock-query <protocol> -a <address1> -a <address2> -a <address3>
 
 In this case, the resulting JSON object will have three entries,
-one for each address. If all the daemons are gathered in an SSG group
+one for each address. If all the daemons are gathered in an Flock group
 represented by a group file of a given *<filename>*, the following command
 will query all the members of the group.
 
 .. code-block:: console
 
-   bedrock-query <protocol> -s <filename>
+   bedrock-query <protocol> -f <filename>
 
 
 The :code:`-i/--provider-id` flag may be used to specify a provider
