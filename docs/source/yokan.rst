@@ -1,4 +1,4 @@
- **Yokan** (Key/Value storage component)
+Yokan (Key/Value storage component)
 =======================================
 
 Yokan is a Mochi microservice that provides single-node key/value and document storage
