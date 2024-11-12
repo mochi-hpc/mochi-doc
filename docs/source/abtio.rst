@@ -1,5 +1,5 @@
-ABT-IO
-======
+ABT-IO (Argobots-aware POSIX I/O)
+=================================
 
 ABT-IO is a Mochi library that provides wrappers for conventional POSIX I/O
 functions.  The wrappers are prefixed with :code:`abt_io_` as in

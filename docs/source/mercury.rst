@@ -1,5 +1,5 @@
-Mercury
-=======
+Mercury (Low-level RPC and RDMA)
+================================
 
 This section contains a series of tutorial on Mercury.
 These tutorials are aimed at people who want to use Mercury without

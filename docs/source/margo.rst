@@ -1,5 +1,5 @@
-Margo
-=====
+Margo (Core C runtime)
+======================
 
 Margo is a C library that helps develop distributed services
 based on RPC and RDMA.

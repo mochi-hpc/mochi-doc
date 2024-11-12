@@ -1,5 +1,5 @@
-PyMargo
-=======
+PyMargo (Margo for Python)
+==========================
 
 PyMargo is a python binding for Margo, with an object-oriented
 interface similar to that of thallium.

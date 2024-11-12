@@ -78,7 +78,7 @@ devices.
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.
 
-**SSG** is Mochi's Scalable Service Group library. It provides functionalities
+**SSG (Deprecated)** is Mochi's Scalable Service Group library. It provides functionalities
 to bootstrap a dynamic group of process and manage group membership. This
 library can be used for fault tolerance and/or to implement elastic services.
 

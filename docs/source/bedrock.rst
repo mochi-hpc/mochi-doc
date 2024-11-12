@@ -1,5 +1,5 @@
-Bedrock
-=======
+Bedrock (Bootstrapping and configuration)
+=========================================
 
 Composing various Mochi components together into a daemon program running
 the service can be done manually, by writing a C, C++, or Python code that

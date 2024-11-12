@@ -1,5 +1,5 @@
-SSG
-===
+SSG (Group membership - deprecated)
+===================================
 
 SSG is a C library that manages groups of processes.
 It can be used to monitor group membership for the purport of fault

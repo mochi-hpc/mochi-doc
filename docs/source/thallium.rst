@@ -1,5 +1,5 @@
-Thallium
-========
+Thallium (Core C++ runtime)
+===========================
 
 This section will walk you through a series of tutorials on how to use
 Thallium. We highly recommend to read at least up to the tutorial
