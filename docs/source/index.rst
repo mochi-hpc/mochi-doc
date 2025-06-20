@@ -78,6 +78,10 @@ devices.
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.
 
+**Plumber** is a library that can be used in conjunction with Margo (and
+thus also Thallium) to automatically select optimal network cards for Mochi
+processes to use if more than one is available on your system.
+
 **SSG (Deprecated)** is Mochi's Scalable Service Group library. It provides functionalities
 to bootstrap a dynamic group of process and manage group membership. This
 library can be used for fault tolerance and/or to implement elastic services.
