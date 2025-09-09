@@ -2,7 +2,7 @@ HPE Slingshot (CXI) network considerations
 ==========================================
 
 HPE systems that use the Slingshot (CXI) network fabric require some special
-considerations for use with Margo.  Examples are documented in the `platform-configurations repository <https://github.com/mochi-hpc/platform-configurations>`_.
+considerations for use with Margo.  Examples are documented in the `platform-configurations repository <https://github.com/mochi-hpc-experiments/platform-configurations>`_.
 
 The most important concept to understand is that in order for two processes
 to communicate over the Slingshot network, then they must share a VNI
@@ -36,6 +36,7 @@ Using a job level VNI (most common scenario)
 This is the preferred method no most systems.  In order to use it, you must
 launch all processes using either `srun` (on SLURM systems) or `mpiexec` (on
 PBS Pro systems) and use the following options:
+
 * for SLURM: `--network job_vni,single_node_vni`
 * for PBS Pro: `--single-node-vni`
 
@@ -54,3 +55,7 @@ or use it in jobs launched via `srun` by specifying the `--network no_vni`
 option.  These options prevent the resource manager from provisioning a VNI
 for the job, leaving Margo to use the default system VNI.
 
+Other configurations (rare)
+---------------------------
+You can also explicitly specify a VNI for Margo to use by setting the
+`auth_key` json parameter.  See the :ref:`JSON configuration documentation <_margo_09_config>` for details.

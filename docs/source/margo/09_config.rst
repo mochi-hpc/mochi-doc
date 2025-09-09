@@ -127,6 +127,7 @@ Let's examine this configuration in more details.
   network cards if none is specified by the user.  Right now it only
   influences systems using Slingshot (CXI) networks with more than one
   network card per node.
+
   - :code:`bucket_policy` defines how network cards are differentiated into
     buckets with different properties.  Options are "package", which groups
     network cards by locality to the CPU package (a.k.a. socket).  Other
@@ -162,7 +163,7 @@ Let's examine this configuration in more details.
   - :code:`listening` indicates whether the process is listening (server) or not (client);
   - :code:`auth_key` specifies a particular network authorization key for
     supported transports (such as Slingshot/CXI). The format is
-    "service:vni:index", where service is the network service to use, VNI is
+    `service:vni:index`, where service is the network service to use, VNI is
     the VNI number to use, and index (optional) is the index of the
     system-provided SLINGSHOT environment variables to use.  See your system
     documentation for more information.  Usually this does not need to be
