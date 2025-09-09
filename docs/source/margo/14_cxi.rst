@@ -58,4 +58,4 @@ for the job, leaving Margo to use the default system VNI.
 Other configurations (rare)
 ---------------------------
 You can also explicitly specify a VNI for Margo to use by setting the
-`auth_key` json parameter.  See the :ref:`JSON configuration documentation <_margo_09_config>` for details.
+`auth_key` json parameter.  See the :ref:`JSON configuration documentation <margo_09_config>` for details.
