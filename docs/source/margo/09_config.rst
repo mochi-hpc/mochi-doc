@@ -37,10 +37,15 @@ for example, we get the following configuration.
 
    {
      "progress_timeout_ub_msec":100,
+     "progress_spindown_msec":10,
      "enable_profiling":false,
      "enable_diagnostics":false,
      "handle_cache_size":32,
      "profile_sparkline_timeslice_msec":1000,
+     "plumber":{
+       "bucket_policy":"package",
+       "nic_policy":"roundrobin"
+     },
      "mercury":{
        "version":"2.0.0",
        "request_post_incr":256,
@@ -54,6 +59,7 @@ for example, we get the following configuration.
        "max_contexts":1,
        "address":"ofi+tcp;ofi_rxm://10.0.2.15:42925",
        "listening":true
+       "auth_key":"0:0"
      },
      "argobots":{
        "abt_mem_max_num_stacks":8,
@@ -103,6 +109,11 @@ Let's examine this configuration in more details.
    including just the fields you want to change from their default values
    (shown above).
 
+- :code:`progress_spindown_msec` is the "spindown" time, or the number of
+  milliseconds that Margo will continue to actively poll for new events once
+  all pending events are completed.  This improves latency and power
+  consumption for sequential workloads by preventing Margo from entering
+  idle mode too quickly.
 - :code:`progress_timeout_ub_msec` is the number of milliseconds
   that will be passed to Mercury's progress function as maximum timeout;
 - :code:`enable_profiling` enables internal profiling (extensive statistics
@@ -112,6 +123,25 @@ Let's examine this configuration in more details.
   reuse RPC handles instead of allocating new ones;
 - :code:`profiling_sparkline_timeslice_msec` is the granularity of data collection
   for sparklines (when profiling is enabled);
+- The :code:`plumber` section (if present) governs how Margo will select
+  network cards if none is specified by the user.  Right now it only
+  influences systems using Slingshot (CXI) networks with more than one
+  network card per node.
+
+  - :code:`bucket_policy` defines how network cards are differentiated into
+    buckets with different properties.  Options are "package", which groups
+    network cards by locality to the CPU package (a.k.a. socket).  Other
+    options include "numa", which groups cards by NUMA domain, "all" which
+    puts all available network cards into a single bucket, and
+    "passthrough", which instructs Margo to pass network addresses
+    unmodified to the network stack.
+  - :code:`nic_policy` defines how cards are selected from the buckets
+    defined above.  "roundrobin" cycles evenly among all network cards in a
+    given bucket. "random" selects network cards randomly.  "bycore" selects
+    network cards based on a static mapping of what core the process is
+    executing on to a network card, while "byset" is similar to "bycore" but
+    considers the cpuset that the process is elegible to run on rather than
+    the one core that it is currently running on.
 - The :code:`mercury` section provides Mercury parameters:
 
   - :code:`version` will be filled by Margo and does not need to be provided;
@@ -131,6 +161,13 @@ Let's examine this configuration in more details.
   - :code:`max_contexts` is the maximum number of Mercury contexts that can be created;
   - :code:`address` is completed by Margo to provide the process address;
   - :code:`listening` indicates whether the process is listening (server) or not (client);
+  - :code:`auth_key` specifies a particular network authorization key for
+    supported transports (such as Slingshot/CXI). The format is
+    `service:vni:index`, where service is the network service to use, VNI is
+    the VNI number to use, and index (optional) is the index of the
+    system-provided SLINGSHOT environment variables to use.  See your system
+    documentation for more information.  Usually this does not need to be
+    explicitly specified.
 
 - The :code:`argobots` section configures the Argobots run time:
 

@@ -19,7 +19,7 @@ simplicity of a multi-threaded execution model.
 This section will walk you through a series of tutorials on how to use
 Margo. We highly recommend to read all the tutorials before diving into
 the implementation of any Margo-based service, in order to understand how
-we envision designing such a service. This will also help you greatly 
+we envision designing such a service. This will also help you greatly
 in understanding other Margo-based services.
 
 .. toctree::
@@ -38,4 +38,5 @@ in understanding other Margo-based services.
    margo/11_timers.rst
    margo/12_profiling.rst
    margo/13_lifetime.rst
+   margo/14_cxi.rst
    margo/api.rst
