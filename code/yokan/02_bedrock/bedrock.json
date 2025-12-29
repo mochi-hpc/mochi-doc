@@ -1,7 +1,7 @@
 {
-    "libraries": {
-        "yokan": "libyokan-bedrock-module.so"
-    },
+    "libraries": [
+        "libyokan-bedrock-module.so"
+    ],
     "providers": [
         {
             "name" : "my_yokan_provider",
