@@ -79,7 +79,6 @@ install Margo if you didn't install it before, as well as its dependencies).
 :code:`spack install argobots` can be used to install Argobots, should you
 need to install either independently of Margo or Thallium.
 :code:`spack install mochi-abt-io` will install ABT-IO.
-:code:`spack install mochi-ssg` will install SSG.
 
 Loading and using the Mochi libraries
 -------------------------------------
@@ -116,7 +115,7 @@ Within a cmake project, Thallium, Mercury, Yokan, and Bedrock can be found using
    find_package(yokan REQUIRED)
    find_package(bedrock REQUIRED)
 
-To make cmake find Margo, Argobots, ABT-IO, or SSG, you can use
+To make cmake find Margo, Argobots, or ABT-IO, you can use
 cmake's PkgConfig module:
 
 .. code-block:: console
@@ -125,7 +124,6 @@ cmake's PkgConfig module:
    pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
    pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
    pkg_check_modules (ABTIO REQUIRED IMPORTED_TARGET abt-io)
-   pkg_check_modules (SSG REQUIRED IMPORTED_TARGET ssg)
 
 You can now link targets as follows.
 
@@ -150,10 +148,6 @@ You can now link targets as follows.
    # Code using ABT-IO
    add_executable(my_abt_io_prog source.c)
    target_link_libraries(my_abt_io_prog PkgConfig::ABTIO)
-
-   # Code using SSG
-   add_executable(my_ssg_prog source.c)
-   target_link_libraries(my_ssg_prog PkgConfig::SSG)
 
    # Code using Bedrock
    add_executable(my_bedrock_prog source.cpp)

@@ -71,14 +71,14 @@ provider creation function when calling it.
 Dependency resolution
 ---------------------
 
-The :code:`dependencies` section in a provider or client lists dependency names associated with
-values. These values can be one of the following.
+The :code:`dependencies` section in a provider lists dependency names associated with
+values. These values can be one of the following:
 
-- The name of an Argobots pool listed in the :code:`"margo"` section of the configurations;
-- The name of an Argoots execution stream listed in the :code:`"margo"` section of the configurations;
-- For providers, the name of another provider defined in the same JSON file
+- **Pool**: The name of an Argobots pool listed in the :code:`"margo"` section;
+- **Xstream**: The name of an Argobots execution stream listed in the :code:`"margo"` section;
+- **Local provider**: The name of another provider defined in the same JSON file
   (such provider must have been defined before) will resolve to a pointer to this provider;
-- A string of the form :code:`"<name>@<location>"` or :code:`"<type>:<id>@<location>"`
+- **Remote provider**: A string of the form :code:`"<name>@<location>"` or :code:`"<type>:<id>@<location>"`
   will resolve into a provider handle pointing to a specific provider identified
   either by its *<name>* or by its *<type>* and provider *<id>* at the specified
   *<location>*. The location may be either :code:`local`, to refer to the calling
@@ -90,3 +90,7 @@ dependencies that must be provided, as well as their types. Some of these depend
 may be listed as optional, some may be mandatory, in which case Bedrock will fail
 if the dependency isn't provided in the :code:`dependencies` section of the provider.
 Some dependencies may be an array, some may be a single string.
+
+.. note::
+   The :code:`clients` section from earlier versions of Bedrock has been deprecated.
+   Clients should now be initialized directly using the component's client library API.

@@ -1,0 +1,23 @@
+{
+    "libraries": [
+        "libflock-bedrock-module.so"
+    ],
+    "providers": [
+        {
+            "type": "flock",
+            "name": "my_flock_provider",
+            "provider_id": 42,
+            "config": {
+                "bootstrap": "self",
+                "group": {
+                    "type": "centralized",
+                    "config": {
+                        "heartbeat_interval_ms": 5000,
+                        "failure_timeout_ms": 15000
+                    }
+                },
+                "file": "mygroup.flock"
+            }
+        }
+    ]
+}

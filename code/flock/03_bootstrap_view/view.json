@@ -1,0 +1,21 @@
+{
+    "members": [
+        {
+            "address": "na+sm://12345/0",
+            "provider_id": 42,
+            "rank": 0
+        },
+        {
+            "address": "na+sm://12346/0",
+            "provider_id": 42,
+            "rank": 1
+        },
+        {
+            "address": "na+sm://12347/0",
+            "provider_id": 42,
+            "rank": 2
+        }
+    ],
+    "digest": 0,
+    "metadata": ""
+}

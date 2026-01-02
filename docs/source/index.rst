@@ -70,6 +70,14 @@ Other Mochi libraries/components
 **Yokan** is Mochi's main key/value storage service. It provides many
 backends and a rich API, including C, C++, and Python bindings.
 
+**Warabi** is Mochi's blob storage service. It provides capabilities for
+storing binary large objects with support for multiple backends (memory,
+persistent memory, ABT-IO) and efficient bulk transfers.
+
+**Flock** is Mochi's group management service. It provides functionalities
+to form and manage groups of distributed processes with multiple bootstrap
+methods (self, view, MPI, join, file) and backends (static, centralized).
+
 **Bake** is Mochi's main bulk storage service. It provides ways to
 store raw data in local devices such as SSDs or persistent memory
 devices.
@@ -77,10 +85,6 @@ devices.
 **ABT-IO** is a small library that can be used to offload POSIX
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.
-
-**SSG (Deprecated)** is Mochi's Scalable Service Group library. It provides functionalities
-to bootstrap a dynamic group of process and manage group membership. This
-library can be used for fault tolerance and/or to implement elastic services.
 
 Developing and deploying a service
 ----------------------------------
@@ -109,8 +113,9 @@ Contents
    argobots.rst
    pymargo.rst
    yokan.rst
+   warabi.rst
+   flock.rst
    abtio.rst
-   ssg.rst
    templates.rst
    bedrock.rst
    interop.rst

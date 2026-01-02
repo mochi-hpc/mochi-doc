@@ -1,0 +1,34 @@
+{
+    "libraries": {
+        "warabi": "libwarabi-bedrock-module.so"
+    },
+    "providers": [
+        {
+            "type": "warabi",
+            "name": "my_warabi_provider",
+            "provider_id": 42,
+            "config": {
+                "targets": [
+                    {
+                        "type": "memory",
+                        "config": {}
+                    },
+                    {
+                        "type": "pmem",
+                        "config": {
+                            "path": "/mnt/pmem/warabi",
+                            "size": 10737418240
+                        }
+                    },
+                    {
+                        "type": "abt-io",
+                        "config": {
+                            "path": "/data/warabi",
+                            "num_threads": 4
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,90 @@
+{
+    "margo": {
+        "argobots": {
+            "pools": [
+                {
+                    "name": "rpc_pool",
+                    "kind": "fifo_wait",
+                    "access": "mpmc"
+                },
+                {
+                    "name": "yokan_pool",
+                    "kind": "fifo_wait",
+                    "access": "mpmc"
+                }
+            ],
+            "xstreams": [
+                {
+                    "name": "rpc_xstream",
+                    "cpubind": 0,
+                    "affinity": [0, 1],
+                    "scheduler": {
+                        "type": "basic_wait",
+                        "pools": ["rpc_pool"]
+                    }
+                },
+                {
+                    "name": "yokan_xstream_1",
+                    "cpubind": 2,
+                    "affinity": [2, 3],
+                    "scheduler": {
+                        "type": "basic_wait",
+                        "pools": ["yokan_pool"]
+                    }
+                },
+                {
+                    "name": "yokan_xstream_2",
+                    "cpubind": 4,
+                    "affinity": [4, 5],
+                    "scheduler": {
+                        "type": "basic_wait",
+                        "pools": ["yokan_pool"]
+                    }
+                }
+            ]
+        },
+        "rpc_pool": "rpc_pool"
+    },
+    "libraries": {
+        "abt_io": "libabt-io-bedrock-module.so",
+        "yokan": "libyokan-bedrock-module.so"
+    },
+    "providers": [
+        {
+            "name": "my_abt_io",
+            "type": "abt_io",
+            "provider_id": 1,
+            "pool": "__primary__",
+            "config": {
+                "num_threads": 4
+            }
+        },
+        {
+            "name": "high_perf_db",
+            "type": "yokan",
+            "provider_id": 42,
+            "pool": "yokan_pool",
+            "config": {
+                "database": {
+                    "type": "rocksdb",
+                    "config": {
+                        "path": "/mnt/nvme/yokan_db",
+                        "create_if_missing": true,
+                        "write_buffer_size": 134217728,
+                        "max_write_buffer_number": 4,
+                        "target_file_size_base": 134217728,
+                        "max_bytes_for_level_base": 1073741824,
+                        "compression": "lz4",
+                        "block_cache_size": 536870912,
+                        "max_background_jobs": 4,
+                        "use_direct_reads": false,
+                        "use_direct_io_for_flush_and_compaction": false
+                    }
+                }
+            },
+            "dependencies": {
+                "abt_io": "my_abt_io"
+            }
+        }
+    ]
+}

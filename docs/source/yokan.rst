@@ -15,6 +15,7 @@ This section will walk you through a series of tutorials on how to use Yokan.
    :maxdepth: 1
 
    yokan/01_init.rst
+   yokan/02_advanced_setup.rst
    yokan/03_basics.rst
    yokan/04_multi.rst
    yokan/05_modes.rst
@@ -22,3 +23,7 @@ This section will walk you through a series of tutorials on how to use Yokan.
    yokan/07_backends.rst
    yokan/08_bindings.rst
    yokan/09_filters.rst
+   yokan/10_migration.rst
+   yokan/11_watcher.rst
+   yokan/12_python.rst
+   yokan/13_cpp.rst

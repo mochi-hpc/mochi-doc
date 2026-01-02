@@ -435,7 +435,7 @@ used to dynamically load additional service providers.
         [+]  2y7oqvk              ^libfabric@1.15.1%gcc@11.2.0~debug~disable-spinlocks~kdreg fabrics=rxm,tcp arch=linux-ubuntu22.04-skylake
         [+]  x7yeuj2          ^pkg-config@0.29.2%gcc@11.2.0+internal_glib arch=linux-ubuntu22.04-skylake
         ==> Concretized mochi-bedrock
-         -   gyni5wv  mochi-bedrock@0.5.2%gcc@11.2.0+abtio~ipo~mona~mpi+ssg build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
+         -   gyni5wv  mochi-bedrock@0.5.2%gcc@11.2.0+abtio~ipo~mona~mpi build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
         [+]  xuzv4eo          ^cmake@3.22.1%gcc@11.2.0~doc+ncurses+ownlibs~qt build_type=Release arch=linux-ubuntu22.04-skylake
          -   kqupezf          ^fmt@8.1.1%gcc@11.2.0~ipo+pic~shared build_type=RelWithDebInfo cxxstd=11 arch=linux-ubuntu22.04-skylake
          -   euf7mld          ^mochi-abt-io@0.5.1%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
@@ -453,8 +453,6 @@ used to dynamically load additional service providers.
         [+]  yvp5cp6          ^mochi-margo@0.9.10%gcc@11.2.0~pvar arch=linux-ubuntu22.04-skylake
         [+]  7xpep5r              ^mercury@2.2.0%gcc@11.2.0~bmi~boostsys~checksum~debug~hwloc~ipo~mpi+ofi~psm~psm2+shared+sm~ucx~udreg build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
         [+]  2y7oqvk                  ^libfabric@1.15.1%gcc@11.2.0~debug~disable-spinlocks~kdreg fabrics=rxm,tcp arch=linux-ubuntu22.04-skylake
-         -   kai5m5m          ^mochi-ssg@0.5.3%gcc@11.2.0~drc+mpi~pmix~valgrind patches=f23321f arch=linux-ubuntu22.04-skylake
-         -   533ib4c              ^mpich@4.0.2%gcc@11.2.0~argobots~benvolio~cuda+fortran+hwloc+hydra+libxml2+pci~rocm+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch3 netmod=ofi patches=d4c0e99 pmi=pmi arch=linux-ubuntu22.04-skylake
          -   wcburov          ^mochi-thallium@0.10.1%gcc@11.2.0+cereal~ipo build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
          -   e6u5uqj              ^cereal@1.3.2%gcc@11.2.0~ipo build_type=RelWithDebInfo patches=2dfa0bf arch=linux-ubuntu22.04-skylake
          -   wzxn4cn          ^nlohmann-json@3.11.2%gcc@11.2.0~ipo+multiple_headers build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
@@ -577,8 +575,7 @@ format.
                     "rpc_pool": 0,
                     "version": "0.9.10"
                 },
-                "providers": [],
-                "ssg": []
+                "providers": []
             }
         }
 

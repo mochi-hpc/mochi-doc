@@ -46,31 +46,10 @@
         "pool": "my_rpc_pool",
         "provider_id": 0
     },
-    "abt_io" : [
-        {
-            "name" : "my_abt_io",
-            "pool" : "__primary__"
-        }
-    ],
-    "ssg" : [
-        {
-            "name" : "mygroup",
-            "bootstrap" : "init",
-            "group_file" : "mygroup.ssg"
-        }
-    ],
     "libraries" : {
         "module_a" : "examples/libexample-module-a.so",
         "module_b" : "examples/libexample-module-b.so"
     },
-    "clients" : [
-        {
-            "name" : "ClientA",
-            "type" : "module_a",
-            "config" : {},
-            "dependencies" : {}
-        }
-    ],
     "providers" : [
         {
             "name" : "ProviderA",
@@ -87,10 +66,8 @@
             "pool" : "__primary__",
             "config" : {},
             "dependencies" : {
-                "ssg_group" : "mygroup",
                 "a_provider" : "ProviderA",
-                "a_local" : [ "ProviderA@local" ],
-                "a_client" : "module_a:client"
+                "a_local" : [ "ProviderA@local" ]
             }
         }
     ]
