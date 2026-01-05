@@ -12,7 +12,7 @@ The Mochi philosophy
 --------------------
 
 The philosophy of the Mochi project consists of providing a set of building blocks
-for developing HPC data service. Each building block is meant to offer **efficient**,
+for developing HPC data services. Each building block is meant to offer **efficient**,
 **location-agnostic** access to a simple set of functionalities through
 **modular backends**, while **seamlessly sharing hardware** (compute and network)
 with other building blocks.
@@ -34,12 +34,12 @@ by sharing a common networking and threading layer: Margo.
 Design overview
 ---------------
 
-The typical design of a Mochi microservice revolves around four libraries:
-*server*, *client*, *admin*, and *bedrock module*.
+The typical design of a Mochi microservice revolves around three libraries:
+*server*, *client*, and *bedrock module*.
 
 - The server library contains a service **provider**, that is, an object that
   can receive some predefined RPCs to offer a particular functionality. Within
-  the same process, multiple providers of the same service may be instantiated,
+  the same process, multiple providers may be instantiated,
   using distinct **provider ids** (*uint16_t*). A provider is responsible for
   managing a set of **resources**. In the example of a storage for key/value
   pairs, a resource may be a database. The functionalities of a provider may
@@ -52,28 +52,22 @@ The typical design of a Mochi microservice revolves around four libraries:
   services interact with providers. It will typically provide a client structure
   that is used to register the set of RPCs that can be invoked, and a **resource handle**
   structure that references a particular resource located on a particular provider.
-  User applications will typically initialize a singe client object for a service, and
+  User applications will typically initialize a single client object for a service, and
   from this client object instantiate as many resource handles as needed to interact with
-  available resources. Resources are identified by a **resource id**, which are generally
-  either a name, an integer, or a `uuid <https://en.wikipedia.org/wiki/Universally_unique_identifier>`_
-  (this template project uses uuids).
-- The **admin** library is the library through which a user application can send
-  requests that are meant for the provider itself rather than for a resource.
-  A few most common such requests include the creation and destruction of
-  resources, their migration, etc. It can be useful to think of the admin
-  library as the set of features you would want to provide to the person or
-  application that sets up the service, rather than the person or application
-  that uses its functionalities.
+  available resources/providers.
 - The **bedrock module** library enables using your component with Bedrock.
-  It is implemented in *src/bedrock-module.c*.
+  It is implemented in C++ *src/bedrock-module.cpp* and required Thallium.
+  This library wraps a provider into an object inheriting from :code:`bedrock::AbstractComponent`,
+  which Bedrock will use to instantiate providers. This library should be linked
+  against the Bedrock Module API library.
 
 Organization of the template project
 ------------------------------------
 
 The template project illustrates how a Margo-based microservice could
 be architected. It can be compiled as-is, and provides a couple of
-functionalities that make the provider print a "Hello World" message
-on its standard output, or compute the sum of two integers.
+functionalities that make the provider compute the sum of integers
+in various ways to demonstrate Margo's functionalities.
 
 This template project uses *alpha* as the name of your microservice.
 Functions, types, files, and libraries therefore use the *alpha* prefix.
@@ -97,11 +91,6 @@ The *include* directory of this template project provides public header files.
 - *alpha/alpha-backend.h* contains the definition of a structure that
   one would need to implement in order to provide a new backend for
   your microservice;
-- *alpha/alpha-admin.h* contains the functions to create and destroy
-  an admin object, as well as admin functions to interact with a provider;
-- *alpha/alpha-provider-handle.h* contains the definition of a provider handle.
-  This type of construct is often used in Mochi services to encapsulate
-  an address and a provider id.
 
 The implementation of all these functions is located in the *src* directory.
 The source also includes functionalities such as a small header-based logging library.
@@ -114,21 +103,18 @@ acknowledges requests but does not process them, or provides mock results.
 
 The *examples* directory contains an example using the microservice:
 the server example will start a provider and print its address (if logging was enabled).
-The admin example will connect to this provider and have it create a resource, then
-print the resource id. The client example can be run next to interact with the resource.
+The client example can be run next to interact with the resource.
 
 The *tests* directory contains a set of unit tests for your service.
-It relies on `µnit <https://nemequ.github.io/munit>`_ (included in the repository),
-a C unit-test library under an MIT license. Feel free to continue using it as you
-add more functionalities to your microservice; unit-testing is just good software
-development practice in general.
+They rely on `Catch2 <https://github.com/catchorg/Catch2>`_ and
+are implemented in C++.
 
 The template also contains a *spack.yaml* file at its root that can be used to
 install its dependencies. You may add additional dependencies into this file as
 your microservice gets more complex.
 
 As you modify this project to implement your own microservice, feel free to remove
-any dependencies you don't like (such as json-c or µnit) and adapt it to your needs!
+any dependencies you don't like (such as json-c or Catch2) and adapt it to your needs!
 
 Setting up your project
 -----------------------
@@ -160,7 +146,7 @@ Your repo is now ready to use!
 Building the project
 --------------------
 
-The project's dependencies may be build using `spack <https://spack.readthedocs.io/en/latest/>`_.
+The project's dependencies may be built using `spack <https://spack.readthedocs.io/en/latest/>`_.
 You will need to have setup `mochi-spack-packages <https://github.com/mochi-hpc/mochi-spack-packages>`_ as external
 namespace for spack, which can be done as follows.
 
