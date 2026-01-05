@@ -49,8 +49,12 @@ the compiler to generate the right deserialization code.
 .. warning::
    A common miskate consists of changing the arguments accepted by an RPC handler
    but forgetting to update the calls to that RPC on clients. This can lead to data
-   corruptions or crashes. Indeed, Thallium has no way to check that the types passed
-   by the client to the RPC call are the ones expected by the server.
+   corruptions or crashes. By default, Thallium has no way to check that the types passed
+   by the client to the RPC call are the ones expected by the server. To debug such
+   problems, you can compile your code with :code:`-DTHALLIUM_DEBUG_RPC_TYPES` or
+   link it (with cmake) against the :code:`thallium_check_types` target. This
+   will add the name of the type as a payload to the RPC (hence increasing the size of
+   these payloads) and will check that the type matches upon deserialization.
 
 .. warning::
    Another common mistake is to use integers of different size on client and server.
@@ -60,7 +64,8 @@ the compiler to generate the right deserialization code.
    :code:`void sum(const tl::request& req, int64_t x, int64_t y)`,
    the call would have led to data corruptions and potential crash. One way to ensure
    that the right types are used is to explicitely cast the litterals:
-   :code:`sum.on(server)(static_cast<int64_t>(42), static_cast<int64_t>(63));`.
+   :code:`sum.on(server)(static_cast<int64_t>(42), static_cast<int64_t>(63));`,
+   or assign them to variables of a known type.
 
 Timeout
 -------
