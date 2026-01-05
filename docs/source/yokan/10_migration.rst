@@ -62,8 +62,8 @@ Basic migration example
 
 Here's a simple example of migrating a database:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_basic.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_basic.c
+   :language: c
 
 This example:
 
@@ -78,8 +78,8 @@ Migration with removal
 
 To move data (rather than copy), use ``remove_source = true``:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_remove.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_remove.c
+   :language: c
 
 After this migration, the source database will be empty.
 
@@ -118,8 +118,8 @@ Migrates only key/value pairs matching the filter. Modes include:
 
 **Example with filter**:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_filter.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_filter.c
+   :language: c
 
 Backend compatibility
 ---------------------
@@ -150,8 +150,8 @@ runtime configuration APIs.
 Programmatic migration
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_bedrock.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_bedrock.c
+   :language: c
 
 Using Bedrock runtime API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -177,8 +177,8 @@ Error handling
 
 Migration can fail for various reasons:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_error.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_error.c
+   :language: c
 
 Common errors:
 
@@ -232,8 +232,8 @@ Advanced: Incremental migration
 
 For very large databases, consider incremental migration:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_incremental.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_incremental.c
+   :language: c
 
 This approach:
 

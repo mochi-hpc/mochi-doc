@@ -42,8 +42,8 @@ Basic Wait/Notify Example
 
 Here's a simple example demonstrating the wait/notify pattern:
 
-.. literalinclude:: ../../code/yokan/11_watcher/wait_notify_basic.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/11_watcher/wait_notify_basic.c
+   :language: c
 
 In this example:
 
@@ -60,8 +60,8 @@ Multiple Waiters
 Multiple clients can wait for the same key. When a put operation
 uses ``YOKAN_MODE_NOTIFY``, all waiting clients are woken up:
 
-.. literalinclude:: ../../code/yokan/11_watcher/wait_notify_multi.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/11_watcher/wait_notify_multi.c
+   :language: c
 
 This is useful for broadcast-style notifications where multiple workers
 need to be triggered by the same event.
@@ -72,8 +72,8 @@ Producer/Consumer Pattern
 A common use case is implementing producer/consumer queues where consumers
 wait for producers to provide data:
 
-.. literalinclude:: ../../code/yokan/11_watcher/producer_consumer.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/11_watcher/producer_consumer.c
+   :language: c
 
 This example demonstrates:
 
@@ -87,8 +87,8 @@ Distributed Coordination
 
 Wait/notify can coordinate distributed processes across different nodes:
 
-.. literalinclude:: ../../code/yokan/11_watcher/distributed_coord.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/11_watcher/distributed_coord.c
+   :language: c
 
 This pattern is useful for:
 
@@ -103,8 +103,8 @@ Without Wait/Notify
 For comparison, here's what coordination looks like without wait/notify,
 using polling instead:
 
-.. literalinclude:: ../../code/yokan/11_watcher/without_wait.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/11_watcher/without_wait.c
+   :language: c
 
 The polling approach:
 
@@ -120,8 +120,8 @@ Error Handling and Timeouts
 
 Wait operations can be interrupted when the provider shuts down:
 
-.. literalinclude:: ../../code/yokan/11_watcher/wait_timeout.cpp
-   :language: cpp
+.. literalinclude:: ../../../code/yokan/11_watcher/wait_timeout.c
+   :language: c
 
 Best practices for wait/notify:
 
@@ -145,7 +145,7 @@ Bedrock Integration
 When using Yokan with Bedrock, ensure your backend configuration supports
 wait/notify:
 
-.. literalinclude:: ../../code/yokan/11_watcher/bedrock-config.json
+.. literalinclude:: ../../../code/yokan/11_watcher/bedrock-config.json
    :language: json
 
 The ``map`` backend fully supports wait/notify operations. Other backends

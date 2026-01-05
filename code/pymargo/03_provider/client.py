@@ -1,6 +1,6 @@
 import sys
-from pymargo.core import Engine, MargoException
-import pymargo
+from mochi.margo import Engine, MargoException
+import mochi.margo as pymargo
 
 if __name__ == "__main__":
     with Engine("tcp", mode=pymargo.client) as engine:

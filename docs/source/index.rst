@@ -78,10 +78,6 @@ persistent memory, ABT-IO) and efficient bulk transfers.
 to form and manage groups of distributed processes with multiple bootstrap
 methods (self, view, MPI, join, file) and backends (static, centralized).
 
-**Bake** is Mochi's main bulk storage service. It provides ways to
-store raw data in local devices such as SSDs or persistent memory
-devices.
-
 **ABT-IO** is a small library that can be used to offload POSIX
 I/O operations to dedicated execution stream to better integrate with
 the core Mochi libraries. ABT-IO depends on Argobots only.

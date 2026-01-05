@@ -530,6 +530,6 @@ Test different configurations and measure performance.
 Next steps
 ----------
 
-- :doc:`11_cpp`: Learn about the C++ API
+- :doc:`11_c_api`: Learn about the C API
 - :ref:`Bedrock`: Learn more about Bedrock features
 - :doc:`06_transfer_managers`: Optimize transfer performance

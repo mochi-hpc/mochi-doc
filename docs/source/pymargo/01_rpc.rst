@@ -18,7 +18,7 @@ prints them, and returns a string.
 The :code:`Engine`'s constructor takes the protocol as the first
 argument. Additional arguments may be provided:
 
-- :code:`mode`: :code:`pymargo.client` or :code:`pymargo.server`,
+- :code:`mode`: :code:`mochi.margo.client` or :code:`mochi.margo.server`,
   to indicate whether the engine will be used as a client or a
   server (defaults to server);
 - :code:`use_progress_thread`: a boolean indicating whether to
@@ -57,13 +57,15 @@ can be anything, as long as their types are
 The :code:`Handle` object is used to call :code:`respond`, among other things.
 :code:`handle.address` can be used to get the address of the sender.
 Any object can be passed to :code:`respond`, again as long as its type
-is pickleable. Here, our function takes two argument (firstname and lastname)
+is pickleable. Here, our function takes two arguments (firstname and lastname)
 of expected type :code:`str`, and will respond with a string.
 
-Note that the :code:`Engine` is used as a context manager (:code:`with` statement),
-this context will automatically call :code:`finalize` on the engine
-when exiting, hence we have to explicitely block on a :code:`wait_for_finalize`
-call to avoid exiting the context and start servicing RPCs.
+.. note::
+
+   The :code:`Engine` is used as a context manager (:code:`with` statement),
+   this context will automatically call :code:`finalize` on the engine
+   when exiting, hence we have to explicitely block on a :code:`wait_for_finalize`
+   call to avoid exiting the context and start servicing RPCs.
 
 PyMargo client
 --------------
@@ -73,7 +75,8 @@ The following code is the corresponding client.
 .. literalinclude:: ../../../code/pymargo/01_rpc/client.py
    :language: python
 
-In this code, we initialize the :code:`Engine` with :code:`mode=pymargo.client`.
+In this code, we initialize the :code:`Engine` with :code:`mode=pymargo.client`
+(note that the code imports :code:`mochi.margo as pymargo` for convenience).
 We then use the engine's :code:`lookup` function to convert a string address
 (taken from :code:`sys.argv[1]`) into an :code:`Address` object.
 

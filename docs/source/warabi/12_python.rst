@@ -20,7 +20,7 @@ Quick Start
 
 Here's a simple example of using Warabi from Python:
 
-.. literalinclude:: ../../code/warabi/12_python/quickstart.py
+.. literalinclude:: ../../../code/warabi/12_python/quickstart.py
    :language: python
 
 This example demonstrates:
@@ -39,7 +39,7 @@ Warabi providers:
 Basic Provider Creation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../code/warabi/12_python/server_basic.py
+.. literalinclude:: ../../../code/warabi/12_python/server_basic.py
    :language: python
 
 Backend Configuration
@@ -47,7 +47,7 @@ Backend Configuration
 
 Warabi supports multiple storage backends:
 
-.. literalinclude:: ../../code/warabi/12_python/server_backends.py
+.. literalinclude:: ../../../code/warabi/12_python/server_backends.py
    :language: python
 
 Available backends:
@@ -66,7 +66,7 @@ classes for interacting with Warabi providers.
 Basic Operations
 ~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../code/warabi/12_python/client_basic.py
+.. literalinclude:: ../../../code/warabi/12_python/client_basic.py
    :language: python
 
 Key operations:
@@ -83,7 +83,7 @@ Working with Regions
 
 Regions are logical containers for blob data:
 
-.. literalinclude:: ../../code/warabi/12_python/regions.py
+.. literalinclude:: ../../../code/warabi/12_python/regions.py
    :language: python
 
 Regions support:
@@ -98,7 +98,7 @@ Buffer Protocol Support
 
 Like Yokan, Warabi supports Python's buffer protocol for efficient zero-copy operations:
 
-.. literalinclude:: ../../code/warabi/12_python/buffer_protocol.py
+.. literalinclude:: ../../../code/warabi/12_python/buffer_protocol.py
    :language: python
 
 Using buffer protocol objects (``bytearray``, ``memoryview``, NumPy arrays) avoids
@@ -109,7 +109,7 @@ Asynchronous Operations
 
 Warabi provides async operations for non-blocking I/O:
 
-.. literalinclude:: ../../code/warabi/12_python/async_operations.py
+.. literalinclude:: ../../../code/warabi/12_python/async_operations.py
    :language: python
 
 Async operations return ``AsyncRequest`` or ``AsyncCreateRequest`` objects that
@@ -125,7 +125,7 @@ Persistence Control
 
 Control when data is persisted to storage:
 
-.. literalinclude:: ../../code/warabi/12_python/persistence.py
+.. literalinclude:: ../../../code/warabi/12_python/persistence.py
    :language: python
 
 Persistence strategies:
@@ -140,7 +140,7 @@ Working with NumPy Arrays
 
 Warabi integrates seamlessly with NumPy:
 
-.. literalinclude:: ../../code/warabi/12_python/numpy_example.py
+.. literalinclude:: ../../../code/warabi/12_python/numpy_example.py
    :language: python
 
 This is useful for:
@@ -156,7 +156,7 @@ Error Handling
 The Python bindings raise ``mochi.warabi.client.Exception`` for client errors
 and ``mochi.warabi.server.Exception`` for server errors:
 
-.. literalinclude:: ../../code/warabi/12_python/error_handling.py
+.. literalinclude:: ../../../code/warabi/12_python/error_handling.py
    :language: python
 
 Always wrap Warabi operations in try/except blocks to handle:
@@ -174,7 +174,7 @@ Context Manager
 
 Create a context manager for automatic cleanup:
 
-.. literalinclude:: ../../code/warabi/12_python/context_manager.py
+.. literalinclude:: ../../../code/warabi/12_python/context_manager.py
    :language: python
 
 Batch Operations
@@ -182,7 +182,7 @@ Batch Operations
 
 Efficient batch processing:
 
-.. literalinclude:: ../../code/warabi/12_python/batch_operations.py
+.. literalinclude:: ../../../code/warabi/12_python/batch_operations.py
    :language: python
 
 Data Migration Pattern
@@ -190,7 +190,7 @@ Data Migration Pattern
 
 Migrate data between storage backends:
 
-.. literalinclude:: ../../code/warabi/12_python/migration_pattern.py
+.. literalinclude:: ../../../code/warabi/12_python/migration_pattern.py
    :language: python
 
 Performance Tips
@@ -239,7 +239,7 @@ Use Python for:
 - Data analysis and visualization
 - Less performance-critical applications
 
-Use C++ (see :doc:`11_cpp`) for:
+Use C++ for:
 
 - Production HPC services
 - Performance-critical code
@@ -253,7 +253,7 @@ With Bedrock
 
 Using Warabi through Bedrock in Python:
 
-.. literalinclude:: ../../code/warabi/12_python/with_bedrock.py
+.. literalinclude:: ../../../code/warabi/12_python/with_bedrock.py
    :language: python
 
 With Other Mochi Services
@@ -261,7 +261,7 @@ With Other Mochi Services
 
 Combining Warabi with Yokan for metadata + blob storage:
 
-.. literalinclude:: ../../code/warabi/12_python/with_yokan.py
+.. literalinclude:: ../../../code/warabi/12_python/with_yokan.py
    :language: python
 
 Building Higher-Level APIs
@@ -269,7 +269,7 @@ Building Higher-Level APIs
 
 Create application-specific abstractions:
 
-.. literalinclude:: ../../code/warabi/12_python/higher_level_api.py
+.. literalinclude:: ../../../code/warabi/12_python/higher_level_api.py
    :language: python
 
 This allows you to:
@@ -282,7 +282,7 @@ This allows you to:
 Next Steps
 ----------
 
-- Learn about :doc:`11_cpp` for C++ API details
+- Learn about :doc:`11_c_api` for C API details
 - Review :doc:`08_migration` for data migration patterns
 - See :doc:`09_async` for async operation details
 - Explore :doc:`10_bedrock` for deployment options

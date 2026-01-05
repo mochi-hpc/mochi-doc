@@ -20,7 +20,7 @@ Quick Start
 
 Here's a simple example of using Yokan from Python:
 
-.. literalinclude:: ../../code/yokan/12_python/quickstart.py
+.. literalinclude:: ../../../code/yokan/12_python/quickstart.py
    :language: python
 
 This example demonstrates:
@@ -36,7 +36,7 @@ Server API
 The ``mochi.yokan.server`` module provides the ``Provider`` class for creating
 Yokan providers:
 
-.. literalinclude:: ../../code/yokan/12_python/server_example.py
+.. literalinclude:: ../../../code/yokan/12_python/server_example.py
    :language: python
 
 Provider configuration uses the same JSON format as the C++ API, supporting
@@ -51,7 +51,7 @@ for interacting with Yokan providers:
 Basic Operations
 ~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../code/yokan/12_python/client_basic.py
+.. literalinclude:: ../../../code/yokan/12_python/client_basic.py
    :language: python
 
 The client API supports:
@@ -68,7 +68,7 @@ Batch Operations
 
 For efficiency, use batch operations when working with multiple keys:
 
-.. literalinclude:: ../../code/yokan/12_python/batch_operations.py
+.. literalinclude:: ../../../code/yokan/12_python/batch_operations.py
    :language: python
 
 Batch operations include:
@@ -84,7 +84,7 @@ List Operations
 
 Yokan provides powerful list operations for iterating through key/value pairs:
 
-.. literalinclude:: ../../code/yokan/12_python/list_operations.py
+.. literalinclude:: ../../../code/yokan/12_python/list_operations.py
    :language: python
 
 The Buffer Protocol
@@ -97,7 +97,7 @@ The Buffer Protocol
 Using buffer protocol objects (``bytearray``, ``numpy`` arrays, etc.) is more
 efficient than strings because it avoids memory copies:
 
-.. literalinclude:: ../../code/yokan/12_python/buffer_protocol.py
+.. literalinclude:: ../../../code/yokan/12_python/buffer_protocol.py
    :language: python
 
 The buffer protocol is especially important for:
@@ -112,7 +112,7 @@ Working with Modes
 
 Yokan's mode system is available in Python through the ``mochi.yokan.mode`` module:
 
-.. literalinclude:: ../../code/yokan/12_python/modes_example.py
+.. literalinclude:: ../../../code/yokan/12_python/modes_example.py
    :language: python
 
 Available modes include:
@@ -134,7 +134,7 @@ Document Store Operations
 
 Yokan also supports document storage with the collection API:
 
-.. literalinclude:: ../../code/yokan/12_python/documents.py
+.. literalinclude:: ../../../code/yokan/12_python/documents.py
    :language: python
 
 Collections provide:
@@ -150,7 +150,7 @@ Error Handling
 The Python bindings raise ``mochi.yokan.client.Exception`` for client errors
 and ``mochi.yokan.server.Exception`` for server errors:
 
-.. literalinclude:: ../../code/yokan/12_python/error_handling.py
+.. literalinclude:: ../../../code/yokan/12_python/error_handling.py
    :language: python
 
 Always wrap Yokan operations in try/except blocks to handle:
@@ -168,7 +168,7 @@ Using with Context Managers
 
 For automatic resource cleanup, you can implement context managers:
 
-.. literalinclude:: ../../code/yokan/12_python/context_manager.py
+.. literalinclude:: ../../../code/yokan/12_python/context_manager.py
    :language: python
 
 Integration with NumPy
@@ -176,7 +176,7 @@ Integration with NumPy
 
 Yokan works seamlessly with NumPy arrays:
 
-.. literalinclude:: ../../code/yokan/12_python/numpy_example.py
+.. literalinclude:: ../../../code/yokan/12_python/numpy_example.py
    :language: python
 
 This is useful for:
@@ -209,7 +209,7 @@ Building Higher-Level APIs
 The Python bindings are designed to be low-level and performance-oriented.
 We encourage users to build higher-level APIs for their use cases:
 
-.. literalinclude:: ../../code/yokan/12_python/higher_level_api.py
+.. literalinclude:: ../../../code/yokan/12_python/higher_level_api.py
    :language: python
 
 This allows you to:

@@ -29,5 +29,5 @@ This section will walk you through a series of tutorials on how to use Warabi.
    warabi/08_migration.rst
    warabi/09_async.rst
    warabi/10_bedrock.rst
-   warabi/11_cpp.rst
+   warabi/11_c_api.rst
    warabi/12_python.rst

@@ -25,7 +25,7 @@ Quick Start
 
 Here's a minimal example using the C++ API:
 
-.. literalinclude:: ../../code/yokan/13_cpp/quickstart.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/quickstart.cpp
    :language: cpp
 
 This demonstrates:
@@ -40,7 +40,7 @@ Client and Database Handles
 Creating Clients and Databases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../code/yokan/13_cpp/client_database.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/client_database.cpp
    :language: cpp
 
 The ``yokan::Client`` and ``yokan::Database`` classes:
@@ -56,7 +56,7 @@ Basic Operations
 Put, Get, Exists, and Erase
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../code/yokan/13_cpp/basic_operations.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/basic_operations.cpp
    :language: cpp
 
 All basic operations:
@@ -74,7 +74,7 @@ Multi-key Operations
 
 For efficiency, use batch operations when working with multiple keys:
 
-.. literalinclude:: ../../code/yokan/13_cpp/batch_operations.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/batch_operations.cpp
    :language: cpp
 
 Batch operations reduce network round-trips and improve throughput significantly.
@@ -85,7 +85,7 @@ String and Vector Helpers
 The C++ API provides convenient helpers for working with ``std::string`` and
 ``std::vector``:
 
-.. literalinclude:: ../../code/yokan/13_cpp/string_helpers.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/string_helpers.cpp
    :language: cpp
 
 List Operations
@@ -93,12 +93,12 @@ List Operations
 
 The C++ API provides wrappers for list operations that work with callbacks:
 
-.. literalinclude:: ../../code/yokan/13_cpp/list_operations.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/list_operations.cpp
    :language: cpp
 
 Alternatively, use the packed variants for lower-level control:
 
-.. literalinclude:: ../../code/yokan/13_cpp/list_packed.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/list_packed.cpp
    :language: cpp
 
 Working with Modes
@@ -106,7 +106,7 @@ Working with Modes
 
 Modes modify operation semantics and can be combined using bitwise OR:
 
-.. literalinclude:: ../../code/yokan/13_cpp/modes.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/modes.cpp
    :language: cpp
 
 Available modes include:
@@ -126,7 +126,7 @@ Exception Handling
 
 The C++ API throws ``yokan::Exception`` for all errors:
 
-.. literalinclude:: ../../code/yokan/13_cpp/exceptions.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/exceptions.cpp
    :language: cpp
 
 Best practices:
@@ -144,7 +144,7 @@ Copy and Move Semantics
 
 The C++ classes use reference counting for safe copying:
 
-.. literalinclude:: ../../code/yokan/13_cpp/raii.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/raii.cpp
    :language: cpp
 
 Resources are automatically cleaned up when the last reference is destroyed,
@@ -158,7 +158,7 @@ Custom Memory Management
 
 For high-performance applications, preallocate buffers:
 
-.. literalinclude:: ../../code/yokan/13_cpp/custom_memory.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/custom_memory.cpp
    :language: cpp
 
 Binary Data Handling
@@ -166,7 +166,7 @@ Binary Data Handling
 
 Working with binary (non-text) data:
 
-.. literalinclude:: ../../code/yokan/13_cpp/binary_data.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/binary_data.cpp
    :language: cpp
 
 Template-Based Wrappers
@@ -174,7 +174,7 @@ Template-Based Wrappers
 
 Create type-safe wrappers using templates:
 
-.. literalinclude:: ../../code/yokan/13_cpp/templates.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/templates.cpp
    :language: cpp
 
 Migration API
@@ -182,7 +182,7 @@ Migration API
 
 The C++ API provides a clean interface for database migration:
 
-.. literalinclude:: ../../code/yokan/13_cpp/migration.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/migration.cpp
    :language: cpp
 
 See :doc:`10_migration` for detailed migration documentation.
@@ -192,7 +192,7 @@ Document Collections
 
 Work with JSON documents using the Collection API:
 
-.. literalinclude:: ../../code/yokan/13_cpp/collections.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/collections.cpp
    :language: cpp
 
 Collections provide:
@@ -245,7 +245,7 @@ With Thallium
 
 The C++ bindings work seamlessly with Thallium:
 
-.. literalinclude:: ../../code/yokan/13_cpp/with_thallium.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/with_thallium.cpp
    :language: cpp
 
 With Bedrock
@@ -253,7 +253,7 @@ With Bedrock
 
 Using Yokan with Bedrock's C++ API:
 
-.. literalinclude:: ../../code/yokan/13_cpp/with_bedrock.cpp
+.. literalinclude:: ../../../code/yokan/13_cpp/with_bedrock.cpp
    :language: cpp
 
 See :doc:`02_advanced_setup` for Bedrock configuration details.

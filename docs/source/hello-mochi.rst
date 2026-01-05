@@ -512,17 +512,15 @@ format.
 
     Example::
 
-	carns-x1-7g ~> spack env activate hello-mochi
+        carns-x1-7g ~> spack env activate hello-mochi
         carns-x1-7g ~> bedrock-query tcp:// -p -a ofi+tcp\;ofi_rxm://192.168.122.1:46053
         {
             "ofi+tcp;ofi_rxm://192.168.122.1:46053": {
-                "abt_io": [],
                 "bedrock": {
                     "pool": "__primary__",
                     "provider_id": 0
                 },
-                "clients": [],
-                "libraries": {},
+                "libraries": [],
                 "margo": {
                     "argobots": {
                         "abt_mem_max_num_stacks": 8,
