@@ -11,9 +11,6 @@ blocking API and a non-blocking API to callers.  In the former case, the
 calling thread is suspended so that other user-level threads may
 gracefully execute until the I/O operation is complete.
 
-Rationale
----------
-
 Executing I/O operations (:code:`read()`, :code:`write()`, etc.) directly
 from within an Argobots user-level thread (ULT) is technically legal but
 will block the underlying execution stream (ES) until the I/O operation has
@@ -34,9 +31,6 @@ ABT-IO may also optionally be configured to use
 `io_uring <https://kernel.dk/io_uring.pdf>`_ on supported platforms to
 further accelerate I/O performance.
 
-References
-----------
-
 A description of the original implementation of ABT-IO can be found in
 Section 5.3 of `S.
 Seo et al., "Argobots: A Lightweight Low-Level Threading and Tasking
@@ -44,11 +38,6 @@ Framework," in IEEE Transactions on Parallel and Distributed Systems, vol.
 29, no. 3, pp. 512-526, 1 March 2018, doi: 10.1109/TPDS.2017.2766062.
 <https://ieeexplore.ieee.org/document/8082139>`_
 
-
-ABT-IO Usage
-------------
-
-This section gives a list of tutorials on how to use ABT-IO.
 
 .. toctree::
    :maxdepth: 1
