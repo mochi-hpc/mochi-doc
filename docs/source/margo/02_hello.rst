@@ -2,7 +2,7 @@ Simple Hello World RPC with Margo
 =================================
 
 The previous tutorial explained how to initialize a server and a client.
-This this tutoria, we will have the server register and RPC handler and
+This this tutorial, we will have the server register and RPC handler and
 the client send an RPC request to the server.
 
 Server-side RPC handler
@@ -13,8 +13,8 @@ We will change the code of our server as follows.
 .. container:: toggle
 
     .. container:: header
-    
-       .. container:: btn btn-info 
+
+       .. container:: btn btn-info
 
           server.c (show/hide)
 
@@ -54,7 +54,7 @@ The :code:`margo_registered_disable_response` is used to indicate that this RPC
 handler does not send a response back to the client.
 
 The rest of the program defines the :code:`hello_world` function.
-From inside an RPC handler, we can access the Margo instance using 
+From inside an RPC handler, we can access the Margo instance using
 :code:`margo_hg_handle_get_instance`. This is the prefered method for better code
 organization, rather than declaring the Margo instance as a global variable.
 
@@ -79,15 +79,15 @@ The following code is the corresponding client.
 .. container:: toggle
 
     .. container:: header
-    
-       .. container:: btn btn-info 
+
+       .. container:: btn btn-info
 
           client.c (show/hide)
 
     .. literalinclude:: ../../../code/margo/02_hello/client.c
        :language: cpp
 
-This client takes the server's address as argument (copy-past the address printed
+This client takes the server's address as argument (copy the address printed
 by the server when calling the client). This string representation of the server's
 address must be resolved into a :code:`hg_addr_t` object. This is done by
 :code:`margo_addr_lookup`.

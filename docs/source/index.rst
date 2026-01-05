@@ -25,7 +25,7 @@ the other components will use. If you are into C++, you may then want to read
 about Thallium, which is a C++ library written on top of Margo.
 
 If you want to use some of our components, you can then jump to their corresponding
-tutorial sections. If you want to _develop_ your own component, your can jump
+tutorial sections. If you want to *develop* your own component, your can jump
 to the Mochi templates and to the Bedrock bootstrapping system.
 
 
@@ -36,7 +36,7 @@ The core Mochi libraries
 It relies on Mercury for RPC/RDMA, and Argobots for threading/tasking, hidding
 the complexity of these two libraries under a simple programming model.
 
-**Thallium** is a C++14 library wrapping Margo and enabling the development of
+**Thallium** is a C++ library wrapping Margo and enabling the development of
 the same sort of services using all the power of modern C++. It is the
 recommended library for C++ developers. Note that Thallium also provides
 C++ wrappers to Argobots.
@@ -55,8 +55,9 @@ scheduling and placement of threads and tasks in a Mochi service.
 of Mochi services in Python.
 
 .. note::
-   The tutorials for each of these libraries are independent of one another.
-   Feel free to start with the most relevant for you.
+   The tutorials for each of these libraries are mostly independent of one another.
+   Feel free to start with the most relevant for you and jump from a library to another
+   as you need.
 
 .. important::
    In all the tutorials, we use the term "server" to denote a process to which

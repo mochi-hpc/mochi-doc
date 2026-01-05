@@ -13,3 +13,4 @@ with the Mochi libraries.
    misc/03_rpc_model.rst
    misc/04_debugging.rst
    misc/05_auth.rst
+   misc/06_cxi.rst
