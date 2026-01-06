@@ -111,7 +111,8 @@ Common Performance Bottlenecks
 -------------------------------
 
 **1. Too Many ULTs**
-  Creating millions of ULTs overwhelms the system. Solution: Use tasklets or batch work.
+  Creating millions of ULTs overwhelms the system. Solution: Batch work, or consider
+  reducing stack sizes for lightweight ULTs.
 
 **2. Fine-Grained Synchronization**
   Excessive locking/unlocking. Solution: Batch operations, use lock-free structures where possible.
@@ -169,7 +170,7 @@ Best Practices
 --------------
 
 **Performance**:
-  1. Choose appropriate work unit type (ULT vs tasklet)
+  1. Configure appropriate stack sizes for ULTs based on workload
   2. Use work-stealing for unbalanced workloads
   3. Batch small operations
   4. Minimize synchronization overhead
@@ -214,7 +215,7 @@ Conclusion
 
 You've completed the Argobots tutorial series! You now have the knowledge to:
 
-- Build efficient parallel applications with ULTs and tasklets
+- Build efficient parallel applications with ULTs
 - Choose and configure appropriate schedulers
 - Use synchronization primitives effectively
 - Implement custom schedulers for specialized needs

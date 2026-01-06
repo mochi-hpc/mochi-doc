@@ -36,11 +36,15 @@ int main(int argc, char **argv)
                       ABT_THREAD_ATTR_NULL, &thread);
     printf("Created ULT\n");
 
-    /* Step 5: Wait for the ULT to complete and free it */
-    ABT_thread_free(&thread);
-    printf("ULT completed and freed\n");
+    /* Step 5: Wait for the ULT to complete */
+    ABT_thread_join(thread);
+    printf("ULT completed\n");
 
-    /* Step 6: Finalize Argobots */
+    /* Step 6: Free the ULT */
+    ABT_thread_free(&thread);
+    printf("ULT freed\n");
+
+    /* Step 7: Finalize Argobots */
     ABT_finalize();
     printf("Argobots finalized\n");
 

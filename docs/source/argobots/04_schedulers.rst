@@ -2,34 +2,15 @@ Schedulers and Work Distribution
 ==================================
 
 In this tutorial, you will learn about Argobots schedulers and how they control the
-distribution and execution of work units. Schedulers are the key to achieving optimal
-performance through proper work distribution and load balancing.
-
-Prerequisites
--------------
-
-- Completed Tutorials 01-03
-- Understanding of execution streams and pools
-- Familiarity with work-stealing concepts from Tutorial 02
-
-What You'll Learn
------------------
-
-By the end of this tutorial, you will understand:
-
-- The role of schedulers in Argobots
-- Different predefined scheduler types (BASIC, RANDWS, PRIO)
-- How schedulers interact with pools
-- Scheduler configuration options
-- When to use each scheduler type
-- Work-stealing for divide-and-conquer algorithms
+distribution and execution of work units.
 
 Key Concepts
 ------------
 
 **Schedulers**
-  A scheduler is responsible for pulling work units from pools and executing them
-  on an execution stream. Every execution stream has exactly one main scheduler.
+  Each execution stream is associated with a scheduler, which is responsible for
+  pulling work units from pools and executing them
+  on the execution stream. Every execution stream has exactly one main scheduler.
 
   The scheduler's main loop:
   1. Check pools for available work units
@@ -78,7 +59,7 @@ The PRIO scheduler checks pools in priority order:
 Key Points
 ~~~~~~~~~~
 
-**Pool Priority (lines 38-39)**
+**Pool Priority**
   .. code-block:: c
 
      pools[0] = high_pool;  /* Checked first */
@@ -104,7 +85,7 @@ The RANDWS (random work-stealing) scheduler enables dynamic load balancing:
 Key Points
 ~~~~~~~~~~
 
-**Multi-Pool Access (lines 55-57)**
+**Multi-Pool Access**
   Each scheduler gets access to all pools, ordered so its own pool is first.
   When a scheduler's pool is empty, it randomly steals from other pools.
 
@@ -146,45 +127,6 @@ Key Points
   With work-stealing, this fibonacci computation utilizes all cores effectively.
   Without it, work would be statically assigned and load imbalance would waste cores.
 
-Building and Running Examples
-------------------------------
-
-Build all examples:
-
-.. code-block:: bash
-
-   cd code/argobots/04_schedulers
-   mkdir build && cd build
-   cmake ..
-   make
-
-Run each example:
-
-.. code-block:: bash
-
-   ./basic_scheduler
-   ./priority_scheduler
-   ./work_stealing
-   ./fibonacci
-
-Scheduler Configuration
------------------------
-
-Schedulers can be configured with additional parameters:
-
-**Event Frequency**
-  .. code-block:: c
-
-     ABT_sched_config config;
-     ABT_sched_config_create(&config,
-         ABT_sched_config_var_end);
-     ABT_sched_create_basic(ABT_SCHED_BASIC, 1, &pool, config, &sched);
-     ABT_sched_config_free(&config);
-
-**Automatic Free**
-  By default, schedulers created with ``ABT_sched_create_basic()`` are automatically
-  freed when their execution stream is freed. You can control this behavior.
-
 Choosing a Scheduler
 ---------------------
 
@@ -210,7 +152,7 @@ Choosing a Scheduler
 Mochi/Bedrock Integration
 --------------------------
 
-Bedrock configurations expose scheduler choices:
+Bedrock configurations expose scheduler choices in each xstream definition:
 
 .. code-block:: json
 
@@ -240,14 +182,9 @@ Bedrock configurations expose scheduler choices:
    }
 
 This configuration:
-- Creates dedicated streams for RPC and I/O
+- Creates dedicated xstreams for RPC and I/O
 - I/O stream can steal from RPC pool when idle
 - BASIC_WAIT scheduler for efficient waiting
-
-Common Scheduler Types in Bedrock:
-- ``basic_wait``: Most common for Margo services
-- ``prio``: For multi-priority workloads
-- ``randws``: For computational workloads
 
 Common Pitfalls
 ---------------
@@ -317,19 +254,3 @@ API Reference
 
     Free scheduler configuration.
 
-Next Steps
-----------
-
-Now that you understand schedulers, you can move on to synchronization primitives:
-
-- **Tutorial 05: Barriers** - Learn how to synchronize multiple work units at specific
-  points in execution.
-
-- **Tutorial 06: Futures** - Understand fine-grained dependency management for better
-  parallelism.
-
-For Mochi developers, understanding schedulers is crucial for:
-- Bedrock configuration optimization
-- Choosing the right scheduler for your workload
-- Balancing latency vs throughput
-- Configuring work-stealing for computational services

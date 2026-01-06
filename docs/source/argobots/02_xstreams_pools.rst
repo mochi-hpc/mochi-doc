@@ -6,38 +6,19 @@ execution and understand how pools distribute work among them. This is essential
 achieving high performance in Mochi applications and understanding how Bedrock configures
 Argobots for your services.
 
-Prerequisites
--------------
-
-- Completed Tutorial 01 (Introduction and Basic Execution)
-- Understanding of basic parallelism concepts
-- Multi-core system (recommended for observing parallel execution)
-
-What You'll Learn
------------------
-
-By the end of this tutorial, you will understand:
-
-- How to create multiple execution streams for parallelism
-- The concept of pools and their role in work distribution
-- Different pool types and access modes
-- Fixed allocation vs. work-stealing strategies
-- How execution streams interact with pools
-- When to use each strategy in Mochi applications
-
 Key Concepts
 ------------
 
 **Execution Streams (xstreams)**
-  Execution streams are OS-level threads that execute Argobots work units (ULTs and
-  tasklets). Each execution stream runs independently and can execute work in parallel
+  Execution streams are OS-level threads that execute Argobots work units (ULTs).
+  Each execution stream runs independently and can execute work in parallel
   with other streams. Think of them as worker threads.
 
   **Best Practice**: Create one execution stream per CPU core for optimal performance.
   Creating more execution streams than cores can lead to contention and reduced performance.
 
 **Pools**
-  Pools are work queues that hold ULTs and tasklets waiting to be executed. Each execution
+  Pools are work queues that hold ULTs waiting to be executed. Each execution
   stream has at least one pool that it pulls work from. Pools can be:
 
   - **Private**: Only one execution stream accesses the pool (lower overhead)
@@ -49,6 +30,10 @@ Key Concepts
   - ``ABT_POOL_FIFO``: First-In-First-Out queue (simple, low overhead)
   - ``ABT_POOL_FIFO_WAIT``: FIFO with blocking wait when empty
   - ``ABT_POOL_RANDWS``: Random work-stealing pool (best for load balancing)
+
+  You will see in a latter tutorial how to create new pool types. Margo, for instance,
+  provides two additional pool types (that can be initialized via Margo's API): "prio_wait"
+  and "earliest_first".
 
 **Pool Access Modes**
   Access modes control thread safety and determine which execution streams can access a pool:
@@ -78,99 +63,6 @@ to specific pools and will only execute on that pool's execution stream.
    :language: c
    :linenos:
 
-Key Points
-~~~~~~~~~~
-
-**Private Pools (lines 47-52)**
-  Each execution stream automatically gets a default private pool when created with
-  ``ABT_xstream_create(ABT_SCHED_NULL, &xstream)``. We retrieve these pools using
-  ``ABT_xstream_get_main_pools()``.
-
-**Static Assignment (lines 55-63)**
-  ULTs are assigned to pools in round-robin fashion. Once assigned, a ULT will only
-  execute on that pool's execution stream. This is simple and has low overhead since
-  pools don't need synchronization.
-
-**Advantages:**
-  - Lower overhead (no lock contention)
-  - Predictable execution (ULT always runs on same execution stream)
-  - Better cache locality
-
-**Disadvantages:**
-  - Load imbalance: Some execution streams may finish early while others are still busy
-  - No dynamic load balancing
-
-Work-Stealing Example
-----------------------
-
-In work-stealing, execution streams can access multiple pools. When an execution stream
-runs out of work in its own pool, it can steal work from other pools.
-
-.. literalinclude:: ../../../code/argobots/02_xstreams_pools/work_stealing.c
-   :language: c
-   :linenos:
-
-Key Points
-~~~~~~~~~~
-
-**Creating Shared Pools (lines 49-54)**
-  .. code-block:: c
-
-     ABT_pool_create_basic(ABT_POOL_FIFO,           /* Pool type */
-                           ABT_POOL_ACCESS_MPMC,    /* Access mode */
-                           ABT_TRUE,                /* Automatic free */
-                           &pools[i]);
-
-  The ``ABT_POOL_ACCESS_MPMC`` access mode makes the pool thread-safe, allowing multiple
-  execution streams to safely push and pop work.
-
-**Scheduler with Multiple Pools (lines 57-71)**
-  .. code-block:: c
-
-     /* Pool priority order: own pool first, then others */
-     for (j = 0; j < NUM_XSTREAMS; j++) {
-         sched_pools[j] = pools[(i + j) % NUM_XSTREAMS];
-     }
-     ABT_sched_create_basic(ABT_SCHED_DEFAULT, NUM_XSTREAMS,
-                            sched_pools, ABT_SCHED_CONFIG_NULL, &scheds[i]);
-
-  Each scheduler gets access to all pools, ordered by priority. The scheduler first
-  checks its primary pool, then tries others in round-robin order. This enables
-  work-stealing.
-
-**Varying Workloads (lines 24-33)**
-  The example simulates varying work amounts to demonstrate work-stealing. ULTs with
-  heavy work take longer, allowing execution streams with light work to steal from
-  pools that still have pending ULTs.
-
-**Advantages:**
-  - Better load balancing (idle execution streams steal work)
-  - More efficient use of resources
-  - Handles dynamic and unpredictable workloads well
-
-**Disadvantages:**
-  - Higher overhead (synchronization costs)
-  - Less predictable execution
-  - Potential cache thrashing from migration
-
-Building and Running the Examples
-----------------------------------
-
-Build both examples using CMake:
-
-.. code-block:: bash
-
-   cd code/argobots/02_xstreams_pools
-   mkdir build && cd build
-   cmake ..
-   make
-
-Run the fixed allocation example:
-
-.. code-block:: bash
-
-   ./fixed_allocation
-
 Expected output (order may vary):
 
 .. code-block:: text
@@ -190,11 +82,38 @@ Expected output (order may vary):
 
 Notice that ULT IDs are grouped by execution stream: 0,4,8,12 on ES 0; 1,5,9,13 on ES 1; etc.
 
-Run the work-stealing example:
+Key Points
+~~~~~~~~~~
 
-.. code-block:: bash
+**Private Pools**
+  Each execution stream automatically gets a default private pool when created with
+  ``ABT_xstream_create(ABT_SCHED_NULL, &xstream)``. Passing ``ABT_SCHED_NULL`` as scheduler
+  will make Argobots instantiate a new default scheduler with a default (private) pool.
+  We retrieve this pool using ``ABT_xstream_get_main_pools()``.
 
-   ./work_stealing
+**Static Assignment**
+  ULTs are assigned to pools in round-robin fashion. Once assigned, a ULT will only
+  execute on that pool's execution stream. This is simple and has low overhead since
+  pools don't need synchronization.
+
+**Advantages:**
+  - Lower overhead (no lock contention)
+  - Predictable execution (ULT always runs on same execution stream)
+  - Better cache locality
+
+**Disadvantages:**
+  - Load imbalance: Some execution streams may finish early while others are still busy
+  - No dynamic load balancing
+
+Work-Stealing Example
+----------------------
+
+In work-stealing, execution streams can access multiple pools. When an execution stream
+runs out of work in its first pool, it can steal work from other pools.
+
+.. literalinclude:: ../../../code/argobots/02_xstreams_pools/work_stealing.c
+   :language: c
+   :linenos:
 
 Expected output (order will vary significantly):
 
@@ -216,6 +135,50 @@ Expected output (order will vary significantly):
 
 Notice that ULTs are not strictly grouped by execution stream. Execution streams that
 finish their light work may steal heavy work from others.
+
+Key Points
+~~~~~~~~~~
+
+**Creating Shared Pools**
+  .. code-block:: c
+
+     ABT_pool_create_basic(ABT_POOL_FIFO,           /* Pool type */
+                           ABT_POOL_ACCESS_MPMC,    /* Access mode */
+                           ABT_TRUE,                /* Automatic free */
+                           &pools[i]);
+
+  The ``ABT_POOL_ACCESS_MPMC`` access mode makes the pool thread-safe, allowing multiple
+  execution streams to safely push and pop work.
+
+**Scheduler with Multiple Pools**
+  .. code-block:: c
+
+     /* Pool priority order: own pool first, then others */
+     for (j = 0; j < NUM_XSTREAMS; j++) {
+         sched_pools[j] = pools[(i + j) % NUM_XSTREAMS];
+     }
+     ABT_sched_create_basic(ABT_SCHED_DEFAULT, NUM_XSTREAMS,
+                            sched_pools, ABT_SCHED_CONFIG_NULL, &scheds[i]);
+
+  Each scheduler gets access to all pools, ordered differently. The scheduler first
+  checks its first pool, then tries others in order. This enables
+  work-stealing.
+
+**Varying Workloads**
+  The example simulates varying work amounts to demonstrate work-stealing. ULTs with
+  heavy work take longer, allowing execution streams with light work to steal from
+  pools that still have pending ULTs.
+
+**Advantages:**
+  - Better load balancing (idle execution streams steal work)
+  - More efficient use of resources
+  - Handles dynamic and unpredictable workloads well
+
+**Disadvantages:**
+  - Higher overhead (synchronization costs)
+  - Less predictable execution
+  - Potential cache thrashing from migration
+
 
 Understanding Pool Access Modes
 --------------------------------
@@ -264,10 +227,10 @@ Mochi/Bedrock Connection
 -------------------------
 
 Understanding execution streams and pools is crucial for configuring Mochi services
-through Bedrock. Bedrock configurations allow you to:
+through Bedrock and Margo. Bedrock and Margo configurations allow you to:
 
 - Create custom pools for different types of work
-- Assign Margo RPC handlers to specific pools
+- Assign RPC handlers or providers to specific pools
 - Configure work-stealing for load balancing
 - Set pool access modes for optimal performance
 
@@ -316,7 +279,7 @@ Common Pitfalls
 
 **Too Many Execution Streams**
   Creating more execution streams than CPU cores often reduces performance due to
-  context switching overhead and cache contention.
+  core overloading, context switching overhead, and cache contention.
 
   .. code-block:: c
 
@@ -411,20 +374,3 @@ This tutorial covered the following Argobots functions:
   - ``int ABT_sched_create_basic(ABT_sched_predef predef, int num_pools, ABT_pool *pools, ABT_sched_config config, ABT_sched *newsched)``
 
     Create a scheduler with predefined type and specific pools.
-
-Next Steps
-----------
-
-Now that you understand execution streams and pools, you can move on to:
-
-- **Tutorial 03: ULTs vs Tasklets** - Learn about the two types of work units and when
-  to use each.
-
-- **Tutorial 04: Schedulers and Work Distribution** - Deep dive into predefined
-  schedulers and scheduling policies.
-
-For Mochi developers, understanding pools and execution streams is essential for:
-
-- Configuring Bedrock to optimize service performance
-- Creating dedicated pools for different types of work (RPC, I/O, computation)
-- Tuning work-stealing behavior for load balancing

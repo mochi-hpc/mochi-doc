@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 
     /* Wait for all ULTs to complete */
     for (i = 0; i < NUM_THREADS; i++) {
+        ABT_thread_join(threads[i]);
         ABT_thread_free(&threads[i]);
     }
 

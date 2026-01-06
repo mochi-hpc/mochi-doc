@@ -9,9 +9,9 @@ pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
 add_executable (03_abt_ult_example ult_example.c)
 target_link_libraries (03_abt_ult_example PkgConfig::ABT)
 
-# Build tasklet example
-add_executable (03_abt_tasklet_example tasklet_example.c)
-target_link_libraries (03_abt_tasklet_example PkgConfig::ABT)
+# Build simple example
+add_executable (03_abt_simple_example simple_example.c)
+target_link_libraries (03_abt_simple_example PkgConfig::ABT)
 
 # Build revive example
 add_executable (03_abt_revive_example revive_example.c)
