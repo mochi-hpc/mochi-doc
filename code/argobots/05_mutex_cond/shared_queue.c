@@ -1,9 +1,11 @@
 /*
- * Thread-safe queue implementation with mutexes
+ * Thread-safe queue implementation with mutexes using static initialization
+ * Demonstrates ABT_mutex_memory to avoid heap allocation
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <abt.h>
 
 #define QUEUE_SIZE 10
@@ -16,7 +18,7 @@ typedef struct {
     int size;
     int head;
     int tail;
-    ABT_mutex mutex;
+    ABT_mutex_memory mutex_mem;  /* Static mutex memory */
 } thread_safe_queue_t;
 
 void queue_init(thread_safe_queue_t *q, int capacity)
@@ -26,15 +28,20 @@ void queue_init(thread_safe_queue_t *q, int capacity)
     q->size = 0;
     q->head = 0;
     q->tail = 0;
-    ABT_mutex_create(&q->mutex);
+    /* Initialize mutex memory
+     * This is equivalent to setting it to ABT_MUTEX_INITIALIZER */
+    memset(&q->mutex_mem, 0, sizeof(q->mutex_mem));
 }
 
 int queue_push(thread_safe_queue_t *q, int value)
 {
-    ABT_mutex_lock(q->mutex);
+    /* Convert mutex_memory to ABT_mutex handle */
+    ABT_mutex mutex = ABT_MUTEX_MEMORY_GET_HANDLE(&q->mutex_mem);
+
+    ABT_mutex_lock(mutex);
 
     if (q->size == q->capacity) {
-        ABT_mutex_unlock(q->mutex);
+        ABT_mutex_unlock(mutex);
         return -1;  /* Queue full */
     }
 
@@ -42,16 +49,19 @@ int queue_push(thread_safe_queue_t *q, int value)
     q->tail = (q->tail + 1) % q->capacity;
     q->size++;
 
-    ABT_mutex_unlock(q->mutex);
+    ABT_mutex_unlock(mutex);
     return 0;
 }
 
 int queue_pop(thread_safe_queue_t *q, int *value)
 {
-    ABT_mutex_lock(q->mutex);
+    /* Convert mutex_memory to ABT_mutex handle */
+    ABT_mutex mutex = ABT_MUTEX_MEMORY_GET_HANDLE(&q->mutex_mem);
+
+    ABT_mutex_lock(mutex);
 
     if (q->size == 0) {
-        ABT_mutex_unlock(q->mutex);
+        ABT_mutex_unlock(mutex);
         return -1;  /* Queue empty */
     }
 
@@ -59,13 +69,13 @@ int queue_pop(thread_safe_queue_t *q, int *value)
     q->head = (q->head + 1) % q->capacity;
     q->size--;
 
-    ABT_mutex_unlock(q->mutex);
+    ABT_mutex_unlock(mutex);
     return 0;
 }
 
 void queue_destroy(thread_safe_queue_t *q)
 {
-    ABT_mutex_free(&q->mutex);
+    /* No need to free mutex_mem - no heap allocation */
     free(q->data);
 }
 
@@ -113,8 +123,9 @@ int main(int argc, char **argv)
 
     ABT_init(argc, argv);
 
-    printf("=== Thread-Safe Queue ===\n");
-    printf("Workers: %d, Queue capacity: %d\n\n", NUM_WORKERS, QUEUE_SIZE);
+    printf("=== Thread-Safe Queue (Static Mutex) ===\n");
+    printf("Workers: %d, Queue capacity: %d\n", NUM_WORKERS, QUEUE_SIZE);
+    printf("Using ABT_mutex_memory for zero-overhead initialization\n\n");
 
     queue_init(&queue, QUEUE_SIZE);
 
@@ -137,6 +148,7 @@ int main(int argc, char **argv)
     queue_destroy(&queue);
 
     printf("\nAll operations completed safely with mutex protection\n");
+    printf("No heap allocation needed for mutex (ABT_mutex_memory)\n");
 
     ABT_finalize();
     return 0;

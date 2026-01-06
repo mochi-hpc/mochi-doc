@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     ABT_xstream_self(&xstream);
     ABT_xstream_get_main_pools(xstream, 1, &pool);
 
-    /* Create eventual (no value size parameter needed) */
+    /* Create eventual which will contain an int */
     ABT_eventual_create(sizeof(int), &eventual);
 
     /* Create waiters first */

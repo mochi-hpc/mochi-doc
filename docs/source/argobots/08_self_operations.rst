@@ -5,28 +5,12 @@ Self operations give ULTs direct control over their execution: yielding to the s
 suspending/resuming, and explicit control flow transfers. These are advanced techniques
 critical for implementing custom execution patterns and integrating with external event loops.
 
-Prerequisites
--------------
-
-- Completed Tutorials 01-08
-- Understanding of cooperative multitasking
-- Familiarity with schedulers
-
-What You'll Learn
------------------
-
-- Voluntary yielding for cooperative scheduling
-- Progress polling patterns (critical for Margo)
-- Suspend and resume operations
-- Targeted control flow transfers
-- When and how to use self operations
-
 Key Concepts
 ------------
 
 **Self Operations**
   Operations that a ULT performs on itself:
-  - ``ABT_self_yield()``: Voluntarily return control to scheduler
+  - ``ABT_self_yield()`` or ``ABT_thread_yield()``: Voluntarily return control to scheduler
   - ``ABT_self_suspend()``: Suspend self, requiring external resume
   - ``ABT_self_exit()``: Terminate self immediately
 
@@ -43,7 +27,7 @@ Yield-Based Synchronization
 
 Yielding enables fair cooperative scheduling:
 
-.. literalinclude:: ../../../code/argobots/09_self_operations/yield_sync.c
+.. literalinclude:: ../../../code/argobots/08_self_operations/yield_sync.c
    :language: c
    :linenos:
 
@@ -63,23 +47,23 @@ Progress Polling Pattern
 
 Critical pattern for Margo/Mochi network progress:
 
-.. literalinclude:: ../../../code/argobots/09_self_operations/progress_polling.c
+.. literalinclude:: ../../../code/argobots/08_self_operations/progress_polling.c
    :language: c
    :linenos:
 
 **Key Points**:
-  - Poll for completion in loop (lines 42-52)
-  - Yield after each check (line 55)
+  - Poll for completion in loop
+  - Yield after each check
   - Non-blocking: doesn't wait, just checks
   - Lets other ULTs (like background workers) make progress
 
-**Margo Usage**:
+**Example Usage**:
   .. code-block:: c
 
-     /* Typical Margo progress pattern */
+     /* Typical progress loop pattern */
      while (!request_completed) {
-         margo_progress(mid, 0);  /* Non-blocking progress */
-         ABT_self_yield();        /* Let other work run */
+         make_progress(...);  /* Non-blocking progress */
+         ABT_self_yield();    /* Let other work run */
      }
 
 Other Self Operations
@@ -109,37 +93,6 @@ Other Self Operations
      ABT_self_yield_to(target_thread);  /* Yield and schedule target next */
 
   Direct control flow transfer. Use sparingly; breaks scheduler abstraction.
-
-Building and Running
---------------------
-
-.. code-block:: bash
-
-   cd code/argobots/09_self_operations
-   mkdir build && cd build
-   cmake ..
-   make
-   ./yield_sync
-   ./progress_polling
-
-When to Use Self Operations
-----------------------------
-
-**Use ABT_self_yield() when**:
-  - Implementing long-running computations
-  - Progress polling loops
-  - Cooperative fairness needed
-  - You want to give other work a chance to run
-
-**Use ABT_self_suspend/resume() when**:
-  - Implementing event-driven execution
-  - External events (I/O, signals) control execution
-  - Building custom synchronization primitives
-
-**Avoid self operations when**:
-  - Normal blocking operations suffice (mutex, cond, future)
-  - Not performance-critical
-  - You want scheduler to make decisions
 
 Performance Implications
 ------------------------
@@ -212,14 +165,3 @@ API Reference
   - ``int ABT_thread_resume(ABT_thread thread)``
 
     Resume a suspended ULT.
-
-Next Steps
-----------
-
-- **Tutorial 10: Custom Schedulers** - Implement your own scheduling policies
-  using the knowledge from this tutorial.
-
-- **Tutorial 11: Performance and Debugging** - Measure and optimize Argobots programs.
-
-Self operations are powerful tools for advanced Argobots programming, especially
-for integrating with external event loops and implementing custom execution patterns.

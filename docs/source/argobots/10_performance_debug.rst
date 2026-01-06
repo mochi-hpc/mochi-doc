@@ -5,28 +5,12 @@ This final tutorial covers performance measurement, debugging techniques, and er
 for Argobots applications. These skills are essential for optimizing and troubleshooting
 Mochi services.
 
-Prerequisites
--------------
-
-- Completed Tutorials 01-10
-- Understanding of performance profiling concepts
-- Familiarity with debugging practices
-
-What You'll Learn
------------------
-
-- Measuring execution time with Argobots timers
-- Using info functions for debugging
-- Proper error handling
-- Common performance bottlenecks
-- Debugging strategies for Argobots programs
-
 Performance Measurement
 -----------------------
 
 Argobots provides timing functions for performance analysis:
 
-.. literalinclude:: ../../../code/argobots/11_performance_debug/timing_example.c
+.. literalinclude:: ../../../code/argobots/10_performance_debug/timing_example.c
    :language: c
    :linenos:
 
@@ -53,15 +37,15 @@ Debugging with Info Functions
 
 Argobots provides introspection APIs for debugging:
 
-.. literalinclude:: ../../../code/argobots/11_performance_debug/debugging_example.c
+.. literalinclude:: ../../../code/argobots/10_performance_debug/debugging_example.c
    :language: c
    :linenos:
 
 **Key Info Functions**:
 
-- ``ABT_info_print_config()`` (line 29): Print Argobots configuration
-- ``ABT_info_print_all_xstreams()`` (line 47): Print all execution streams
-- ``ABT_thread_get_state()`` (line 54): Query thread state
+- ``ABT_info_print_config()``: Print Argobots configuration
+- ``ABT_info_print_all_xstreams()``: Print all execution streams
+- ``ABT_thread_get_state()``: Query thread state
 
 **Thread States**:
   - ``ABT_THREAD_STATE_READY``: In pool, ready to run
@@ -74,7 +58,7 @@ Error Handling
 
 Proper error handling improves robustness:
 
-.. literalinclude:: ../../../code/argobots/11_performance_debug/error_handling.c
+.. literalinclude:: ../../../code/argobots/10_performance_debug/error_handling.c
    :language: c
    :linenos:
 
@@ -93,19 +77,7 @@ Proper error handling improves robustness:
   - ``ABT_ERR_INV_XSTREAM``: Invalid execution stream
   - ``ABT_ERR_INV_POOL``: Invalid pool
   - ``ABT_ERR_INV_THREAD``: Invalid thread
-
-Building and Running
---------------------
-
-.. code-block:: bash
-
-   cd code/argobots/11_performance_debug
-   mkdir build && cd build
-   cmake ..
-   make
-   ./timing_example
-   ./debugging_example
-   ./error_handling
+  - etc.
 
 Common Performance Bottlenecks
 -------------------------------
@@ -124,7 +96,7 @@ Common Performance Bottlenecks
   Too frequent yielding. Solution: Reduce yield frequency, batch work.
 
 **5. Synchronization Overhead**
-  Wrong synchronization primitive. Solution: Use appropriate primitive (barrier vs future vs mutex).
+  Wrong synchronization primitive. Solution: Use appropriate primitive (eventual vs barrier vs future vs mutex...).
 
 Debugging Strategies
 --------------------
@@ -209,35 +181,3 @@ API Reference
 
 **Error Functions**:
   - ``int ABT_error_get_str(int err, char *str, size_t *len)``
-
-Conclusion
-----------
-
-You've completed the Argobots tutorial series! You now have the knowledge to:
-
-- Build efficient parallel applications with ULTs
-- Choose and configure appropriate schedulers
-- Use synchronization primitives effectively
-- Implement custom schedulers for specialized needs
-- Measure and optimize performance
-- Debug complex concurrency issues
-
-**For Mochi Developers**:
-  This Argobots knowledge enables you to:
-  - Configure Bedrock for optimal performance
-  - Understand Margo's threading model
-  - Build high-performance Mochi services
-  - Troubleshoot concurrency issues in distributed systems
-
-**Next Steps**:
-  - Apply Argobots knowledge to Margo/Thallium services
-  - Experiment with different Bedrock configurations
-  - Build custom Mochi services with specialized scheduling
-  - Contribute to the Mochi ecosystem
-
-**Resources**:
-  - Argobots documentation: https://www.argobots.org/
-  - Argobots repository: https://github.com/pmodels/argobots
-  - Mochi documentation: Continue with Margo and Thallium tutorials
-
-Thank you for completing the Argobots tutorial series!

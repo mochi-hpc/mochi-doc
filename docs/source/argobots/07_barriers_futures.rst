@@ -1,52 +1,118 @@
-Futures and Fine-Grained Dependencies
-=======================================
+Barriers and Futures
+====================
 
-**Futures provide multiple-producer-single-consumer synchronization.** Multiple work units
-(producers) can contribute values to compartments of a future, and a single consumer waits
-for all compartments to be filled. This makes futures sit between eventuals (single-producer
--single-consumer) and barriers (multiple-producer-multiple-consumer).
+In this tutorial, you will learn about two important synchronization primitives for
+parallel algorithms: barriers for bulk-synchronous patterns and futures for fine-grained
+dependency management.
 
-Prerequisites
--------------
+Understanding the Synchronization Spectrum
+-------------------------------------------
 
-- Completed Tutorials 01-05
-- Understanding of data dependencies
-- Familiarity with barriers and their limitations
+These primitives form a spectrum from coarse-grained to fine-grained synchronization:
 
-What You'll Learn
------------------
-
-- Multiple-producer-single-consumer synchronization pattern
-- How futures enable fine-grained synchronization
-- Future compartments for gathering values from multiple producers
-- Expressing dependency graphs with futures
-- When to use futures vs. eventuals vs. barriers
-
-Synchronization Primitive Spectrum
------------------------------------
-
-Understanding where futures fit in the synchronization landscape:
-
-**Eventual** (single-producer-single-consumer):
-  - One producer sets a value
-  - One consumer waits for that value
-  - Use for: simple producer-consumer pairs
-
-**Future** (multiple-producer-single-consumer):
-  - **N producers** each set one compartment
-  - **One consumer** waits for all N compartments
-  - Use for: gathering results from multiple workers, parallel reduction
-
-**Barrier** (multiple-producer-multiple-consumer):
+**Barrier** (all-to-all, N-to-N):
   - **N work units** all synchronize with each other
   - Everyone waits for everyone
   - Use for: bulk-synchronous algorithms, phase transitions
 
-**Key Insight**: Futures are for scenarios where you need to wait for multiple producers
-but don't need all producers to wait for each other.
+**Future** (many-to-one, N-to-1):
+  - **N producers** each set one compartment
+  - **One consumer** waits for all N compartments
+  - Use for: gathering results from multiple workers, parallel reduction
 
-Key Concepts
-------------
+**Eventual** (one-to-many, 1-to-N):
+  - **One producer** sets a value
+  - **Multiple consumers** can wait for that value
+  - Use for: broadcast pattern (Tutorial 06)
+
+Barriers
+--------
+
+A barrier is a synchronization point where multiple work units wait for each other.
+When a work unit reaches a barrier, it blocks until all other work units also reach
+the barrier. Once all work units arrive, they all proceed together.
+
+**Barrier Count**
+  When creating a barrier, you specify how many work units must arrive before the
+  barrier releases. This count is fixed when the barrier is created.
+
+**Bulk-Synchronous Parallel (BSP) Model**
+  Barriers enable the BSP programming model:
+  1. Parallel computation phase
+  2. Barrier synchronization
+  3. Communication/data exchange phase
+  4. Barrier synchronization
+  5. Repeat
+
+**Use Cases**:
+  - Stencil computations (iterative PDE solvers)
+  - Synchronous iterative algorithms
+  - Phase-based simulations
+  - Parallel sorting algorithms
+  - Matrix operations
+
+Stencil Example with Barriers
+------------------------------
+
+Stencil computations update each array element based on its neighbors. This requires
+synchronization to ensure all threads read the same consistent array state:
+
+.. literalinclude:: ../../../code/argobots/07_barriers_futures/stencil_barrier.c
+   :language: c
+   :linenos:
+
+Key Points
+~~~~~~~~~~
+
+**Two Barriers per Iteration**
+  .. code-block:: c
+
+     ABT_barrier_wait(work->barrier);  /* After computation */
+     ABT_barrier_wait(work->barrier);  /* After copying */
+
+  We need two barriers:
+  1. After computation: Ensure all threads finished computing before anyone copies
+  2. After copying: Ensure all threads finished copying before next iteration
+
+  **Why two barriers?**: Without the second barrier, some threads might start the next
+  iteration's computation while others are still copying, reading inconsistent data.
+
+**Barrier Creation**
+  .. code-block:: c
+
+     ABT_barrier_create(NUM_THREADS, &barrier);
+
+  The barrier is created for ``NUM_THREADS`` threads. Exactly this many threads must
+  call ``ABT_barrier_wait()`` for the barrier to release.
+
+**Data Dependencies**
+  Barriers enforce happens-before relationships:
+  - All computations happen before any copying
+  - All copying happens before next iteration's computations
+
+**Multiple Barriers per Work Unit**
+  Each work unit may wait on the same barrier multiple times. The barrier
+  synchronizes all threads at each wait point.
+
+**Reinitialization**
+
+  ``ABT_barrier_reinit`` may be used to re-initialize a barrier with a different
+  number of waiters. There is no need to reinitialize a barrier to wait multiple
+  times on it with the same number of waiters.
+
+Futures
+-------
+
+**Futures provide multiple-producer-single-consumer synchronization.** Multiple work units
+(producers) can contribute values to compartments of a future, and a single consumer waits
+for all compartments to be filled.
+
+You can think of a future as an eventuel with multiple values (compartments), however
+the future does not store the values. It stores pointers to them, which means it is
+up to the caller to ensure the pointed memory remains valid. Also, ``ABT_future_wait``,
+which blocks until all the compartments are filled, does not return the contained
+values. Instead, a callback provided so ``ABT_future_create`` is invoked when
+all the compartments are filled.
 
 **Compartments**
   A future with N compartments requires N ``ABT_future_set()`` calls before the consumer
@@ -83,7 +149,7 @@ Key Concepts
 
      ABT_future_create(num_compartments, gather_callback, &future);
 
-  The callback is invoked automatically when all compartments are set, just before
+  The callback is invoked automatically when all compartments are set, before
   ``ABT_future_wait()`` returns.
 
 **Futures vs Barriers**
@@ -99,14 +165,14 @@ Parallel Reduction with Futures
 This example demonstrates the core use case: multiple workers computing partial results,
 one coordinator gathering them.
 
-.. literalinclude:: ../../../code/argobots/06_futures/parallel_reduce.c
+.. literalinclude:: ../../../code/argobots/07_barriers_futures/parallel_reduce.c
    :language: c
    :linenos:
 
 Key Points
 ~~~~~~~~~~
 
-**Multiple Producers (lines 95-103)**
+**Multiple Producers**
   .. code-block:: c
 
      ABT_future_create(NUM_WORKERS, reduction_callback, &result_future);
@@ -118,7 +184,7 @@ Key Points
 
   The future has one compartment per worker. This is the multiple-producer pattern.
 
-**Callback Receives All Values (lines 28-37)**
+**Callback Receives All Values**
   .. code-block:: c
 
      void reduction_callback(void **args) {
@@ -131,63 +197,20 @@ Key Points
   The callback is invoked when all workers complete. ``args[]`` contains all the
   pointers passed via ``ABT_future_set()``.
 
-**Single Consumer Waits (lines 109-111)**
+**Single Consumer Waits**
   .. code-block:: c
 
      ABT_future_wait(result_future);
 
   Main thread (single consumer) blocks until all NUM_WORKERS compartments are set.
 
-**Persistent Storage Required (line 22)**
+**Persistent Storage Required**
   .. code-block:: c
 
      int partial_results[NUM_WORKERS];  /* Must outlive workers */
 
   Values passed to ``ABT_future_set()`` must remain valid until the callback executes.
   Stack variables in worker functions will be destroyed too early.
-
-Stencil with Futures
----------------------
-
-Futures also enable fine-grained synchronization in iterative algorithms. Each work unit
-waits only for its specific dependencies, not all work units.
-
-.. literalinclude:: ../../../code/argobots/06_futures/stencil_future.c
-   :language: c
-   :linenos:
-
-Key Points
-~~~~~~~~~~
-
-**Sparse Dependencies**
-  Each cell waits only for its neighbors (2-4 cells), not all cells. This exposes more
-  parallelism than barriers.
-
-**Future Set and Reset (throughout)**
-  .. code-block:: c
-
-     ABT_future_set(neighbor_future, NULL);  /* Signal completion */
-     ABT_future_reset(future);                /* Prepare for next iteration */
-
-  Futures can be reused across iterations with reset.
-
-**Better Parallelism**
-  - With barriers: All cells wait for the slowest cell
-  - With futures: Fast cells can run ahead, limited only by data dependencies
-
-Building and Running
---------------------
-
-.. code-block:: bash
-
-   cd code/argobots/06_futures
-   mkdir build && cd build
-   cmake ..
-   make
-   ./parallel_reduce
-   ./stencil_future
-
-Observe how futures coordinate multiple producers with one consumer.
 
 When to Use Futures
 -------------------
@@ -199,22 +222,18 @@ When to Use Futures
   - You want to expose maximum parallelism
 
 **Use Eventuals When**:
-  - Single producer, single consumer
-  - Simpler one-to-one synchronization
+  - Single producer, single or multiple consumers
+  - Simpler one-to-many broadcast (Tutorial 06)
 
 **Use Barriers When**:
   - All work units must synchronize (N-to-N)
   - Bulk-synchronous parallel algorithms
   - Phase-based computation
 
-**DON'T Use Futures For**:
-  - Single-producer-single-consumer (use eventual instead)
-  - All-to-all synchronization (use barrier instead)
-
 Common Patterns
 ---------------
 
-**Parallel Reduction**
+**Parallel Reduction (Futures)**
   .. code-block:: c
 
      /* N workers compute partial results */
@@ -224,7 +243,16 @@ Common Patterns
      }
      ABT_future_wait(future);  /* Wait for all N */
 
-**Divide and Conquer**
+**Bulk-Synchronous Iteration (Barriers)**
+  .. code-block:: c
+
+     ABT_barrier_create(N, &barrier);
+     for (i = 0; i < N; i++) {
+         ABT_thread_create(pool, worker, ...);
+     }
+     /* Workers do: compute(), barrier_wait(), communicate(), barrier_wait() */
+
+**Divide and Conquer (Futures)**
   .. code-block:: c
 
      /* Fork into N subproblems */
@@ -234,16 +262,17 @@ Common Patterns
      }
      ABT_future_wait(future);  /* Wait for all subproblems */
 
-**Neighbor Synchronization (Stencils)**
-  .. code-block:: c
-
-     /* Wait for left and right neighbors */
-     ABT_future_create(2, NULL, &future);
-     /* Neighbors call ABT_future_set() when ready */
-     ABT_future_wait(future);  /* Proceed when both ready */
-
 Common Pitfalls
 ---------------
+
+**Wrong Barrier Count**
+  .. code-block:: c
+
+     /* WRONG: Barrier count doesn't match thread count */
+     ABT_barrier_create(NUM_THREADS - 1, &barrier);
+     for (int i = 0; i < NUM_THREADS; i++) {
+         /* Last thread will wait forever */
+     }
 
 **No ABT_future_get() Function**
   .. code-block:: c
@@ -277,47 +306,41 @@ Common Pitfalls
      ABT_future_create(4, callback, &future);
 
      /* Only 3 workers set compartments */
-     /* Worker 0 */ ABT_future_set(future, &val0);
-     /* Worker 1 */ ABT_future_set(future, &val1);
-     /* Worker 2 */ ABT_future_set(future, &val2);
-     /* Worker 3 never calls set! */
-
      /* Waiter blocks forever! Needs 4 sets */
      ABT_future_wait(future);
 
   Number of compartments must match number of producers.
 
-**Stack Variables in Callback**
+**Forgetting to Free Resources**
   .. code-block:: c
 
-     void bad_worker(void *arg) {
-         int local_result = 42;
-         ABT_future_set(future, &local_result);  /* WRONG! */
-         /* local_result destroyed when function returns */
-     }
+     ABT_barrier_create(n, &barrier);
+     /* ... use barrier ... */
+     ABT_barrier_free(&barrier);  /* Don't forget! */
 
-     /* Callback accesses dangling pointer */
-     void callback(void **args) {
-         int *val = (int *)args[0];  /* Undefined behavior */
-     }
-
-  Use heap-allocated or static storage for values passed to futures.
-
-**Circular Dependencies**
-  .. code-block:: c
-
-     /* Thread A waits for future B */
-     ABT_future_wait(futureB);
-
-     /* Thread B waits for future A */
-     ABT_future_wait(futureA);
-
-     /* Deadlock! */
-
-  Design dependency graphs to be acyclic (DAG).
+     ABT_future_create(n, callback, &future);
+     /* ... use future ... */
+     ABT_future_free(&future);  /* Don't forget! */
 
 API Reference
 -------------
+
+**Barrier Functions**
+  - ``int ABT_barrier_create(uint32_t num_waiters, ABT_barrier *newbarrier)``
+
+    Create a barrier for ``num_waiters`` work units.
+
+  - ``int ABT_barrier_wait(ABT_barrier barrier)``
+
+    Wait at the barrier. Blocks until all ``num_waiters`` work units call wait.
+
+  - ``int ABT_barrier_reinit(ABT_barrier barrier, uint32_t num_waiters)``
+
+    Reinitialize a barrier for reuse. Resets internal state and waiter count.
+
+  - ``int ABT_barrier_free(ABT_barrier *barrier)``
+
+    Free a barrier. Must not be called while work units are waiting.
 
 **Future Functions**
   - ``int ABT_future_create(uint32_t compartments, void (*cb_func)(void **arg), ABT_future *newfuture)``
@@ -350,15 +373,3 @@ API Reference
 
 **Important**: There is **no** ``ABT_future_get()`` function. Values are retrieved only
 via the callback.
-
-Next Steps
-----------
-
-- **Tutorial 07: Mutexes and Condition Variables** - Learn traditional locking
-  primitives for protecting shared data.
-
-- **Tutorial 08: Other Synchronization Primitives** - Explore eventuals (single-producer
-  -single-consumer), reader-writer locks, and work-unit keys.
-
-Futures are the right tool for multiple-producer-single-consumer patterns like parallel
-reduction, divide-and-conquer, and gathering results from multiple workers.

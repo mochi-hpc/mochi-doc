@@ -5,23 +5,6 @@ Mutexes and condition variables are traditional synchronization primitives for p
 shared data and coordinating work units. They are essential for thread-safe data structures
 and complex coordination patterns.
 
-Prerequisites
--------------
-
-- Completed Tutorials 01-06
-- Understanding of race conditions and data races
-- Familiarity with critical sections
-
-What You'll Learn
------------------
-
-- Using mutexes to protect shared data
-- Condition variables for wait/signal patterns
-- Producer-consumer implementations
-- Building thread-safe data structures
-- Pthread interoperability (critical for Mochi/MPI integration)
-- Mutex priority levels
-
 Key Concepts
 ------------
 
@@ -47,25 +30,22 @@ Key Concepts
      /* Condition is now true, mutex is locked */
      ABT_mutex_unlock(mutex);
 
-**Why the while loop?**: Spurious wakeups and broadcast signals mean the condition
-might not be true when you wake up. Always recheck.
-
-Producer-Consumer Pattern
---------------------------
+Example: Producer-Consumer Pattern
+----------------------------------
 
 The classic producer-consumer pattern uses mutex and condition variables for coordination:
 
-.. literalinclude:: ../../../code/argobots/07_mutex_cond/producer_consumer.c
+.. literalinclude:: ../../../code/argobots/05_mutex_cond/producer_consumer.c
    :language: c
    :linenos:
 
 Key Points
 ~~~~~~~~~~
 
-**Protecting Shared State (lines 35, 51)**
+**Protecting Shared State**
   All accesses to the shared buffer are protected by mutex lock/unlock.
 
-**Waiting on Conditions (lines 38-40, 66-68)**
+**Waiting on Conditions**
   .. code-block:: c
 
      while (buf->count == BUFFER_SIZE) {
@@ -75,28 +55,48 @@ Key Points
   Producer waits while buffer is full. ``ABT_cond_wait()`` atomically releases the
   mutex and blocks. When signaled, it reacquires the mutex before returning.
 
-**Signaling (lines 49, 78)**
+**Signaling**
   After producing/consuming, signal the opposite side that the condition changed.
 
-Thread-Safe Queue
+Optimizing memory
 -----------------
 
-Building reusable thread-safe data structures with mutexes:
+``ABT_mutex`` is an opaque pointer to some heap-allocated object that must be
+created with ``ABT_mutex_create```. To avoid such an indirection, you may use
+an ``ABT_mutex_memory`` instead, initialized with ``ABT_MUTEX_INITIALIZER``.
+This type is a placeholder of the same size as a mutex' underlying implementation,
+and can be converted into an ``ABT_mutex`` by using
+``ABT_MUTEX_MEMORY_GET_HANDLE(&mutex_memory)``. This eliminates the need for
+``ABT_mutex_create/free`` and their corresponding heap allocation/deallocation.
 
-.. literalinclude:: ../../../code/argobots/07_mutex_cond/shared_queue.c
+The same applies to ``ABT_cond_memory``, using ``ABT_COND_INITIALIZER`` and
+``ABT_COND_MEMORY_GET_HANDLE``.
+
+.. important::
+
+   An ``ABT_mutex_memory`` should not be moved in memory. An ``ABT_mutex`` can
+   be moved (it's a pointer to an ``ABT_mutex_memory``, which doesn't move).
+
+Example: Thread-Safe Queue
+--------------------------
+
+Building reusable thread-safe data structures with mutexes, using static initialization
+(``ABT_mutex_memory`` instead of ``ABT_mutex``):
+
+.. literalinclude:: ../../../code/argobots/05_mutex_cond/shared_queue.c
    :language: c
    :linenos:
 
 Key Points
 ~~~~~~~~~~
 
-**Encapsulated Locking (lines 32-43, 48-61)**
+**Encapsulated Locking**
   Lock/unlock happens inside queue operations. Users don't need to know about the mutex.
 
 **Short Critical Sections**
   Mutex is held only during the actual queue manipulation, not during application logic.
 
-**Yielding on Busy (lines 82, 95)**
+**Yielding on Busy**
   When queue is full/empty, yield to let other work units run before retrying.
 
 Pthread Interoperability
@@ -104,34 +104,27 @@ Pthread Interoperability
 
 Critical for Mochi: Argobots mutexes work with pthreads (needed for MPI integration):
 
-.. literalinclude:: ../../../code/argobots/07_mutex_cond/pthread_interop.c
+.. literalinclude:: ../../../code/argobots/05_mutex_cond/pthread_interop.c
    :language: c
    :linenos:
 
 Key Points
 ~~~~~~~~~~
 
-**Shared Synchronization (lines 44-53)**
+**Shared Synchronization**
   Pthreads can lock Argobots mutexes and wait on Argobots condition variables.
   This is essential when mixing Mochi services with pthread-based libraries (like MPI).
 
 **Common Use Case in Mochi**:
-  - Margo RPC handlers (ULTs) and MPI communication (pthreads) sharing data
+  - Margo RPC handlers (ULTs) and other multi-threaded libraries (using pthreads) sharing data
   - Progress threads (pthreads) signaling Argobots work units
   - Integrating Mochi with pthread-based I/O libraries
 
-Building and Running
---------------------
-
-.. code-block:: bash
-
-   cd code/argobots/07_mutex_cond
-   mkdir build && cd build
-   cmake ..
-   make
-   ./producer_consumer
-   ./shared_queue
-   ./pthread_interop
+.. important::
+   While blocking on an ``ABT_mutex`` will make the execution stream yield back to
+   its scheduler to look for other ULTs to run, it is not the case when using a POSIX mutex
+   (``pthread_mutex_t``). POSIX mutex will cause the entire execution stream to block.
+   It is therefore import to rely on ``ABT_mutex`` as much as possible.
 
 Mutex Priority Levels
 ----------------------
@@ -154,8 +147,7 @@ Best Practices
 
      /* Bad: Long critical section */
      ABT_mutex_lock(mutex);
-     expensive_computation();  /* Don't do this under lock */
-     shared_data = result;
+     shared_data = expensive_computation();  /* Don't do this under lock */
      ABT_mutex_unlock(mutex);
 
      /* Good: Minimal critical section */
@@ -191,6 +183,9 @@ Best Practices
 **Signal vs Broadcast**
   - ``ABT_cond_signal()``: Wake one waiter (efficient for single consumer)
   - ``ABT_cond_broadcast()``: Wake all waiters (needed when condition affects all)
+
+**Static initialization**
+  - Use ``ABT_*_memory`` whenever possible.
 
 Common Pitfalls
 ---------------
@@ -263,14 +258,3 @@ API Reference
 **Static Initializers**
   - ``ABT_MUTEX_INITIALIZER``: Static mutex initialization
   - ``ABT_COND_INITIALIZER``: Static condition variable initialization
-
-Next Steps
-----------
-
-- **Tutorial 08: Other Synchronization Primitives** - Eventuals, reader-writer locks,
-  and work-unit keys.
-
-- **Tutorial 09: Self Operations** - Yielding, suspension, and direct control flow.
-
-Mutexes and condition variables are fundamental for building thread-safe Mochi services
-that integrate with pthread-based libraries like MPI.

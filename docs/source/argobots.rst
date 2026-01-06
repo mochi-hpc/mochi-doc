@@ -102,10 +102,9 @@ Tutorials
    argobots/02_xstreams_pools.rst
    argobots/03_ults_tasklets.rst
    argobots/04_schedulers.rst
-   argobots/05_barriers.rst
-   argobots/06_futures.rst
-   argobots/07_mutex_cond.rst
-   argobots/08_sync_primitives.rst
-   argobots/09_self_operations.rst
-   argobots/10_custom_schedulers.rst
-   argobots/11_performance_debug.rst
+   argobots/05_mutex_cond.rst
+   argobots/06_eventuals_rwlocks.rst
+   argobots/07_barriers_futures.rst
+   argobots/08_self_operations.rst
+   argobots/09_custom_schedulers_pools.rst
+   argobots/10_performance_debug.rst
