@@ -52,6 +52,8 @@ int main(int argc, char** argv)
     ret = yk_client_finalize(client);
     assert(ret == YOKAN_SUCCESS);
 
+    margo_addr_free(mid, server_addr);
+
     margo_finalize(mid);
 
     return 0;

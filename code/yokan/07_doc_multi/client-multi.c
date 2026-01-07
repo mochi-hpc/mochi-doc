@@ -7,6 +7,15 @@
 #include <yokan/database.h>
 #include <yokan/collection.h>
 
+/* Callback function for yk_doc_iter */
+static yk_return_t doc_iter_callback(void* uargs, size_t index,
+                                      yk_id_t id,
+                                      const void* doc, size_t doc_size)
+{
+    printf("\t[%zu] id=%lu: %.*s\n", index, id, (int)doc_size, (char*)doc);
+    return YOKAN_SUCCESS;
+}
+
 int main(int argc, char** argv)
 {
     if(argc != 3) {
@@ -95,6 +104,13 @@ int main(int argc, char** argv)
     ret = yk_doc_list(db_handle, "my_collection",
             YOKAN_MODE_INCLUSIVE, 1, NULL, 0, 2,
             listed_ids, (void * const*)buffers, buf_sizes);
+    assert(ret == YOKAN_SUCCESS);
+
+    /* iterate through documents using a callback */
+    printf("Iterating through documents:\n");
+    ret = yk_doc_iter(db_handle, "my_collection",
+                      YOKAN_MODE_INCLUSIVE, 1, NULL, 0, 10,
+                      doc_iter_callback, NULL, NULL);
     assert(ret == YOKAN_SUCCESS);
 
     ret = yk_database_handle_release(db_handle);

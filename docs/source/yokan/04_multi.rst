@@ -62,6 +62,10 @@ These functions are the following.
   the specified lower bound.
 - :code:`yk_list_keyvals`: same as :code:`yk_list_keyvals` but also returns
   values.
+- :code:`yk_iter`: another way of iterating through key/value pairs, using
+  a callback. This method can improve performance by avoiding memory copies.
+  It also lets the Yokan client manage and reuse buffers, and pipeline
+  calls to fetch the next batch of key/value pairs.
 
 Once again, more documentation on the semantics of all these functions
 is available in the *yokan/database.h* header.

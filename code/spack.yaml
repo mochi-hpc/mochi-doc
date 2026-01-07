@@ -10,7 +10,7 @@ spack:
   - mochi-warabi
   - mochi-abt-io
   - argobots
-  - mochi-yokan+bedrock+python+lua
+  - mochi-yokan+bedrock+python+lua+remi
   concretizer:
     unify: true
     reuse: dependencies

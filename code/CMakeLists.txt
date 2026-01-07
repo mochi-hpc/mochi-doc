@@ -49,6 +49,8 @@ find_package (bedrock-module-api REQUIRED)
 find_package (yokan REQUIRED)
 # flock
 find_package (flock REQUIRED)
+# REMI
+find_package (remi REQUIRED)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)

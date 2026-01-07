@@ -1,296 +1,222 @@
-Provider migration
+Database migration
 ==================
 
-Yokan supports migrating database state from one provider to another. This
-is useful for load balancing, service relocation, maintenance, and implementing
-fault tolerance.
+Yokan supports migrating a database from one provider to another using REMI
+(REsource MIgration component). This is useful for relocating databases,
+balancing load, or moving data between storage tiers.
 
-What is provider migration?
+.. important::
+   Database migration requires:
+
+   - Yokan compiled with the ``+remi`` variant
+   - A REMI receiver provider on the destination
+   - A REMI sender provider on the source
+   - The destination provider initialized with an empty configuration: ``"{}"``
+
+What is database migration?
 ----------------------------
 
-Provider migration transfers the complete state of a Yokan database from a
-source provider to a destination provider. After migration:
+Database migration physically transfers the database files from a source
+provider to a destination provider. After migration:
 
-- The destination provider contains all key/value pairs from the source
-- The source can optionally be cleared (depending on migration mode)
-- Both providers continue running (migration doesn't shut down providers)
+- The destination provider takes ownership of the database
+- The source provider's database becomes invalid
+- All key/value pairs and collections are transferred
+- The database can continue being accessed at the new location
 
-Use cases for migration include:
+Migration uses REMI to transfer the database files efficiently over the network.
 
-- **Load balancing**: Move databases to less-loaded nodes
-- **Maintenance**: Evacuate databases before node shutdown
-- **Tiering**: Move data between storage tiers (memory → disk)
-- **Replication**: Copy databases for redundancy
-- **Disaster recovery**: Restore from backups
+Setting up for migration
+-------------------------
+
+**Compiling Yokan with REMI support**:
+
+.. code-block:: console
+
+   spack install mochi-yokan +remi
+
+**Provider setup for migration**:
+
+The source and destination providers must be configured with REMI support:
+
+.. code-block:: c
+
+   #include <remi/remi-server.h>
+   #include <remi/remi-client.h>
+
+   // Register a REMI provider (needed on destination)
+   remi_provider_t remi_provider;
+   remi_provider_register(
+       mid, ABT_IO_INSTANCE_NULL,
+       provider_id, ABT_POOL_NULL, &remi_provider);
+
+   // Create a REMI client (needed on source)
+   remi_client_t remi_client;
+   remi_client_init(mid, ABT_IO_INSTANCE_NULL, &remi_client);
+
+   // Source provider: needs REMI client
+   struct yk_provider_args args1 = YOKAN_PROVIDER_ARGS_INIT;
+   args1.remi.client = remi_client;
+   args1.remi.provider = REMI_PROVIDER_NULL;
+   yk_provider_register(mid, 1, config, &args1, &source_provider);
+
+   // Destination provider: needs REMI provider and EMPTY config
+   struct yk_provider_args args2 = YOKAN_PROVIDER_ARGS_INIT;
+   args2.remi.client = REMI_CLIENT_NULL;
+   args2.remi.provider = remi_provider;
+   yk_provider_register(mid, 2, "{}", &args2, &dest_provider);
+   //                            ^^^^
+   //                            MUST be empty!
+
+The destination provider **must** be initialized with an empty configuration
+``"{}"`` because it will receive its database through migration.
 
 Migration API
 -------------
 
-The migration API is available in both C and C++.
-
-C API
-^^^^^
-
-The C API is defined in ``yokan/database.h``:
+The migration function is called from the source provider:
 
 .. code-block:: c
 
-   yk_return_t yk_migrate_database(
-       yk_database_handle_t source,      // Source database handle
-       const char*          dest_addr,   // Destination address
-       uint16_t             dest_provider_id,  // Destination provider ID
-       const char*          migration_config,  // Migration options (JSON)
-       bool                 remove_source      // Whether to clear source
+   yk_return_t yk_provider_migrate_database(
+       yk_provider_t provider,                        // Source provider
+       const char* dest_addr,                         // Destination address
+       uint16_t dest_provider_id,                     // Destination provider ID
+       const struct yk_migration_options* options     // Migration options
    );
 
-C++ API
-^^^^^^^
+**Migration options structure**:
 
-The C++ API is defined in ``yokan/cxx/database.hpp``:
+.. code-block:: c
 
-.. code-block:: cpp
+   struct yk_migration_options {
+       const char* new_root;      // New path for database on destination
+       const char* extra_config;  // Extra JSON config for destination
+       size_t      xfer_size;     // Transfer block size (0 = default)
+   };
 
-   void yokan::Database::migrate(
-       const std::string& dest_addr,
-       uint16_t dest_provider_id,
-       const std::string& migration_config = "{}",
-       bool remove_source = false
-   );
+Migration example
+-----------------
 
-Basic migration example
-------------------------
+Here's a complete example showing database migration:
 
-Here's a simple example of migrating a database:
-
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_basic.c
+.. literalinclude:: ../../../code/yokan/10_migration/migrate_example.c
    :language: c
 
 This example:
 
-1. Connects to both source and destination providers
-2. Populates the source database
-3. Migrates all data to the destination
-4. Verifies the migration succeeded
-5. Source data is preserved (``remove_source = false``)
+1. Sets up both source and destination providers with REMI support
+2. Creates a database on the source provider and populates it
+3. Migrates the database to the destination provider
+4. Verifies the source provider's database is now invalid
+5. Verifies the destination provider now has the migrated data
 
-Migration with removal
-----------------------
+Migration behavior
+------------------
 
-To move data (rather than copy), use ``remove_source = true``:
+**After migration**:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_remove.c
-   :language: c
+- The source provider returns ``YOKAN_ERR_INVALID_DATABASE`` for operations
+- The destination provider can now access the migrated database
+- All key/value pairs are transferred
+- All collections and documents are transferred
+- The database files are physically moved or copied to the new location
 
-After this migration, the source database will be empty.
+**Migration options**:
 
-Migration configuration
------------------------
+- ``new_root``: Specifies the filesystem path where the database will be stored
+  on the destination. This is important when the destination needs the database
+  in a specific location (e.g., on a particular disk or mount point).
 
-The ``migration_config`` parameter accepts a JSON object with options:
+- ``extra_config``: Additional JSON configuration to apply at the destination.
+  For example, you might change backend parameters while migrating.
 
-**Batch size**:
-
-.. code-block:: json
-
-   {
-       "batch_size": 1000
-   }
-
-Controls how many key/value pairs are transferred per RPC. Larger batches
-improve throughput but use more memory.
-
-**Selection filter**:
-
-.. code-block:: json
-
-   {
-       "selection": {
-           "filter": "prefix:",
-           "mode": "prefix"
-       }
-   }
-
-Migrates only key/value pairs matching the filter. Modes include:
-
-- ``prefix``: Keys starting with the filter string
-- ``suffix``: Keys ending with the filter string
-- ``lua``: Lua script filter (like in list operations)
-
-**Example with filter**:
-
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_filter.c
-   :language: c
+- ``xfer_size``: Controls the transfer block size for REMI. Setting this to 0
+  uses REMI's default. Larger sizes may improve throughput for large databases.
 
 Backend compatibility
 ---------------------
 
-Migration works between any two backends that support the same data model:
+Migration support depends on the backend's ability to have its files
+transferred. In-memory backends without persistence can be migrated but they
+will first dump their data into a temporary file, and send that file.
+Some backends may return ``YOKAN_ERR_OP_UNSUPPORTED`` when migration
+is attempted if migration is not suported..
 
-**Key/value backends** (all backends):
-- map ↔ map ✓
-- map ↔ rocksdb ✓
-- rocksdb ↔ lmdb ✓
-- etc.
+Using migration with Bedrock
+-----------------------------
 
-**Document backends** (sorted backends only):
-- Cannot migrate documents to non-sorted backends
-- Verify destination backend supports documents
+When using Bedrock to manage Yokan providers, the setup is similar but
+Bedrock handles provider registration. The key requirements remain:
 
-.. warning::
-   Migrating from a sorted backend (map, rocksdb, lmdb) to an unsorted
-   backend (unordered_map, unordered_set) will preserve all data but lose
-   ordering guarantees.
+1. Compile Yokan with ``+remi``
+2. Register a "remi_sender" and/or a "remi_receiver" in your Bedrock configuration,
+   depending on what you intend to support
+3. Ensure the destination Yokan provider has an empty database configuration
+4. Pass REMI sender/receiver as dependencies to the respective Yokan providers
 
-Migration with Bedrock
-----------------------
+Example Bedrock configuration:
 
-When using Bedrock, providers can be migrated programmatically or via
-runtime configuration APIs.
+.. code-block:: json
 
-Programmatic migration
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_bedrock.c
-   :language: c
-
-Using Bedrock runtime API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The Bedrock ServiceHandle API also supports provider migration:
-
-.. code-block:: cpp
-
-   #include <bedrock/ServiceHandle.hpp>
-
-   bedrock::ServiceHandle service = client.makeServiceHandle(addr, 0);
-
-   service.migrateProvider(
-       "yokan_provider_name",
-       dest_addr,
-       dest_provider_id,
-       migration_config,
-       remove_source
-   );
+   {
+       "libraries": [
+           "libyokan-bedrock-module.so",
+           "libremi-bedrock-module.so"
+       ],
+       "providers": [
+           {
+               "name": "sender",
+               "type": "remi_sender",
+               "provider_id": 1
+           },
+           {
+               "name": "receiver",
+               "type": "remi_receiver",
+               "provider_id": 2
+           },
+           {
+               "name": "yokan_source",
+               "type": "yokan",
+               "provider_id": 3,
+               "config": {
+                   "database": {
+                       "type": "map"
+                   }
+               },
+               "dependencies": {
+                   "remi_sender": "sender"
+               }
+           },
+           {
+               "name": "yokan_dest",
+               "type": "yokan",
+               "provider_id": 4,
+               "config": {},
+               "dependencies": {
+                   "remi_receiver": "receiver"
+               }
+           }
+       ]
+   }
 
 Error handling
 --------------
 
-Migration can fail for various reasons:
+Common errors during migration:
 
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_error.c
-   :language: c
+- ``YOKAN_ERR_OP_UNSUPPORTED``: Backend doesn't support migration
+- ``YOKAN_ERR_INVALID_DATABASE``: Source database is invalid or already migrated
+- REMI errors: File transfer failures, permission issues
+- Network errors: Connection failures to destination
 
-Common errors:
-
-- ``YOKAN_ERR_INVALID_ARGS``: Invalid destination address or provider ID
-- ``YOKAN_ERR_NO_PERM``: Destination provider doesn't allow writes
-- Network errors: Connection failures
-- Backend errors: Insufficient space, write failures
-
-Best practices
---------------
-
-1. **Verify destination**: Ensure the destination provider exists and is
-   accessible before migrating.
-
-2. **Check capacity**: Verify the destination has sufficient storage space.
-
-3. **Use appropriate batch sizes**:
-   - Small batches (100-1000): Lower memory, slower
-   - Large batches (10000+): Higher memory, faster
-
-4. **Test migrations**: Test with a subset of data first using filters.
-
-5. **Monitor progress**: For large databases, consider implementing progress
-   tracking in your application.
-
-6. **Handle failures gracefully**: Migration failures leave both providers
-   in consistent states, but you may want to retry.
-
-7. **Consider downtime**: While migration doesn't require shutting down
-   providers, you may want to prevent writes during migration to ensure
-   consistency.
-
-Performance considerations
---------------------------
-
-Migration performance depends on:
-
-- **Database size**: Larger databases take longer
-- **Network bandwidth**: Higher bandwidth improves throughput
-- **Batch size**: Larger batches improve efficiency
-- **Backend speed**: Faster backends (memory) migrate quicker than slower ones (disk)
-
-**Typical throughput**:
-
-- In-memory to in-memory: 100K-500K keys/sec
-- Disk to disk: 10K-100K keys/sec
-- Cross-network: Limited by bandwidth
-
-Advanced: Incremental migration
---------------------------------
-
-For very large databases, consider incremental migration:
-
-.. literalinclude:: ../../../code/yokan/10_migration/migrate_incremental.c
-   :language: c
-
-This approach:
-
-- Migrates data in chunks based on key prefixes
-- Allows monitoring and cancellation
-- Reduces memory pressure
-- Enables progress reporting
-
-Migration vs. Replication
--------------------------
-
-**Migration** transfers data once:
-- One-time operation
-- Source can be cleared
-- No ongoing synchronization
-
-**Replication** (if supported by backend):
-- Continuous synchronization
-- Multiple replicas maintained
-- Higher complexity
-
-Yokan's migration API is designed for one-time transfers. For continuous
-replication, consider application-level solutions or backend-specific features.
+After a failed migration attempt, the source database typically remains
+valid and can be retried.
 
 Limitations
 -----------
 
-1. **No automatic rollback**: If migration fails partway, manual cleanup
-   may be needed.
-
-2. **No live consistency**: Writes during migration may not be captured.
-
-3. **Memory overhead**: Large batch sizes require proportional memory.
-
-4. **Backend-specific**: Some backends may have limitations on migration.
-
-Troubleshooting
----------------
-
-**Migration hangs**:
-- Check network connectivity
-- Verify destination provider is responding
-- Check for deadlocks or resource exhaustion
-
-**Partial migration**:
-- Review error logs
-- Check destination storage capacity
-- Verify permissions
-
-**Performance issues**:
-- Increase batch size
-- Use faster network
-- Consider backend performance characteristics
-
-Next steps
-----------
-
-- :doc:`02_advanced_setup`: Configure high-performance deployments
-- :doc:`07_backends`: Learn about different backend capabilities
-- :doc:`../bedrock/07_runtime_config`: Use Bedrock for runtime migration
+- Migration is an all-or-nothing operation (no partial migration)
+- No built-in support for incremental migration
+- Source database becomes invalid after migration
+- Not all backends support migration

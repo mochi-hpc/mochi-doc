@@ -1,20 +1,14 @@
-cmake_minimum_required(VERSION 3.10)
-project(yokan-migration C)
+cmake_minimum_required (VERSION 3.10)
+project (yokan-migration C)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(MARGO REQUIRED IMPORTED_TARGET margo)
-find_package(yokan REQUIRED)
+find_package (PkgConfig REQUIRED)
+pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
+find_package (remi REQUIRED)
+find_package (yokan REQUIRED)
 
-set(EXAMPLES
-    migrate_basic
-    migrate_remove
-    migrate_filter
-    migrate_bedrock
-    migrate_error
-    migrate_incremental
-)
-
-foreach(example ${EXAMPLES})
-    add_executable(${example} ${example}.c)
-    target_link_libraries(${example} PkgConfig::MARGO yokan::client)
-endforeach()
+add_executable (migrate_example migrate_example.c)
+target_link_libraries (migrate_example
+    PkgConfig::MARGO
+    remi
+    yokan::server
+    yokan::client)
