@@ -11,7 +11,7 @@ a module to make it usable with Bedrock is really not difficult.
 Such a module consists of a single dynamic library (.so) that
 can be implemented as shown in the example bellow.
 
-.. literalinclude:: ../../../code/bedrock/05_cpp_module/module.cpp
+.. literalinclude:: ../../../code/bedrock/04_module/module.cpp
    :language: cpp
 
 You must compile your module as a dynamic library and link it against

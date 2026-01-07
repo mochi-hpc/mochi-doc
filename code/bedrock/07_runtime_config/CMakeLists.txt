@@ -23,6 +23,6 @@ set(EXAMPLES
 )
 
 foreach(example ${EXAMPLES})
-    add_executable(${example} ${example}.cpp)
-    target_link_libraries(${example} bedrock::client)
+    add_executable(07_bedrock_${example} ${example}.cpp)
+    target_link_libraries(07_bedrock_${example} bedrock::client)
 endforeach()

@@ -26,7 +26,7 @@ The code bellow is an example of such a Jx9-based configuration.
 It first initializes a base configuration, then uses a loop to
 add as many pools as requested in the :code:`argobots` section.
 
-.. literalinclude:: ../../../code/bedrock/06_jx9/example.jx9
+.. literalinclude:: ../../../code/bedrock/05_jx9/example.jx9
    :language: json
 
 Bedrock can use this file as follows.
@@ -46,7 +46,7 @@ Bedrock understands TOML configuration files using the :code:`--toml` argument
 of the :code:`bedrock` program. The code bellow is an example of such a
 TOML configuration.
 
-.. literalinclude:: ../../../code/bedrock/06_jx9/example.toml
+.. literalinclude:: ../../../code/bedrock/05_jx9/example.toml
    :language: toml
 
 Since TOML is simply an alternative language to express the same kind of

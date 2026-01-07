@@ -24,7 +24,7 @@ To use Flock in a Bedrock configuration, you need to:
 Basic Flock configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../code/bedrock/08_flock_integration/basic-config.json
+.. literalinclude:: ../../../code/bedrock/06_flock_integration/basic-config.json
    :language: json
 
 This configuration creates a Flock provider that:
@@ -116,7 +116,7 @@ Flock and Yokan across multiple processes.
 Configuration file (same for all processes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../code/bedrock/08_flock_integration/distributed-config.json
+.. literalinclude:: ../../../code/bedrock/06_flock_integration/distributed-config.json
    :language: json
 
 Launching the service
@@ -144,7 +144,7 @@ Service discovery example
 
 Once the service is running, clients can discover all members:
 
-.. literalinclude:: ../../../code/bedrock/08_flock_integration/client.cpp
+.. literalinclude:: ../../../code/bedrock/06_flock_integration/client.cpp
    :language: cpp
 
 Python integration
@@ -152,5 +152,5 @@ Python integration
 
 Using Flock with Bedrock Python bindings:
 
-.. literalinclude:: ../../../code/bedrock/08_flock_integration/python_example.py
+.. literalinclude:: ../../../code/bedrock/06_flock_integration/python_example.py
    :language: python

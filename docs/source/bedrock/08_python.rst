@@ -24,7 +24,7 @@ Starting a Bedrock service from Python
 The :code:`mochi.bedrock` module provides a :code:`Server` class that can be used
 to start a Bedrock service directly from Python.
 
-.. literalinclude:: ../../../code/bedrock/05_python/server.py
+.. literalinclude:: ../../../code/bedrock/08_python/server.py
    :language: python
 
 The :code:`Server` constructor takes a Mercury address (protocol) and an optional
@@ -43,7 +43,7 @@ Connecting to a Bedrock service
 The :code:`Client` class allows you to connect to a running Bedrock service
 and interact with it.
 
-.. literalinclude:: ../../../code/bedrock/05_python/client.py
+.. literalinclude:: ../../../code/bedrock/08_python/client.py
    :language: python
 
 The :code:`ServiceHandle` object returned by :code:`make_service_handle()` provides
@@ -54,7 +54,7 @@ Querying configuration
 
 You can retrieve the complete configuration of a Bedrock service:
 
-.. literalinclude:: ../../../code/bedrock/05_python/query.py
+.. literalinclude:: ../../../code/bedrock/08_python/query.py
    :language: python
 
 The :code:`config` property returns a Python dictionary representing the
@@ -131,7 +131,7 @@ Complete example
 
 Here's a complete example showing runtime manipulation:
 
-.. literalinclude:: ../../../code/bedrock/05_python/runtime.py
+.. literalinclude:: ../../../code/bedrock/08_python/runtime.py
    :language: python
 
 Working with service groups
@@ -140,7 +140,7 @@ Working with service groups
 When multiple Bedrock services are organized in a Flock group, you can
 interact with them collectively using :code:`ServiceGroupHandle`:
 
-.. literalinclude:: ../../../code/bedrock/05_python/group.py
+.. literalinclude:: ../../../code/bedrock/08_python/group.py
    :language: python
 
 The server code previously shown has a Flock provider that created a *mygroup.flock*
@@ -159,7 +159,7 @@ Using ProcSpec for configuration
 The :code:`mochi.bedrock.spec` module provides Python classes for building
 configurations programmatically:
 
-.. literalinclude:: ../../../code/bedrock/05_python/spec.py
+.. literalinclude:: ../../../code/bedrock/08_python/spec.py
    :language: python
 
 The advantage of using the ``mochi.bedrock.spec`` package to build such
