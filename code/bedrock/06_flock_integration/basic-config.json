@@ -1,7 +1,7 @@
 {
-    "libraries": {
-        "flock": "libflock-bedrock-module.so"
-    },
+    "libraries": [
+        "libflock-bedrock-module.so"
+    ],
     "providers": [
         {
             "name": "my_group",
