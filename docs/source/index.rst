@@ -86,15 +86,15 @@ the core Mochi libraries. ABT-IO depends on Argobots only.
 Developing and deploying a service
 ----------------------------------
 
-**Templates** are provided to help users develop their own components
-using Margo or Thallium. These templates can save a tremendous amount
-of time and will let you focus on the important part of your service: its
-RPCs and its API.
-
 **Bedrock** is a bootstrapping system for composed Mochi services.
 It provides a simple a unified way of deploying Mochi components in a process
 and configure them using a JSON file. It also enable querying and changing
 this configuration at run time.
+
+**Templates** are provided to help users develop their own components
+using Margo or Thallium. These templates can save a tremendous amount
+of time and will let you focus on the important part of your service: its
+RPCs and its API.
 
 Contents
 ========
@@ -113,8 +113,8 @@ Contents
    warabi.rst
    flock.rst
    abtio.rst
-   templates.rst
    bedrock.rst
+   templates.rst
    interop.rst
    misc.rst
    tutorials.rst
