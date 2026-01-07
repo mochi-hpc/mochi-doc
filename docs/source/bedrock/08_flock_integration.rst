@@ -53,24 +53,6 @@ Creates a single-member group with just the current process:
        }
    }
 
-View file bootstrap
-^^^^^^^^^^^^^^^^^^^
-
-Initializes from a pre-existing group view file:
-
-.. code-block:: json
-
-   {
-       "type": "flock",
-       "config": {
-           "bootstrap": {
-               "method": "view",
-               "view_file": "/path/to/group.view"
-           },
-           "group": {"type": "static", "config": {}}
-       }
-   }
-
 MPI bootstrap
 ^^^^^^^^^^^^^
 
@@ -92,8 +74,12 @@ Then launch with MPI:
 
    $ mpirun -n 4 bedrock na+sm -c config.json
 
-Join method
-^^^^^^^^^^^
+An extra ``"mpi_ranks": [ ... ]`` field may be used in the configuration
+to specify which MPI ranks are part of the group. By default, all the ranks
+of ``MPI_COMM_WORLD`` will be part of the group.
+
+Join bootstrap
+^^^^^^^^^^^^^^
 
 For dynamic groups where members join an existing group:
 
@@ -102,31 +88,24 @@ For dynamic groups where members join an existing group:
    {
        "type": "flock",
        "config": {
-           "bootstrap": {
-               "method": "join",
-               "address": "na+sm://12345/0",
-               "provider_id": 1
-           },
+           "bootstrap": "join",
+           "file": "/path/to/group_file",
            "group": {"type": "centralized", "config": {}}
        }
    }
 
+Bedrock servers using the "join" method will expect the group file to exist
+and will join the group identified by the group file.
+
 .. note::
-   The "join" method requires the "centralized" backend for dynamic membership.
+   The "join" method cannot be used with a "static" group.
 
-Using Flock as a dependency
-----------------------------
+Using multiple methods
+^^^^^^^^^^^^^^^^^^^^^^
 
-Other providers can depend on the Flock group for service discovery:
-
-.. literalinclude:: ../../../code/bedrock/08_flock_integration/with-dependency.json
-   :language: json
-
-The Yokan provider now has access to the Flock group and can:
-
-- Discover other Yokan providers in the group
-- Coordinate distributed operations
-- Handle membership changes
+The ``"bootstrap"`` field can accept a list of strings instead of a string,
+in which case the bootstrap methods will be attempted one after the other until
+one works.
 
 Multi-process deployment
 -------------------------
@@ -150,10 +129,15 @@ Launching the service
 
    # Or launch manually with file-based bootstrap
    # Process 1 (creates the group file)
-   $ bedrock na+sm -c config-file-bootstrap.json
+   $ bedrock na+sm -c distributed-config.json
 
    # Processes 2-4 (join via the group file)
-   $ bedrock na+sm -c config-file-bootstrap.json
+   $ bedrock na+sm -c distributed-config.json
+
+In the case where process 1 is launched before other processes, the use of ``["join", "mpi"]``
+as bootstrap method will make process 1 try to join, fail, and resort to "mpi", creating a
+group with itself as the only member. Subsequent processes will find the group file present
+and successfully use the "join" method.
 
 Service discovery example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -163,44 +147,6 @@ Once the service is running, clients can discover all members:
 .. literalinclude:: ../../../code/bedrock/08_flock_integration/client.cpp
    :language: cpp
 
-Dynamic membership
-------------------
-
-For services that need to handle members joining and leaving, use the
-"centralized" backend:
-
-.. code-block:: json
-
-   {
-       "name": "dynamic_group",
-       "type": "flock",
-       "provider_id": 1,
-       "config": {
-           "bootstrap": "self",
-           "group": {
-               "type": "centralized",
-               "config": {
-                   "update_interval": 1000
-               }
-           }
-       }
-   }
-
-New members can join at any time:
-
-.. code-block:: json
-
-   {
-       "config": {
-           "bootstrap": {
-               "method": "join",
-               "address": "<coordinator_address>",
-               "provider_id": 1
-           },
-           "group": {"type": "centralized", "config": {}}
-       }
-   }
-
 Python integration
 ------------------
 
@@ -208,60 +154,3 @@ Using Flock with Bedrock Python bindings:
 
 .. literalinclude:: ../../../code/bedrock/08_flock_integration/python_example.py
    :language: python
-
-Best practices
---------------
-
-1. **Choose the right bootstrap method**:
-   - Use "mpi" for HPC batch jobs
-   - Use "self" + "join" for elastic services
-   - Use "view" for static, pre-configured deployments
-
-2. **Choose the right backend**:
-   - Use "static" for fixed membership (better performance)
-   - Use "centralized" for dynamic membership
-
-3. **Persist group views**:
-   - Always specify a "file" in the config to persist the group view
-   - This enables recovery after crashes
-
-4. **Handle membership changes**:
-   - If using dynamic membership, implement proper handling of join/leave events
-   - Use group refresh callbacks when available
-
-5. **Security**:
-   - Protect group view files (they contain service addresses)
-   - Consider using authentication in production
-
-Troubleshooting
----------------
-
-**Issue**: Group members can't find each other
-
-**Solutions**:
-- Check that all members use the same provider_id
-- Verify network connectivity between processes
-- Ensure group view files are accessible
-- Check firewall settings
-
-**Issue**: "Join" method fails
-
-**Solutions**:
-- Verify the coordinator address is correct
-- Ensure the coordinator is using "centralized" backend
-- Check that the coordinator is running
-- Verify provider_id matches
-
-**Issue**: Group view file not updated
-
-**Solutions**:
-- Check file permissions
-- Verify the "file" path in configuration
-- Ensure sufficient disk space
-
-Next steps
-----------
-
-- :doc:`../flock`: Learn more about Flock's features and capabilities
-- :doc:`05_python`: Use Flock with Bedrock Python bindings
-- :doc:`07_runtime_config`: Dynamically add Flock providers at runtime

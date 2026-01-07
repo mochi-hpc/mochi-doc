@@ -9,7 +9,7 @@ Writing a Bedrock module
 If you have programmed your own Mochi component, writing
 a module to make it usable with Bedrock is really not difficult.
 Such a module consists of a single dynamic library (.so) that
-can be implemented as show in the example bellow.
+can be implemented as shown in the example bellow.
 
 .. literalinclude:: ../../../code/bedrock/05_cpp_module/module.cpp
    :language: cpp
@@ -83,7 +83,7 @@ The is_updatable field indicates whether the dependency can be updated via a cal
 Given the above dependency declarations for our module, a valid provider
 instantiation in the JSON document might look like the following.
 
-.. code-block:: JSON
+.. code-block:: json
 
    {
         "libraries" : [
@@ -114,7 +114,7 @@ and (3) there should be another Yokan provider local to the current process and 
 Component instantiation
 -----------------------
 
-One :code:`GetDependencies` has been called and Bedrock has looked up the dependencies,
+Once :code:`GetDependencies` has been called and Bedrock has looked up the dependencies,
 the :code:`Register` static function is called. This time, the :code:`dependencies` field
 of the :code:`bedrock::ComponentArgs` has been filled. This field is of type :code:ResolvedDependencyMap`,
 which is defined as a map from dependency names to a :code:`NamedDependencyList` object.

@@ -2,7 +2,7 @@
 """
 Example of working with Bedrock service groups using Flock.
 """
-from mochi.bedrock import Client
+from mochi.bedrock.client import Client
 import sys
 
 if len(sys.argv) != 2:
@@ -16,7 +16,10 @@ client = Client("na+sm")
 
 # Create a handle to the service group
 # This assumes all members have Bedrock provider at ID 0
-group = client.make_service_group_handle(group_file, provider_id=0)
+group = client.make_service_group_handle_from_flock(group_file, provider_id=0)
+
+# You can also use a list of addresses if Flock is not used
+# group = client.make_service_group_handle([addr1, addr2, ...])
 
 print(f"Connected to service group")
 print(f"Group size: {group.size}")
@@ -48,6 +51,3 @@ for i in range(group.size):
     service = group[i]
     provider_names = service.query(jx9_script)
     print(f"Member {i}: {provider_names}")
-
-# Clean up
-client.finalize()

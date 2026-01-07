@@ -24,13 +24,14 @@ int main(int argc, char** argv) {
             "name": "my_dynamic_provider",
             "type": "yokan",
             "provider_id": 100,
-            "pool": "__primary__",
+            "dependencies": {
+                "pool": "__primary__"
+            },
             "config": {
                 "database": {
                     "type": "map"
                 }
-            },
-            "dependencies": {}
+            }
         }
         )";
 

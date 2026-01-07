@@ -63,7 +63,9 @@ int main(int argc, char** argv) {
             "name": "runtime_provider",
             "type": "yokan",
             "provider_id": 200,
-            "pool": "runtime_pool",
+            "dependencies": {
+                "pool": "runtime_pool"
+            },
             "config": {
                 "database": {"type": "map"}
             }

@@ -98,6 +98,9 @@ Adding pools and execution streams
    }
    service.add_xstream(xstream_config)
 
+   # Remove an xstream
+   service.remove_xstream("new_xstream")
+
    # Remove a pool (must not be in use)
    service.remove_pool("new_pool")
 
@@ -111,7 +114,9 @@ Adding providers at runtime
        "name": "my_new_provider",
        "type": "yokan",
        "provider_id": 99,
-       "pool": "__primary__",
+       "dependencies": {
+           "pool": "__primary__"
+       },
        "config": {
            "database": {
                "type": "map"
@@ -138,6 +143,9 @@ interact with them collectively using :code:`ServiceGroupHandle`:
 .. literalinclude:: ../../../code/bedrock/05_python/group.py
    :language: python
 
+The server code previously shown has a Flock provider that created a *mygroup.flock*
+file; try querying the server using this file.
+
 The :code:`ServiceGroupHandle` allows you to:
 
 - Query all members of the group
@@ -151,58 +159,12 @@ Using ProcSpec for configuration
 The :code:`mochi.bedrock.spec` module provides Python classes for building
 configurations programmatically:
 
-.. code-block:: python
+.. literalinclude:: ../../../code/bedrock/05_python/spec.py
+   :language: python
 
-   from mochi.bedrock.spec import ProcSpec, PoolSpec, XstreamSpec, ProviderSpec
-
-   # Create pool specifications
-   pool1 = PoolSpec(name="pool1", kind="fifo_wait", access="mpmc")
-   pool2 = PoolSpec(name="pool2", kind="fifo_wait", access="mpmc")
-
-   # Create xstream specifications
-   xstream1 = XstreamSpec(
-       name="xstream1",
-       scheduler={"type": "basic_wait", "pools": ["pool1"]}
-   )
-
-   # Create provider specification
-   provider = ProviderSpec(
-       name="my_provider",
-       type="yokan",
-       provider_id=42,
-       pool="pool1",
-       config={"database": {"type": "map"}}
-   )
-
-   # Build complete process specification
-   spec = ProcSpec()
-   spec.margo.argobots.pools = [pool1, pool2]
-   spec.margo.argobots.xstreams = [xstream1]
-   spec.providers = [provider]
-
-   # Convert to dictionary or JSON
-   config_dict = spec.to_dict()
-   config_json = spec.to_json()
-
-   # Start server with this configuration
-   server = Server("na+sm", config=spec)
-
-Error handling
---------------
-
-The Python bindings raise exceptions when errors occur:
-
-.. code-block:: python
-
-   from mochi.bedrock import ClientException, BedrockException
-
-   try:
-       service = client.make_service_handle(address, 0)
-       config = service.config
-   except ClientException as e:
-       print(f"Client error: {e}")
-   except BedrockException as e:
-       print(f"Bedrock error: {e}")
+The advantage of using the ``mochi.bedrock.spec`` package to build such
+configuration is that Python will check the configuration for consistency.
+It can also be used to program parameter space exploration of Bedrock configurations.
 
 Integration with PyMargo
 -------------------------
@@ -212,37 +174,9 @@ underlying Margo instance:
 
 .. code-block:: python
 
-   import pymargo
-   from mochi.bedrock import Server
+   from mochi.bedrock.server import Server
 
    # Start Bedrock server
    server = Server("na+sm", config={})
-
-   # Access the underlying margo instance (if needed)
-   # Note: typically you don't need to access this directly
-   # as Bedrock manages the Margo instance for you
-
-Best practices
---------------
-
-1. **Always finalize**: Call :code:`server.finalize()` or :code:`client.finalize()`
-   when done to properly clean up resources.
-
-2. **Use context managers**: Consider wrapping server/client usage in context managers
-   for automatic cleanup.
-
-3. **Check before removing**: Before removing pools or xstreams, ensure they're not
-   in use by any providers.
-
-4. **Validate configurations**: Use :code:`ProcSpec` classes to build configurations
-   programmatically to avoid JSON syntax errors.
-
-5. **Handle exceptions**: Always wrap Bedrock operations in try-except blocks to
-   handle potential errors gracefully.
-
-Next steps
-----------
-
-- :doc:`06_jx9`: Learn about Jx9 queries for advanced configuration introspection
-- :doc:`07_runtime_config`: Learn about runtime configuration in C++
-- :doc:`08_flock_integration`: Learn how to use Flock for group management
+   # Access the underlying engine
+   engine = server.engine

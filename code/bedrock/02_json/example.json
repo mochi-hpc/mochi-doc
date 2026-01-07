@@ -46,28 +46,28 @@
         "pool": "my_rpc_pool",
         "provider_id": 0
     },
-    "libraries" : {
-        "module_a" : "examples/libexample-module-a.so",
-        "module_b" : "examples/libexample-module-b.so"
-    },
+    "libraries" : [
+        "libyokan-bedrock-module.so",
+        "bedrock/05_cpp_module/libmy-bedrock-module.so"
+    ],
     "providers" : [
         {
-            "name" : "ProviderA",
-            "type" : "module_a",
+            "name" : "my_yokan_provider",
+            "type" : "yokan",
             "provider_id" : 42,
-            "pool" : "__primary__",
-            "config" : {},
-            "dependencies" : {}
-        },
-        {
-            "name" : "ProviderB",
-            "type" : "module_b",
-            "provider_id" : 33,
-            "pool" : "__primary__",
             "config" : {},
             "dependencies" : {
-                "a_provider" : "ProviderA",
-                "a_local" : [ "ProviderA@local" ]
+                "pool": "my_rpc_pool"
+            }
+        },
+        {
+            "name" : "my_example_provider",
+            "type" : "my_module",
+            "provider_id" : 33,
+            "config" : {},
+            "dependencies" : {
+                "kv_store" : "my_yokan_provider@local",
+                "pool": "__primary__"
             }
         }
     ]

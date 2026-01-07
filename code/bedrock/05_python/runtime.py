@@ -2,23 +2,16 @@
 """
 Example of runtime configuration manipulation with Bedrock Python API.
 """
-from mochi.bedrock import Server, Client
+from mochi.bedrock.client import Client
 import time
 import json
+import sys
 
-# Start a simple Bedrock server
-print("Starting Bedrock server...")
-server = Server("na+sm", config={
-    "libraries": {
-        "yokan": "libyokan-bedrock-module.so"
-    }
-})
+if len(sys.argv) != 2:
+    print(f"Usage: {sys.argv[0]} <server_address>")
+    sys.exit(1)
 
-address = server.margo.address
-print(f"Server started at {address}")
-
-# Give the server a moment to start
-time.sleep(0.5)
+address = sys.argv[1]
 
 # Connect as a client
 print("\nConnecting to server...")
@@ -32,8 +25,7 @@ print(f"Providers: {len(config.get('providers', []))}")
 
 # Load a module
 print("\n=== Loading Module ===")
-# Note: module is already loaded, this is just for demonstration
-# service.load_module("libyokan-bedrock-module.so")
+service.load_module("libyokan-bedrock-module.so")
 
 # Add a new pool
 print("\n=== Adding Pool ===")
@@ -63,7 +55,9 @@ provider_config = {
     "name": "runtime_database",
     "type": "yokan",
     "provider_id": 100,
-    "pool": "dynamic_pool",
+    "dependencies": {
+        "pool": "dynamic_pool",
+    },
     "config": {
         "database": {
             "type": "map"
@@ -80,9 +74,3 @@ print(f"Providers: {len(config.get('providers', []))}")
 print("\nProvider list:")
 for provider in config.get('providers', []):
     print(f"  - {provider['name']} (type={provider['type']}, id={provider['provider_id']})")
-
-# Clean up
-print("\n=== Cleaning Up ===")
-client.finalize()
-server.finalize()
-print("Done!")

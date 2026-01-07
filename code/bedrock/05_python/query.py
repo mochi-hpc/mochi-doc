@@ -2,7 +2,7 @@
 """
 Example of querying a Bedrock service configuration.
 """
-from mochi.bedrock import Client
+from mochi.bedrock.client import Client
 import sys
 import json
 
@@ -50,6 +50,3 @@ return $result;
 pools = service.query(jx9_pools)
 print("\n=== Argobots Pools ===")
 print(pools)
-
-# Clean up
-client.finalize()

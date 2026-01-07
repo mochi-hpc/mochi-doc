@@ -133,7 +133,7 @@ You can snapshot a provider's state to persistent storage:
 Snapshots can be used for:
 
 - Checkpointing service state
-- Backing up data
+- Backing up data before shutdown
 - Cloning provider state
 
 Restoring from snapshots
@@ -217,28 +217,3 @@ The Bedrock client API throws :code:`bedrock::Exception` on errors:
    }
 
 Always wrap Bedrock operations in try-catch blocks for robust error handling.
-
-Best practices
---------------
-
-1. **Verify dependencies**: Before adding a provider, ensure all its dependencies
-   (pools, other providers) exist.
-
-2. **Handle migration failures**: Provider migration can fail for various reasons
-   (network issues, incompatible providers). Always check for exceptions.
-
-3. **Use asynchronous operations**: For operations that may take time (like
-   migration or loading large modules), use async requests to avoid blocking.
-
-4. **Clean up carefully**: When removing pools or xstreams, ensure no providers
-   are using them. Query the configuration first to check dependencies.
-
-5. **Validate JSON**: When providing JSON configuration strings, ensure they're
-   well-formed to avoid parse errors.
-
-Next steps
-----------
-
-- :doc:`05_python`: Learn about Python bindings for similar operations
-- :doc:`08_flock_integration`: Learn how to use Flock for service group management
-- :doc:`04_module`: Learn how to write Bedrock modules that support runtime operations

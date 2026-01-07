@@ -30,8 +30,10 @@ do for now is query for its internal configuration, or shut it down.
 
 This command can take additional parameters.
 
-- :code:`-c/--config <config.json>`: specifies the JSON configuration file.
+- :code:`-c/--config <config.json>`: specifies the configuration file (JSON by default).
 - :code:`-v/--verbose <level>`: logging level (*trace*, *debug*, *info*, *warning*, *error*, *critical*, or *off*).
 - :code:`--stdin`: pass the JSON configuration via stdin instead of :code:`-c/--config`.
+- :code:`--jx9`: interpret the configuration file as JX9 script.
+- :code:`--toml`: interpret the configuration file as TOML.
 
 The next section will disect the content of a JSON configuration file.

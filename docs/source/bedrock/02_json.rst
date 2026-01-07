@@ -60,7 +60,7 @@ names provided in one of the loaded libraries. The :code:`provider_id` must
 be an integer between 0 and 65534 (max uint16, minus one as 65535 is reserved).
 All the providers must have distinct provider ids.
 :code:`config` should be a JSON object formatted to comply
-with the component's expected JSON format. It will be passed as-is (as a string)
+with the component's expected JSON format. It will be passed as-is
 to the component's registration function. You should refer to the component's
 documentation to know what is expected from this configuration field.
 
@@ -90,7 +90,3 @@ dependencies that must be provided, as well as their types. Some of these depend
 may be listed as optional, some may be mandatory, in which case Bedrock will fail
 if the dependency isn't provided in the :code:`dependencies` section of the provider.
 Some dependencies may be an array, some may be a single string.
-
-.. note::
-   The :code:`clients` section from earlier versions of Bedrock has been deprecated.
-   Clients should now be initialized directly using the component's client library API.

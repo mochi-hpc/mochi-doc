@@ -11,20 +11,22 @@
         },
         "rpc_pool": "rpc_pool"
     },
-    "libraries": {
-        "flock": "libflock-bedrock-module.so",
-        "yokan": "libyokan-bedrock-module.so"
-    },
+    "libraries": [
+        "libflock-bedrock-module.so",
+        "libyokan-bedrock-module.so"
+    ],
     "providers": [
         {
             "name": "service_group",
             "type": "flock",
             "provider_id": 1,
-            "pool": "__primary__",
+            "dependencies": {
+                "pool": "__primary__"
+            },
             "config": {
-                "bootstrap": "mpi",
+                "bootstrap": ["join", "mpi"],
                 "group": {
-                    "type": "static",
+                    "type": "centralized",
                     "config": {}
                 },
                 "file": "distributed_service.flock"
@@ -34,14 +36,13 @@
             "name": "kv_store",
             "type": "yokan",
             "provider_id": 42,
-            "pool": "rpc_pool",
+            "dependencies": {
+                "pool": "__primary__"
+            },
             "config": {
                 "database": {
                     "type": "map"
                 }
-            },
-            "dependencies": {
-                "group": "service_group"
             }
         }
     ]

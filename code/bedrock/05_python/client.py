@@ -2,7 +2,7 @@
 """
 Example of connecting to a Bedrock service from Python.
 """
-from mochi.bedrock import Client
+from mochi.bedrock.client import Client
 import sys
 
 if len(sys.argv) != 2:
@@ -30,6 +30,3 @@ if 'providers' in config:
     print("\nProviders:")
     for provider in config['providers']:
         print(f"  - {provider['name']} (type={provider['type']}, id={provider['provider_id']})")
-
-# Clean up
-client.finalize()

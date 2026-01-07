@@ -2,15 +2,16 @@
 """
 Example of using Flock with Bedrock Python bindings.
 """
-from mochi.bedrock import Server, Client
+from mochi.bedrock.server import Server
+from mochi.bedrock.client import Client
 import time
 
 # Configuration with Flock
 config = {
-    "libraries": {
-        "flock": "libflock-bedrock-module.so",
-        "yokan": "libyokan-bedrock-module.so"
-    },
+    "libraries": [
+        "libflock-bedrock-module.so",
+        "libyokan-bedrock-module.so"
+        ],
     "providers": [
         {
             "name": "my_group",
@@ -31,9 +32,6 @@ config = {
             "provider_id": 42,
             "config": {
                 "database": {"type": "map"}
-            },
-            "dependencies": {
-                "group": "my_group"
             }
         }
     ]
@@ -42,11 +40,8 @@ config = {
 # Start server with Flock
 print("Starting Bedrock server with Flock...")
 server = Server("na+sm", config=config)
-address = server.margo.address
+address = server.margo.engine.address
 print(f"Server started at {address}")
-
-# Give server time to initialize
-time.sleep(0.5)
 
 # Connect as client
 print("\nConnecting to service...")
@@ -63,13 +58,7 @@ for provider in config_result['providers']:
 # (assuming you have the group file path)
 group_file = "/tmp/my_group.flock"
 try:
-    group = client.make_service_group_handle(group_file, provider_id=0)
+    group = client.make_service_group_handle_from_flock(group_file, provider_id=0)
     print(f"\nFlock group size: {group.size}")
 except Exception as e:
     print(f"\nNote: Could not create group handle (single member group): {e}")
-
-# Clean up
-print("\nCleaning up...")
-client.finalize()
-server.finalize()
-print("Done!")

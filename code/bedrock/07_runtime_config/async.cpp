@@ -28,7 +28,6 @@ int main(int argc, char** argv) {
             "name": "async_provider",
             "type": "yokan",
             "provider_id": 101,
-            "pool": "__primary__",
             "config": {
                 "database": {"type": "map"}
             }
