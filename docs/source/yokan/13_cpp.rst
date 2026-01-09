@@ -285,25 +285,3 @@ Manual Compilation
 .. code-block:: bash
 
    g++ -std=c++14 my_app.cpp $(pkg-config --cflags --libs yokan-client) -o my_app
-
-Next Steps
-----------
-
-- Review :doc:`12_python` for Python bindings
-- Learn about :doc:`10_migration` for data migration
-- Explore :doc:`11_watcher` for event-driven patterns
-- See :doc:`05_modes` for all available modes
-
-Summary
--------
-
-The Yokan C++ bindings provide:
-
-- Header-only implementation
-- RAII resource management
-- Exception-based error handling
-- Modern C++ idioms
-- Full feature parity with C API
-
-The bindings are designed for ease of use while maintaining high performance,
-making Yokan ideal for modern C++ applications in HPC and distributed systems.
