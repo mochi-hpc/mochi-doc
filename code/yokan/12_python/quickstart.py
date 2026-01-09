@@ -25,8 +25,10 @@ db = client.make_database_handle(
 db.put(key="greeting", value="Hello, Yokan!")
 
 # Get the value back
-value = db.get(key="greeting")
-print(f"Retrieved: {value}")
+size = db.length(key="greeting")
+value = bytearray(size)
+db.get(key="greeting", value=value)
+print(f"Retrieved: {value.decode()}")
 
 # Count total entries
 count = db.count()

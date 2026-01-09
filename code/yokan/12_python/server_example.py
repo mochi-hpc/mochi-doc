@@ -8,9 +8,7 @@ engine = Engine('tcp')
 # Configure a Yokan provider with RocksDB backend
 config = {
     "database": {
-        "type": "rocksdb",
-        "path": "/tmp/yokan_db",
-        "create_if_missing": True
+        "type": "map"
     }
 }
 
@@ -27,4 +25,5 @@ print("Provider is now accepting requests...")
 
 # In a real application, you would wait here
 # For this example, we'll just finalize
+#engine.wait_for_finalize()
 engine.finalize()

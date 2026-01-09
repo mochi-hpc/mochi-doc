@@ -115,76 +115,8 @@ The polling approach:
 
 The wait/notify approach is more efficient and responsive.
 
-Error Handling and Timeouts
-----------------------------
+Timeouts
+--------
 
-Wait operations can be interrupted when the provider shuts down:
-
-.. literalinclude:: ../../../code/yokan/11_watcher/wait_timeout.c
-   :language: c
-
-Best practices for wait/notify:
-
-1. **Handle shutdown gracefully**: Waiting operations may fail if the
-   provider shuts down while clients are waiting
-
-2. **Use unique keys**: Ensure each notification has a unique key to
-   avoid accidental wake-ups
-
-3. **Clean up consumed keys**: Use ``YOKAN_MODE_CONSUME`` or explicit
-   erase operations to prevent keys from accumulating
-
-4. **Consider backend support**: Verify your backend supports these modes
-
-5. **Combine with other modes**: You can combine wait/notify with other
-   modes like ``YOKAN_MODE_CONSUME`` or ``YOKAN_MODE_APPEND``
-
-Bedrock Integration
--------------------
-
-When using Yokan with Bedrock, ensure your backend configuration supports
-wait/notify:
-
-.. literalinclude:: ../../../code/yokan/11_watcher/bedrock-config.json
-   :language: json
-
-The ``map`` backend fully supports wait/notify operations. Other backends
-may have varying levels of support - consult the backend documentation.
-
-Performance Considerations
---------------------------
-
-The wait/notify mechanism:
-
-- **Efficient**: No polling overhead, minimal network traffic
-- **Scalable**: Supports many concurrent waiters
-- **Low latency**: Immediate notification when keys appear
-- **Thread-safe**: Multiple threads can safely wait/notify
-
-However, keep in mind:
-
-- Waiting operations hold server resources until notified or interrupted
-- Very long waits may impact server memory if many clients are waiting
-- Consider application-level timeouts for long-running waits
-
-Next Steps
-----------
-
-- Learn about :doc:`12_python` for Python bindings
-- Explore :doc:`13_cpp` for advanced C++ patterns
-- Review :doc:`05_modes` for other available modes
-- See :doc:`10_migration` for data migration
-
-Summary
--------
-
-The wait/notify feature provides:
-
-- Efficient event-driven coordination
-- Reduced polling overhead
-- Support for producer/consumer patterns
-- Distributed synchronization primitives
-
-By using ``YOKAN_MODE_WAIT`` and ``YOKAN_MODE_NOTIFY``, you can build
-responsive, scalable distributed applications without the overhead of
-traditional polling approaches.
+There is currently no way to timeout a watcher; the watcher *will* need
+to be notified by a writer.

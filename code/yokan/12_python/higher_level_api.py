@@ -26,8 +26,11 @@ class YokanDict:
     def __getitem__(self, key: str) -> Any:
         """Get a value (automatically deserializes from JSON)."""
         try:
-            json_value = self.db.get(key=self._make_key(key))
-            return json.loads(json_value)
+            full_key = self._make_key(key)
+            length = self.db.length(key=full_key)
+            value = bytearray(length)
+            self.db.get(key=full_key, value=value)
+            return json.loads(value.decode())
         except ClientException:
             raise KeyError(key)
 
@@ -51,9 +54,8 @@ class YokanDict:
 
     def update(self, items: Dict[str, Any]):
         """Update multiple items at once."""
-        keys = [self._make_key(k) for k in items.keys()]
-        values = [json.dumps(v) for v in items.values()]
-        self.db.put_multi(keys=keys, values=values)
+        keyvals = [(self._make_key(k), json.dumps(v)) for k, v in items.items()]
+        self.db.put_multi(keyvals)
 
     def clear(self):
         """Clear all items with this prefix."""
@@ -65,7 +67,7 @@ class YokanDict:
 # Example usage
 engine = Engine('tcp')
 provider = Provider(engine=engine, provider_id=42,
-                   config='{"database":{"type":"map"}}')
+                    config='{"database":{"type":"map"}}')
 client = Client(engine=engine)
 db = client.make_database_handle(address=engine.addr(), provider_id=42)
 

@@ -57,11 +57,16 @@ Basic Operations
 The client API supports:
 
 - ``put(key, value, mode=0)``: Store a key/value pair
-- ``get(key, mode=0)``: Retrieve a value by key
+- ``get(key, value, mode=0)``: Retrieve a value by key
 - ``exists(key, mode=0)``: Check if a key exists
 - ``length(key, mode=0)``: Get the size of a value
 - ``erase(key, mode=0)``: Delete a key/value pair
 - ``count(mode=0)``: Count total key/value pairs
+
+.. note::
+   The ``get`` method does not return the value, instead an appropriately-sized
+   buffer needs to be passed in which the value will be stored. This is because
+   Yokan optimizes operations by doing RDMA directly to the target memory.
 
 Batch Operations
 ~~~~~~~~~~~~~~~~
@@ -73,11 +78,16 @@ For efficiency, use batch operations when working with multiple keys:
 
 Batch operations include:
 
-- ``put_multi(keys, values, mode=0)``
-- ``get_multi(keys, mode=0)``
+- ``put_multi(pairs, mode=0)``
+- ``get_multi(pairs, mode=0)``
 - ``exists_multi(keys, mode=0)``
 - ``length_multi(keys, mode=0)``
 - ``erase_multi(keys, mode=0)``
+
+.. note::
+   The ``put_multi`` and ``get_multi`` methods take a ``list`` of ``pairs``,
+   with the first element of the pair being the key, and the second being the
+   value, or a destination buffer for the value.
 
 List Operations
 ~~~~~~~~~~~~~~~
@@ -90,22 +100,11 @@ Yokan provides powerful list operations for iterating through key/value pairs:
 The Buffer Protocol
 -------------------
 
-.. important::
-   All functions in the Python bindings accept either strings or any object
-   that implements the `buffer protocol <https://docs.python.org/3/c-api/buffer.html>`_.
+All functions in the Python bindings accept either strings or any object
+that implements the `buffer protocol <https://docs.python.org/3/c-api/buffer.html>`_.
 
-Using buffer protocol objects (``bytearray``, ``numpy`` arrays, etc.) is more
-efficient than strings because it avoids memory copies:
-
-.. literalinclude:: ../../../code/yokan/12_python/buffer_protocol.py
-   :language: python
-
-The buffer protocol is especially important for:
-
-- Large binary data
-- Numpy array storage
-- Zero-copy operations
-- High-performance applications
+Strings may only be used as input (e.g. the key in ``put`` and ``get``, and the
+value in ``put``, but not the value in ``get``).
 
 Working with Modes
 ------------------
@@ -115,19 +114,8 @@ Yokan's mode system is available in Python through the ``mochi.yokan.mode`` modu
 .. literalinclude:: ../../../code/yokan/12_python/modes_example.py
    :language: python
 
-Available modes include:
-
-- ``Mode.DEFAULT``: Default behavior
-- ``Mode.INCLUSIVE``: Include lower bound in list operations
-- ``Mode.APPEND``: Append to existing values
-- ``Mode.CONSUME``: Get and erase in one operation
-- ``Mode.WAIT``: Wait for key to appear
-- ``Mode.NOTIFY``: Notify waiting clients
-- ``Mode.NEW_ONLY``: Only put if key doesn't exist
-- ``Mode.EXIST_ONLY``: Only put if key exists
-- ``Mode.NO_RDMA``: Disable RDMA for small data
-
-Modes can be combined using bitwise OR: ``Mode.WAIT | Mode.CONSUME``
+Available modes have the same names as in C/C++.
+Modes can be combined using bitwise OR: ``mode.YOKAN_MODE_WAIT | Mode.YOKAN_MODE_CONSUME``
 
 Document Store Operations
 --------------------------
@@ -159,32 +147,6 @@ Always wrap Yokan operations in try/except blocks to handle:
 - Network errors
 - Unsupported modes
 - Invalid configurations
-
-Advanced Patterns
------------------
-
-Using with Context Managers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For automatic resource cleanup, you can implement context managers:
-
-.. literalinclude:: ../../../code/yokan/12_python/context_manager.py
-   :language: python
-
-Integration with NumPy
-~~~~~~~~~~~~~~~~~~~~~~
-
-Yokan works seamlessly with NumPy arrays:
-
-.. literalinclude:: ../../../code/yokan/12_python/numpy_example.py
-   :language: python
-
-This is useful for:
-
-- Scientific computing
-- Machine learning model storage
-- Large array datasets
-- HPC applications
 
 Performance Tips
 ----------------
@@ -218,26 +180,3 @@ This allows you to:
 - Implement custom caching
 - Add type checking and validation
 - Create domain-specific interfaces
-
-Next Steps
-----------
-
-- Learn about :doc:`13_cpp` for C++ API details
-- Review :doc:`05_modes` for all available modes
-- See :doc:`11_watcher` for event-driven patterns
-- Explore :doc:`07_backends` for backend options
-
-Summary
--------
-
-Yokan's Python bindings provide:
-
-- Full-featured server and client APIs
-- Support for all backend types
-- Batch and list operations
-- Buffer protocol for efficiency
-- Mode system for flexible semantics
-- Document storage capabilities
-
-The bindings prioritize performance while maintaining Python's ease of use,
-making Yokan ideal for both prototyping and production Python applications.
