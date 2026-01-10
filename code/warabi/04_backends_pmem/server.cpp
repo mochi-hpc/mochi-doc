@@ -11,27 +11,18 @@ namespace tl = thallium;
 
 int main(int argc, char** argv)
 {
-    if(argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <pmem_path>" << std::endl;
-        return -1;
-    }
-
-    const char* pmem_path = argv[1];
-
     // Initialize Thallium engine
     tl::engine engine("na+sm", THALLIUM_SERVER_MODE);
 
     // Configure Warabi with persistent memory backend
     // PMEM backend: uses persistent memory for data storage
-    std::string config = std::string(R"(
+    std::string config = R"(
     {
-        "targets": [
-            {
-                "type": "pmem",
-                "config": {
-                    "path": ")") + pmem_path + R"(",
-                    "size": 10737418240
-                }
+        "target": {
+            "type": "pmem",
+            "config": {
+                "path": "/tmp/warabi.pmem",
+                "create_if_missing_with_size": 10737418240
             }
         ]
     }
@@ -45,7 +36,7 @@ int main(int argc, char** argv)
     std::cout << "Server address: " << engine.self() << std::endl;
     std::cout << "Provider ID: " << provider_id << std::endl;
     std::cout << "\nPMEM backend configuration:" << std::endl;
-    std::cout << "  - Path: " << pmem_path << std::endl;
+    std::cout << "  - Path: /tmp/warabi.pmem" << std::endl;
     std::cout << "  - Size: 10 GB" << std::endl;
     std::cout << "\nPMEM backend characteristics:" << std::endl;
     std::cout << "  - Data stored in persistent memory" << std::endl;

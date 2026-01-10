@@ -11,29 +11,20 @@ namespace tl = thallium;
 
 int main(int argc, char** argv)
 {
-    if(argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <storage_path>" << std::endl;
-        return -1;
-    }
-
-    const char* storage_path = argv[1];
-
     // Initialize Thallium engine
     tl::engine engine("na+sm", THALLIUM_SERVER_MODE);
 
     // Configure Warabi with ABT-IO backend
     // ABT-IO backend: uses Argobots-based asynchronous I/O for file storage
-    std::string config = std::string(R"(
+    std::string config = R"(
     {
-        "targets": [
-            {
-                "type": "abt-io",
-                "config": {
-                    "path": ")") + storage_path + R"(",
-                    "num_threads": 4
-                }
+        "target": {
+            "type": "abtio",
+            "config": {
+                "path": "/tmp/warabi.dat",
+                "create_if_missing": true
             }
-        ]
+        }
     }
     )";
 
@@ -45,7 +36,7 @@ int main(int argc, char** argv)
     std::cout << "Server address: " << engine.self() << std::endl;
     std::cout << "Provider ID: " << provider_id << std::endl;
     std::cout << "\nABT-IO backend configuration:" << std::endl;
-    std::cout << "  - Path: " << storage_path << std::endl;
+    std::cout << "  - Path: /tmp/warabi.dat" << std::endl;
     std::cout << "  - I/O threads: 4" << std::endl;
     std::cout << "\nABT-IO backend characteristics:" << std::endl;
     std::cout << "  - Data stored on regular filesystem" << std::endl;

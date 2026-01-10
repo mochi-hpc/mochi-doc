@@ -1,0 +1,41 @@
+{
+    "libraries": [
+        "libwarabi-bedrock-module.so",
+        "libremi-bedrock-module.so"
+    ],
+    "providers": [
+        {
+            "name": "remi_sender",
+            "type": "remi_sender",
+            "provider_id": 1
+        },
+        {
+            "name": "remi_receiver",
+            "type": "remi_receiver",
+            "provider_id": 2
+        },
+        {
+            "name": "warabi_source",
+            "type": "warabi",
+            "provider_id": 3,
+            "config": {
+                "target": {
+                    "type": "memory",
+                    "config": {}
+                }
+            },
+            "dependencies": {
+                "remi_sender": "remi_sender"
+            }
+        },
+        {
+            "name": "warabi_dest",
+            "type": "warabi",
+            "provider_id": 4,
+            "config": {},
+            "dependencies": {
+                "remi_receiver": "remi_receiver"
+            }
+        }
+    ]
+}

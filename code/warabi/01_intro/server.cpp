@@ -15,12 +15,10 @@ int main() {
     // Configuration for memory backend
     auto config = R"(
     {
-        "targets": [
-            {
-                "type": "memory",
-                "config": {}
-            }
-        ]
+        "target": {
+            "type": "memory",
+            "config": {}
+        }
     }
     )";
 

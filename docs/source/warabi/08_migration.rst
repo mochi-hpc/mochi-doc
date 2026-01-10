@@ -1,396 +1,208 @@
-Data migration
-==============
+Target migration
+================
 
-Warabi supports migrating regions between targets and providers, allowing you to:
-- Move data between backends (e.g., memory → pmem)
-- Rebalance data across providers
-- Migrate data to different hardware
-- Upgrade or reconfigure storage
+Warabi supports migrating a target from one provider to another using REMI
+(REsource MIgration component). This transfers all regions from the source
+provider to the destination provider, useful for relocating storage, load
+balancing, or moving data between backends.
 
-Migration basics
-----------------
+.. important::
+   Target migration requires:
 
-Migration copies a region from one target to another:
+   - Warabi compiled with REMI support (``+remi`` variant)
+   - A REMI receiver (provider) on the destination
+   - A REMI sender (client) on the source
+   - The destination provider initialized with an empty configuration: ``"{}"``
 
-.. code-block:: cpp
+What is target migration?
+--------------------------
 
-   // Source target (memory backend)
-   warabi::TargetHandle source = client.makeTargetHandle(addr1, pid1, 0);
+Target migration physically transfers an entire target (and all its regions)
+from a source provider to a destination provider. After migration:
 
-   // Destination target (pmem backend)
-   warabi::TargetHandle dest = client.makeTargetHandle(addr2, pid2, 0);
+- The destination provider contains all regions from the source
+- The source provider's target becomes invalid (if ``remove_source`` is true)
+- All region IDs remain valid and can be accessed from the destination
+- Migration uses REMI to transfer the target data efficiently
 
-   // Create region in source
-   warabi::RegionID source_region;
-   source.create(&source_region);
-   source.write(source_region, 0, data, size);
+Migration uses REMI to transfer the underlying storage files efficiently
+over the network.
 
-   // Migrate to destination
-   warabi::RegionID dest_region;
-   source.migrate(source_region, dest, &dest_region);
+Setting up for migration
+-------------------------
 
-   // Now data exists in both source and dest
-   // Optionally destroy source region
-   source.destroy(source_region);
+**Compiling Warabi with REMI support**:
 
-After migration, you have two independent regions. The source region is not
-automatically deleted - you must explicitly destroy it if desired.
+.. code-block:: console
 
-Migration scenarios
--------------------
+   spack install mochi-warabi +remi
 
-**Scenario 1: Backend migration**
+**Provider setup for migration**:
 
-Move from volatile to persistent storage:
+The source and destination providers must be configured with REMI support:
 
 .. code-block:: cpp
 
-   // Initially in memory for fast writes
-   warabi::TargetHandle memory_target = /* ... */;
-   warabi::RegionID mem_region;
-   memory_target.create(&mem_region);
+   #include <remi/remi-server.h>
+   #include <remi/remi-client.h>
+   #include <warabi/Provider.hpp>
 
-   // Write data quickly
-   memory_target.write(mem_region, 0, data, size);
+   // Initialize REMI
+   remi_client_t remi_client;
+   remi_client_init(mid, ABT_IO_INSTANCE_NULL, &remi_client);
 
-   // Migrate to persistent storage
-   warabi::TargetHandle pmem_target = /* ... */;
-   warabi::RegionID persistent_region;
-   memory_target.migrate(mem_region, pmem_target, &persistent_region);
+   remi_provider_t remi_provider;
+   remi_provider_register(mid, ABT_IO_INSTANCE_NULL,
+                          provider_id, ABT_POOL_NULL, &remi_provider);
 
-   // Clean up memory region
-   memory_target.destroy(mem_region);
-
-**Scenario 2: Load balancing**
-
-Distribute data across multiple providers:
-
-.. code-block:: cpp
-
-   std::vector<warabi::TargetHandle> targets = {target1, target2, target3};
-
-   // Initially all data on target1
-   for(auto& region : regions) {
-       // Migrate some regions to other targets
-       size_t dest_idx = hash(region) % targets.size();
-       if(dest_idx != 0) {
-           warabi::RegionID new_region;
-           target1.migrate(region, targets[dest_idx], &new_region);
-           // Update region mapping
-           region_map[region_name] = new_region;
-           target1.destroy(region);
+   // Source provider: needs REMI client, has a configured target
+   std::string source_config = R"({
+       "target": {
+           "type": "memory",
+           "config": {}
        }
-   }
+   })";
+   warabi::Provider provider1(engine, 1, source_config,
+                              pool, remi_client, REMI_PROVIDER_NULL);
 
-**Scenario 3: Archival**
+   // Destination provider: needs REMI provider, has EMPTY config
+   warabi::Provider provider2(engine, 2, "{}", pool, REMI_CLIENT_NULL, remi_provider);
+   //                                    ^^^^
+   //                                    MUST be empty!
 
-Move old data to slower, cheaper storage:
+The destination provider **must** be initialized with an empty configuration
+``"{}"`` (or at least a configuration without the "target" field) because it will
+receive its target through migration.
 
-.. code-block:: cpp
+Migration API
+-------------
 
-   // Hot data on fast storage
-   warabi::TargetHandle fast = client.makeTargetHandle(fast_addr, pid, 0);
-
-   // Cold data on slow storage
-   warabi::TargetHandle slow = client.makeTargetHandle(slow_addr, pid, 1);
-
-   // Archive old regions
-   if(is_old(region_id)) {
-       warabi::RegionID archived;
-       fast.migrate(region_id, slow, &archived);
-       fast.destroy(region_id);
-
-       // Update catalog
-       catalog.update(region_name, archived, slow_addr);
-   }
-
-Migration performance
----------------------
-
-Migration performance depends on:
-
-- **Data size**: Larger regions take longer
-- **Network bandwidth**: Between source and destination
-- **Backend speeds**: Read from source, write to destination
-- **Transfer manager**: Pipeline can help for large migrations
-
-**Optimizing migration**:
-
-Configure the destination provider with pipeline transfer manager:
-
-.. code-block:: json
-
-   {
-       "providers": [{
-           "name": "migration_dest",
-           "provider_id": 2,
-           "config": {
-               "targets": [{"type": "pmem", "config": {...}}],
-               "transfer_manager": {
-                   "type": "pipeline",
-                   "config": {
-                       "num_threads": 8,
-                       "pipeline_size": 16777216
-                   }
-               }
-           }
-       }]
-   }
-
-**Monitoring migration**:
+The migration function is called from the source provider:
 
 .. code-block:: cpp
 
-   auto start = std::chrono::high_resolution_clock::now();
+   void Provider::migrateTarget(
+       const std::string& address,     // Destination address
+       uint16_t provider_id,           // Destination provider ID
+       const std::string& options      // Migration options (JSON)
+   );
 
-   warabi::RegionID dest_region;
-   source.migrate(source_region, dest, &dest_region);
-
-   auto end = std::chrono::high_resolution_clock::now();
-   auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-
-   size_t region_size = source.size(source_region);
-   double throughput = (region_size / (1024.0 * 1024.0)) / duration.count();
-
-   std::cout << "Migrated " << region_size / (1024*1024) << " MB in "
-             << duration.count() << "s (" << throughput << " MB/s)\n";
-
-Bulk migration
---------------
-
-Migrate multiple regions efficiently:
+**Migration options** (JSON string):
 
 .. code-block:: cpp
 
-   std::vector<warabi::RegionID> source_regions = /* ... */;
-   std::vector<warabi::RegionID> dest_regions(source_regions.size());
+   std::string options = R"({
+       "new_root": "/path/on/destination",
+       "transfer_size": 1024,
+       "merge_config": {},
+       "remove_source": true
+   })";
 
-   // Sequential migration
-   for(size_t i = 0; i < source_regions.size(); i++) {
-       source.migrate(source_regions[i], dest, &dest_regions[i]);
-   }
+- ``new_root`` (string): Path where the target will be stored on the destination.
+  Defaults to the same path as the source.
 
-   // Parallel migration (if provider supports concurrent operations)
-   std::vector<std::thread> threads;
-   for(size_t i = 0; i < source_regions.size(); i++) {
-       threads.emplace_back([&, i]() {
-           source.migrate(source_regions[i], dest, &dest_regions[i]);
-       });
-   }
-   for(auto& t : threads) t.join();
+- ``transfer_size`` (int): Size of individual transfers used by REMI for the
+  migration. Defaults to transferring the entire target in one operation.
+  Smaller sizes reduce memory overhead but may be slower.
 
-Online migration
-----------------
+- ``merge_config`` (object): Additional configuration to merge with the target's
+  configuration at the destination. Defaults to empty object.
 
-Migrate without downtime by using a copy-on-write approach:
+- ``remove_source`` (bool): Whether to remove the target from the source provider
+  after migration. Defaults to ``true``.
 
-.. code-block:: cpp
+Migration example
+-----------------
 
-   // Phase 1: Start migration (async if available)
-   warabi::RegionID dest_region;
-   source.migrate(source_region, dest, &dest_region);
+Here's a complete example showing target migration:
 
-   // Phase 2: Record new writes during migration
-   std::vector<Write> writes_during_migration;
+.. literalinclude:: ../../../code/warabi/08_migration/migration_example.cpp
+   :language: cpp
 
-   // Phase 3: Replay writes to destination
-   for(const auto& write : writes_during_migration) {
-       dest.write(dest_region, write.offset, write.data, write.size);
-   }
+This example:
 
-   // Phase 4: Switch to destination
-   current_region = dest_region;
-   current_target = dest;
+1. Sets up both source and destination providers with REMI support
+2. Creates regions in the source provider
+3. Migrates the entire target to the destination provider
+4. Verifies all regions are accessible from the destination
+5. Confirms the source provider is now invalid
 
-   // Phase 5: Clean up source
-   source.destroy(source_region);
-
-This ensures no data loss during migration.
-
-Migration policies
+Migration behavior
 ------------------
 
-**Policy 1: Tiered storage**
+**After migration**:
 
-Automatically move data based on access patterns:
+- The destination provider contains all regions that were in the source
+- If ``remove_source`` is true (default), the source provider's target is removed
+  and any operations on it will fail
+- All region IDs remain valid and work with the destination provider
+- The target files are physically moved or copied to the new location
 
-.. code-block:: cpp
+**Migration options explained**:
 
-   struct RegionAccessInfo {
-       warabi::RegionID id;
-       size_t access_count;
-       std::chrono::steady_clock::time_point last_access;
-   };
+- **new_root**: Specifies where the target will be stored on the destination.
+  This is important when the destination needs the target in a specific location
+  (e.g., on a particular disk or mount point).
 
-   void apply_tiering_policy(
-       std::vector<RegionAccessInfo>& regions,
-       warabi::TargetHandle& hot_tier,
-       warabi::TargetHandle& cold_tier)
-   {
-       auto now = std::chrono::steady_clock::now();
+  .. code-block:: cpp
 
-       for(auto& info : regions) {
-           auto age = std::chrono::duration_cast<std::chrono::hours>(
-               now - info.last_access).count();
+     // Source has target at /mnt/fast-storage/warabi
+     // Migrate to slow storage at /mnt/archive/warabi
+     auto options = R"({
+         "new_root": "/mnt/archive/warabi"
+     })";
 
-           // Move to cold tier if not accessed in 24 hours
-           if(age > 24 && info.access_count < 10) {
-               warabi::RegionID cold_region;
-               hot_tier.migrate(info.id, cold_tier, &cold_region);
-               hot_tier.destroy(info.id);
+- **transfer_size**: Controls how much data is transferred in each REMI operation.
+  Setting this to a smaller value reduces memory overhead but may increase
+  latency. Setting it to 0 or omitting it transfers everything in one operation.
 
-               info.id = cold_region;
-               std::cout << "Moved region to cold tier\n";
-           }
-       }
-   }
+  .. code-block:: cpp
 
-**Policy 2: Capacity-based migration**
+     // For large targets, use smaller chunks
+     auto options = R"({
+         "transfer_size": 1048576
+     })";  // 1 MB chunks
 
-Rebalance when a target fills up:
+- **merge_config**: Allows changing target configuration during migration.
+  For example, you might migrate from a memory backend to a persistent backend.
 
-.. code-block:: cpp
+  .. code-block:: cpp
 
-   void balance_targets(std::vector<warabi::TargetHandle>& targets) {
-       // Get usage for each target
-       std::vector<size_t> usage(targets.size());
-       for(size_t i = 0; i < targets.size(); i++) {
-           usage[i] = get_target_usage(targets[i]);
-       }
+     auto options = R"({
+         "new_root": "/mnt/pmem/warabi",
+         "merge_config": {
+             "target": {
+                 "type": "pmem",
+                 "config": {
+                     "path": "/mnt/pmem/warabi.pmem",
+                     "create_if_missing_with_size": 10737418240
+                 }
+             }
+         }
+     })";
 
-       // Find most and least loaded
-       size_t max_idx = std::max_element(usage.begin(), usage.end()) - usage.begin();
-       size_t min_idx = std::min_element(usage.begin(), usage.end()) - usage.begin();
+- **remove_source**: If ``false``, the source target is kept after migration,
+  resulting in two copies. This is useful for creating backups.
 
-       // Migrate some regions from max to min
-       if(usage[max_idx] - usage[min_idx] > threshold) {
-           auto regions_to_move = select_regions_to_migrate(targets[max_idx]);
-           for(auto& region : regions_to_move) {
-               warabi::RegionID new_region;
-               targets[max_idx].migrate(region, targets[min_idx], &new_region);
-               targets[max_idx].destroy(region);
-           }
-       }
-   }
+  .. code-block:: cpp
 
-Error handling
---------------
+     // Create a backup without removing source
+     auto options = R"({
+         "new_root": "/backup/warabi",
+         "remove_source": false
+     })";
 
-Handle migration failures gracefully:
+Backend compatibility
+---------------------
 
-.. code-block:: cpp
+Migration works for backends that store data in files or pools that can be
+transferred via REMI, i.e. the "pmem" and "abtio" backends. The "memory"
+backend does not support migration.
 
-   try {
-       warabi::RegionID dest_region;
-       source.migrate(source_region, dest, &dest_region);
+Using migration with Bedrock
+-----------------------------
 
-       // Verify migration success
-       size_t source_size = source.size(source_region);
-       size_t dest_size = dest.size(dest_region);
+When using Bedrock to manage Warabi providers, the setup is similar:
 
-       if(source_size != dest_size) {
-           std::cerr << "Migration size mismatch!\n";
-           dest.destroy(dest_region);  // Clean up failed migration
-           throw std::runtime_error("Migration verification failed");
-       }
-
-       // Safe to destroy source now
-       source.destroy(source_region);
-
-   } catch(const warabi::Exception& ex) {
-       std::cerr << "Migration failed: " << ex.what() << "\n";
-       // Source region still intact, can retry
-   }
-
-Migration with REMI
--------------------
-
-Warabi can integrate with REMI (Remote Memory Integration) for more advanced
-migration features. REMI provides:
-
-- Pre-copy migration
-- Post-copy migration
-- Live migration
-- Incremental migration
-
-See REMI documentation for details.
-
-Best practices
---------------
-
-**1. Verify before cleanup**:
-
-.. code-block:: cpp
-
-   // Migrate
-   warabi::RegionID dest_region;
-   source.migrate(source_region, dest, &dest_region);
-
-   // Verify
-   if(verify_migration(source, source_region, dest, dest_region)) {
-       source.destroy(source_region);  // Safe to clean up
-   }
-
-**2. Update metadata**:
-
-.. code-block:: cpp
-
-   // After migration, update region catalog
-   catalog.update_location(region_name, dest_region, dest_address);
-
-**3. Plan for failures**:
-
-Always have a rollback plan if migration fails:
-
-.. code-block:: cpp
-
-   // Keep source until migration confirmed
-   // Only destroy source after successful verification
-
-**4. Test migrations**:
-
-Test migration before production deployment:
-
-.. code-block:: cpp
-
-   // Test with small regions first
-   warabi::RegionID test_region;
-   source.create(&test_region);
-   source.write(test_region, 0, test_data, 1024);
-
-   warabi::RegionID migrated;
-   source.migrate(test_region, dest, &migrated);
-
-   // Verify and measure
-   verify_and_benchmark_migration();
-
-**5. Monitor progress**:
-
-For large migrations, monitor progress:
-
-.. code-block:: cpp
-
-   // For very large regions, consider chunked manual migration
-   const size_t CHUNK_SIZE = 100 * 1024 * 1024;  // 100 MB
-   size_t region_size = source.size(source_region);
-
-   warabi::RegionID dest_region;
-   dest.create(&dest_region);
-
-   for(size_t offset = 0; offset < region_size; offset += CHUNK_SIZE) {
-       size_t chunk = std::min(CHUNK_SIZE, region_size - offset);
-
-       std::vector<char> buffer(chunk);
-       source.read(source_region, offset, buffer.data(), chunk);
-       dest.write(dest_region, offset, buffer.data(), chunk);
-
-       double progress = 100.0 * (offset + chunk) / region_size;
-       std::cout << "Migration progress: " << progress << "%\n";
-   }
-
-Next steps
-----------
-
-- :doc:`09_async`: Async migration for better performance
-- :doc:`10_bedrock`: Configure migration-friendly deployments
-- :ref:`REMI`: Advanced migration with REMI
+.. literalinclude:: ../../../code/warabi/08_migration/bedrock-config.json
+   :language: json

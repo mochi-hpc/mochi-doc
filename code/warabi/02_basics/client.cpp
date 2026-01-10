@@ -38,6 +38,9 @@ int main(int argc, char** argv) {
         target.write(region_id, 0, message.data(), message.size());
         std::cout << "Wrote " << message.size() << " bytes\n";
 
+        // Persist data
+        target.persist(region_id, 0, message.size());
+
         // Read data back (read the same amount we wrote)
         std::vector<char> buffer(message.size());
         target.read(region_id, 0, buffer.data(), message.size());

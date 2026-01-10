@@ -18,12 +18,10 @@ int main()
     // Memory backend: stores data in RAM, data is lost on shutdown
     auto config = R"(
     {
-        "targets": [
-            {
-                "type": "memory",
-                "config": {}
-            }
-        ]
+        "target": {
+            "type": "memory",
+            "config": {}
+        }
     }
     )";
 

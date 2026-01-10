@@ -7,7 +7,8 @@ creating, writing, reading, and destroying regions.
 Creating regions
 ----------------
 
-A region is a container for data. Before you can store data, you must create a region:
+A region is a container for data with a fixed size. Before you can store data,
+you must create a region by specifying its size:
 
 .. code-block:: cpp
 
@@ -16,14 +17,18 @@ A region is a container for data. Before you can store data, you must create a r
    // Assuming you have a target handle
    warabi::TargetHandle target = /* ... */;
 
-   // Create a region
+   // Create a region with a fixed size (1 MB in this example)
    warabi::RegionID region_id;
-   target.create(&region_id);
+   size_t region_size = 1024 * 1024;  // 1 MB
+   target.create(&region_id, region_size);
 
    std::cout << "Created region: " << region_id << std::endl;
 
-The :code:`create()` method returns a region ID, which is a unique identifier
-you'll use for all subsequent operations on this region.
+The :code:`create()` method takes a size parameter and returns a region ID,
+which is a unique identifier you'll use for all subsequent operations on this region.
+
+**Important**: Regions have a **fixed size** specified at creation time. They do
+not grow dynamically. Plan your region sizes accordingly.
 
 **Region IDs**: A :code:`warabi::RegionID` is an opaque identifier. You should
 treat it as a handle and not make assumptions about its internal structure.
@@ -41,14 +46,27 @@ Once you have a region, you can write data to it:
    // Data to write
    std::string data = "Hello, Warabi!";
 
-   // Write to the region
+   // Write to the region (volatile write)
    target.write(region_id, 0, data.data(), data.size());
 
 The :code:`write()` method takes:
+
 - Region ID
 - Offset (where to start writing)
 - Data pointer
 - Size of data
+- Optional persist flag (default: false)
+
+**Write with persistence**: You can request the data to be persisted immediately:
+
+.. code-block:: cpp
+
+   // Write and persist in one operation
+   target.write(region_id, 0, data.data(), data.size(), true);
+
+When ``persist`` is ``false`` (the default), the write is volatile and may only
+be in cache. To ensure durability, either use ``persist=true`` or call ``persist()``
+separately.
 
 **Bulk writes**: For large data, Warabi uses RDMA bulk transfers automatically:
 
@@ -78,6 +96,7 @@ To read data back from a region:
    std::cout << "Read: " << result << std::endl;
 
 The :code:`read()` method takes:
+
 - Region ID
 - Offset (where to start reading)
 - Buffer pointer
@@ -91,33 +110,67 @@ The :code:`read()` method takes:
    std::vector<char> partial(10);
    target.read(region_id, 10, partial.data(), 10);
 
-Querying region size
---------------------
+Persisting data
+---------------
 
-To find out how much data is in a region:
-
-.. code-block:: cpp
-
-   size_t size = target.size(region_id);
-   std::cout << "Region contains " << size << " bytes\n";
-
-This is useful when you don't know the size beforehand and want to read
-the entire region:
+By default, writes are volatile and may only exist in cache. To ensure data
+is persisted to durable storage, use the :code:`persist()` function:
 
 .. code-block:: cpp
 
-   size_t region_size = target.size(region_id);
-   std::vector<char> all_data(region_size);
-   target.read(region_id, 0, all_data.data(), region_size);
+   // Write data (volatile)
+   target.write(region_id, 0, data.data(), data.size());
+
+   // Persist the written data
+   target.persist(region_id, 0, data.size());
+
+The :code:`persist()` function takes:
+
+- Region ID
+- Offset (where to start persisting)
+- Size (how much to persist)
+
+**Partial persistence**: You can persist specific portions of a region:
+
+.. code-block:: cpp
+
+   // Persist only bytes 100-199
+   target.persist(region_id, 100, 100);
+
+**Note**: For backends like ``memory``, persist is a no-op. For ``pmem`` and
+``abtio`` backends, it ensures data is flushed to persistent storage.
+
+Combined create and write
+--------------------------
+
+For convenience, Warabi provides :code:`createAndWrite()` which combines region
+creation and writing in a single operation:
+
+.. code-block:: cpp
+
+   // Create region and write data in one operation
+   warabi::RegionID region_id;
+   std::string data = "Hello, Warabi!";
+   target.createAndWrite(&region_id, data.data(), data.size());
+
+You can also request immediate persistence:
+
+.. code-block:: cpp
+
+   // Create, write, and persist
+   target.createAndWrite(&region_id, data.data(), data.size(), true);
+
+This is more efficient than calling :code:`create()` and :code:`write()`
+separately, especially for small regions.
 
 Destroying regions
 ------------------
 
-When you're done with a region, you should destroy it to free resources:
+Regions can be deleted as follows.
 
 .. code-block:: cpp
 
-   target.destroy(region_id);
+   target.erase(region_id);
 
 **Important**: After destroying a region, its ID becomes invalid. Attempting
 to use it will result in an error.
@@ -125,73 +178,19 @@ to use it will result in an error.
 Complete example
 ----------------
 
-Here's a complete example demonstrating all basic operations:
+Here's an example demonstrating some of the basic operations:
 
-.. code-block:: cpp
+.. literalinclude:: ../../../code/warabi/02_basics/client.cpp
+   :language: cpp
 
-   #include <thallium.hpp>
-   #include <warabi/Client.hpp>
-   #include <iostream>
-   #include <vector>
-   #include <string>
+Non-blocking operations
+-----------------------
 
-   namespace tl = thallium;
-
-   int main(int argc, char** argv) {
-       if(argc != 3) {
-           std::cerr << "Usage: " << argv[0] << " <server> <provider_id>\n";
-           return -1;
-       }
-
-       try {
-           // Initialize client
-           tl::engine engine("na+sm", THALLIUM_CLIENT_MODE);
-           warabi::Client client(engine);
-
-           // Get target handle
-           warabi::TargetHandle target = client.makeTargetHandle(
-               argv[1], std::atoi(argv[2]), 0
-           );
-
-           // Create a region
-           warabi::RegionID region_id;
-           target.create(&region_id);
-           std::cout << "Created region: " << region_id << std::endl;
-
-           // Write data
-           std::string message = "Hello, Warabi! This is a test message.";
-           target.write(region_id, 0, message.data(), message.size());
-           std::cout << "Wrote " << message.size() << " bytes\n";
-
-           // Query size
-           size_t size = target.size(region_id);
-           std::cout << "Region size: " << size << " bytes\n";
-
-           // Read data back
-           std::vector<char> buffer(size);
-           target.read(region_id, 0, buffer.data(), size);
-
-           std::string result(buffer.begin(), buffer.end());
-           std::cout << "Read: " << result << std::endl;
-
-           // Verify
-           if(result == message) {
-               std::cout << "SUCCESS: Data matches!\n";
-           } else {
-               std::cout << "ERROR: Data mismatch!\n";
-           }
-
-           // Clean up
-           target.destroy(region_id);
-           std::cout << "Region destroyed\n";
-
-       } catch(const warabi::Exception& ex) {
-           std::cerr << "Error: " << ex.what() << std::endl;
-           return -1;
-       }
-
-       return 0;
-   }
+Most of the API presented above accepts an optional pointer to a ``warabi::AsyncRequest``.
+If such an object is provided, the method will return immediately and the operation
+will be performed in a non-blocking manner. The request object can be used to test
+whether the operation has completed (non-blocking) or wait for the operation to complete
+(blocking).
 
 Region persistence
 ------------------
@@ -204,6 +203,17 @@ The persistence of regions depends on the backend:
 
 If you need persistent storage, use the pmem or abt-io backends (covered in
 later tutorials).
+
+Non-contiguous region accesses
+------------------------------
+
+Variants of the ``read``, ``write``, and ``persist`` functions exist that
+take a ``std::vector<std::pair<size_t,size_t>>`` list of offset/size pairs
+for non-contiguous accesses to the data within a region.
+
+Non-contiguous access to/from a region to/from non-contiguous memory
+is also possible by relying on a `thallium::bulk` exposing non-contiguous
+user memory.
 
 Region naming
 -------------
@@ -226,6 +236,11 @@ names, you can maintain a mapping yourself:
    target.write(region_map["my_checkpoint"], 0, data, size);
 
 Alternatively, you can store the region ID in a metadata service like Yokan.
+
+.. note::
+
+   There is no API to retrieve the size of a region, hence you will also
+   need to store it somewhere if needed.
 
 Error handling
 --------------
@@ -251,29 +266,29 @@ Common errors:
 Best practices
 --------------
 
-**1. Check region IDs**: Ensure region was created successfully before using it
+**1. Specify appropriate region sizes**: Since regions have fixed size, plan ahead
 
 .. code-block:: cpp
 
+   // Bad: Creating region too small
    warabi::RegionID id;
-   target.create(&id);
-   if(id == warabi::RegionID{}) {  // Check for invalid ID
-       std::cerr << "Failed to create region\n";
-       return -1;
-   }
+   target.create(&id, 100);  // Only 100 bytes
+   target.write(id, 0, large_data, 10000);  // ERROR: exceeds region size!
+
+   // Good: Create region large enough
+   target.create(&id, large_data_size);
+   target.write(id, 0, large_data, large_data_size);
 
 **2. Clean up regions**: Always destroy regions when done to avoid leaks
 
-**3. Use appropriate buffer sizes**: Allocate buffers based on actual data size
+**3. Persist when needed**: Use ``persist()`` or ``persist=true`` for durability
 
 **4. Handle partial operations**: For very large data, consider splitting into chunks
-
-**5. Verify critical data**: For important writes, read back and verify
 
 Performance considerations
 --------------------------
 
-**Bulk transfers**: Warabi automatically uses RDMA for large transfers (typically > 4KB).
+**Bulk transfers**: Warabi automatically uses RDMA for large transfers.
 For best performance with large data:
 
 .. code-block:: cpp
@@ -295,11 +310,3 @@ For best performance with large data:
    size_t aligned_offset = (offset / alignment) * alignment;
 
 **Async operations**: For better performance, use async operations (covered in :doc:`09_async`).
-
-Next steps
-----------
-
-- :doc:`03_backends_memory`: Learn about the memory backend
-- :doc:`04_backends_pmem`: Learn about persistent memory storage
-- :doc:`05_backends_abtio`: Learn about ABT-IO async I/O backend
-- :doc:`09_async`: Learn about async operations for better performance
