@@ -41,7 +41,7 @@ try:
                 "type": "pmem",
                 "config": {
                     "path": "/mnt/pmem/warabi_data",
-                    "size": 1073741824  # 1GB
+                    "create_if_missing_with_size": 1073741824  # 1GB
                 }
             }
         }
@@ -49,17 +49,5 @@ try:
     print("PMem backend provider created (ID: 3)")
 except Exception as e:
     print(f"PMem backend not available: {e}")
-
-# Dummy backend (for testing)
-dummy_provider = Provider(
-    engine=engine,
-    provider_id=4,
-    config={
-        "target": {
-            "type": "dummy"
-        }
-    }
-)
-print("Dummy backend provider created (ID: 4)")
 
 engine.finalize()

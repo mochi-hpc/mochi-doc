@@ -55,7 +55,6 @@ Available backends:
 - **memory**: Fast in-memory storage (volatile)
 - **pmem**: Persistent memory storage
 - **abtio**: File-based storage using ABT-IO
-- **dummy**: Null storage for testing
 
 Client API
 ----------
@@ -116,9 +115,7 @@ Async operations return ``AsyncRequest`` or ``AsyncCreateRequest`` objects that
 can be used to:
 
 - Wait for completion with ``wait()``
-- Test completion with ``test()``
-- Chain multiple operations
-- Improve throughput with concurrent operations
+- Test completion with ``completed()``
 
 Persistence Control
 -------------------
@@ -150,32 +147,8 @@ This is useful for:
 - Large array datasets
 - HPC applications
 
-Error Handling
---------------
-
-The Python bindings raise ``mochi.warabi.client.Exception`` for client errors
-and ``mochi.warabi.server.Exception`` for server errors:
-
-.. literalinclude:: ../../../code/warabi/12_python/error_handling.py
-   :language: python
-
-Always wrap Warabi operations in try/except blocks to handle:
-
-- Invalid region IDs
-- Out-of-bounds access
-- Backend errors
-- Network failures
-
 Advanced Patterns
 -----------------
-
-Context Manager
-~~~~~~~~~~~~~~~
-
-Create a context manager for automatic cleanup:
-
-.. literalinclude:: ../../../code/warabi/12_python/context_manager.py
-   :language: python
 
 Batch Operations
 ~~~~~~~~~~~~~~~~
@@ -216,35 +189,6 @@ Performance Tips
 
 7. **Preallocate buffers** for read operations to avoid allocations
 
-Comparison with C++ API
------------------------
-
-**Python Advantages:**
-
-- Simpler syntax
-- Automatic memory management
-- Integration with NumPy/scientific stack
-- Rapid prototyping
-
-**C++ Advantages:**
-
-- Lower latency
-- More control over memory
-- Better for performance-critical paths
-
-Use Python for:
-
-- Prototyping and testing
-- Integration with Python workflows
-- Data analysis and visualization
-- Less performance-critical applications
-
-Use C++ for:
-
-- Production HPC services
-- Performance-critical code
-- Integration with C++ applications
-
 Integration Examples
 --------------------
 
@@ -254,14 +198,6 @@ With Bedrock
 Using Warabi through Bedrock in Python:
 
 .. literalinclude:: ../../../code/warabi/12_python/with_bedrock.py
-   :language: python
-
-With Other Mochi Services
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Combining Warabi with Yokan for metadata + blob storage:
-
-.. literalinclude:: ../../../code/warabi/12_python/with_yokan.py
    :language: python
 
 Building Higher-Level APIs
@@ -278,26 +214,3 @@ This allows you to:
 - Implement caching strategies
 - Add validation and type checking
 - Create convenient abstractions
-
-Next Steps
-----------
-
-- Learn about :doc:`11_c_api` for C API details
-- Review :doc:`08_migration` for data migration patterns
-- See :doc:`09_async` for async operation details
-- Explore :doc:`10_bedrock` for deployment options
-
-Summary
--------
-
-Warabi's Python bindings provide:
-
-- Full-featured server and client APIs
-- Multiple storage backend support
-- Synchronous and asynchronous operations
-- Buffer protocol for zero-copy operations
-- NumPy integration
-- Context managers and Pythonic patterns
-
-The bindings balance ease of use with performance, making Warabi ideal for
-Python-based HPC and scientific computing applications.

@@ -78,10 +78,17 @@ print("All writes completed")
 # Test completion without waiting
 print("\nTesting completion status:")
 req = target.create_async(size=512)
-while not req.test():
-    print("Not yet complete, doing other work...")
-    # In real code, do actual work here
-    pass
+print(f"Requested completed: {req.completed()}")
+
+# IMPORTANT: the following code will may loop indefinitely
+# if the Warabi provider and the progress loop are located
+# in the same xstream as the Python code, as the loop never
+# yields to them.
+
+# while not req.completed():
+#    print("Not yet complete, doing other work...")
+#    # In real code, do actual work here
+#    pass
 region = req.wait()  # Get the result
 print(f"Async create tested and completed: {region}")
 

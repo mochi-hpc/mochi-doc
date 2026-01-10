@@ -4,12 +4,13 @@ Example of using Warabi through Bedrock configuration.
 This demonstrates how to configure and use Warabi when deployed
 via Bedrock's configuration system.
 """
+import sys
 
 # Example Bedrock configuration for Warabi
 bedrock_config = {
-    "libraries": {
-        "warabi": "libwarabi-bedrock-module.so"
-    },
+    "libraries": [
+        "libwarabi-bedrock-module.so"
+    ],
     "providers": [
         {
             "name": "warabi_memory",
@@ -50,7 +51,7 @@ client = Client(engine=engine)
 
 # Connect to providers
 # (In real usage, you'd get the server address from Bedrock)
-server_addr = "na+sm://localhost:1234"
+server_addr = sys.argv[1]
 
 memory_target = client.make_target_handle(server_addr, 1)
 persistent_target = client.make_target_handle(server_addr, 2)
