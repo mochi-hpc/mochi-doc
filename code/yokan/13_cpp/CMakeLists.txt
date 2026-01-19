@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.10)
-project(yokan-cpp-examples CXX)
+cmake_minimum_required (VERSION 3.10)
+project (yokan-cpp-examples CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(yokan REQUIRED)
-find_package(thallium REQUIRED)
+find_package (yokan REQUIRED)
+find_package (thallium REQUIRED)
 
-set(EXAMPLES
+set (EXAMPLES
     quickstart
     client_database
     basic_operations
@@ -26,12 +26,12 @@ set(EXAMPLES
     with_thallium
 )
 
-foreach(example ${EXAMPLES})
-    add_executable(${example} ${example}.cpp)
-    target_link_libraries(${example} yokan::client thallium)
-endforeach()
+foreach (example ${EXAMPLES})
+    add_executable (13_yokan_${example} ${example}.cpp)
+    target_link_libraries (13_yokan_${example} yokan::client thallium)
+endforeach ()
 
 # with_bedrock requires bedrock-client
-find_package(bedrock REQUIRED)
-add_executable(with_bedrock with_bedrock.cpp)
-target_link_libraries(with_bedrock yokan::client thallium bedrock::client)
+find_package (bedrock REQUIRED)
+add_executable (13_yokan_with_bedrock with_bedrock.cpp)
+target_link_libraries (13_yokan_with_bedrock yokan::client thallium bedrock::client)

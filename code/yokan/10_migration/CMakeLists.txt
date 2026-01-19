@@ -6,8 +6,8 @@ pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
 find_package (remi REQUIRED)
 find_package (yokan REQUIRED)
 
-add_executable (migrate_example migrate_example.c)
-target_link_libraries (migrate_example
+add_executable (10_yokan_migrate_example migrate_example.c)
+target_link_libraries (10_yokan_migrate_example
     PkgConfig::MARGO
     remi
     yokan::server

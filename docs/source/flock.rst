@@ -7,9 +7,8 @@ other, and coordinate membership. Flock is based on Margo and provides multiple
 bootstrap methods and backends to suit different deployment scenarios.
 
 Flock has been designed to support dynamic group membership, allowing processes
-to join and leave groups, and to handle failures gracefully. It provides both
-static and centralized backend implementations, with support for MPI, file-based,
-and network-based bootstrapping methods.
+to join and leave groups, and to handle failures gracefully. It supports MPI,
+file-based, and network-based bootstrapping methods.
 
 This section will walk you through a series of tutorials on how to use Flock.
 

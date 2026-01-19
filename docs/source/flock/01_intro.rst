@@ -8,10 +8,11 @@ Flock can be installed using Spack as follows.
 
 .. code-block:: console
 
-   spack install mochi-flock +bedrock
+   spack install mochi-flock +bedrock +mpi +python
 
 The :code:`+bedrock` variant will enable :ref:`Bedrock` support, which will be useful
-for spinning up a Flock provider without having to write code.
+for spinning up a Flock provider without having to write code. ``+mpi`` is used to
+enable bootstrapping from an MPI communicator. ``+python`` enables Flock's Python binding.
 The :code:`spack info mochi-flock` command can be used to show the list of variants
 available.
 
