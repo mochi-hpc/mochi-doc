@@ -6,11 +6,11 @@ Demonstrates basic server and client setup.
 import mochi.flock.server as server
 import mochi.flock.client as client
 from mochi.flock.view import GroupView
-import pymargo.core
+import mochi.margo
 import json
 
 # Create Margo engine
-engine = pymargo.core.Engine("na+sm", pymargo.core.server)
+engine = mochi.margo.Engine("na+sm", mochi.margo.server)
 
 # Create initial group view
 initial_view = GroupView()
@@ -44,16 +44,13 @@ group = flock_client.make_group_handle(
 )
 
 print(f"Group handle created")
-print(f"Group view has {group.view.size} members")
+print(f"Group view has {len(group.view.members)} members")
 
 # Access group view
 for i, member in enumerate(group.view.members):
     print(f"  Member {i}: {member.address} (provider_id={member.provider_id})")
 
 # Cleanup
-del group
-del flock_client
-del provider
 engine.finalize()
 
 print("\nQuickstart completed successfully!")

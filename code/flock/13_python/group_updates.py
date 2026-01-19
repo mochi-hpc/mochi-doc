@@ -5,13 +5,13 @@ Updating group membership (for centralized backend).
 import mochi.flock.server as server
 import mochi.flock.client as client
 from mochi.flock.view import GroupView
-import pymargo.core
+import mochi.margo
 import json
 
 print("=== Group Updates Example ===\n")
 
 # Setup server with centralized backend (allows updates)
-engine = pymargo.core.Engine("na+sm", pymargo.core.server)
+engine = mochi.margo.Engine("na+sm", mochi.margo.server)
 
 initial_view = GroupView()
 initial_view.members.add(str(engine.address), 42)
@@ -39,7 +39,7 @@ group = flock_client.make_group_handle(
     provider_id=42
 )
 
-print(f"Initial group size: {group.view.size}")
+print(f"Initial group size: {len(group.view.members)}")
 for i, member in enumerate(group.view.members):
     print(f"  Member {i}: {member.address}")
 
@@ -47,7 +47,7 @@ for i, member in enumerate(group.view.members):
 print("\nCalling update() to refresh view...")
 group.update()
 
-print(f"After update, group size: {group.view.size}")
+print(f"After update, group size: {len(group.view.members)}")
 
 # Note: In a real distributed scenario, other processes would join/leave
 # and update() would reflect those changes
@@ -57,9 +57,6 @@ print(f"\nGroup view digest: {group.view.digest}")
 print(f"View has metadata: {len(group.view.metadata)} entries")
 
 # Cleanup
-del group
-del flock_client
-del provider
 engine.finalize()
 
 print("\nGroup updates example completed!")

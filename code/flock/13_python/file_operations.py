@@ -5,7 +5,7 @@ File-based bootstrapping and serialization examples.
 import mochi.flock.server as server
 import mochi.flock.client as client
 from mochi.flock.view import GroupView
-import pymargo.core
+import mochi.margo
 import json
 import tempfile
 import os
@@ -19,7 +19,7 @@ temp_file.close()
 
 try:
     # Setup server
-    engine = pymargo.core.Engine("na+sm", pymargo.core.server)
+    engine = mochi.margo.Engine("na+sm", mochi.margo.server)
 
     initial_view = GroupView()
     initial_view.members.add(str(engine.address), 42)
@@ -27,9 +27,9 @@ try:
     config = {
         "group": {
             "type": "static",
-            "config": {},
-            "file": group_file  # Flock will write group info to this file
-        }
+            "config": {}
+        },
+        "file": group_file # Flock will write group info to this file
     }
 
     provider = server.Provider(
@@ -47,23 +47,9 @@ try:
     # Method 1: Create group handle from file
     print("\nMethod 1: Loading from file...")
     group = flock_client.make_group_handle_from_file(group_file)
-    print(f"Loaded group with {group.view.size} members")
-
-    # Get serialized representation
-    serialized = group.view.to_json()
-    print(f"\nSerialized group view (truncated): {serialized[:100]}...")
-
-    del group
-
-    # Method 2: Create group handle from serialized string
-    print("\nMethod 2: Loading from serialized string...")
-    group2 = flock_client.make_group_handle_from_serialized(serialized)
-    print(f"Loaded group with {group2.view.size} members")
+    print(f"Loaded group with {len(group.view.members)} members")
 
     # Cleanup
-    del group2
-    del flock_client
-    del provider
     engine.finalize()
 
 finally:
