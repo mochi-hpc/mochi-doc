@@ -8,7 +8,7 @@
 #include <mpi.h>
 #include <margo.h>
 #include <flock/flock-server.h>
-#include <flock/flock-bootstrap.h>
+#include <flock/flock-bootstrap-mpi.h>
 
 int main(int argc, char** argv)
 {

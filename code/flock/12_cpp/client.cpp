@@ -4,9 +4,10 @@
  * See COPYRIGHT in top-level directory.
  */
 #include <thallium.hpp>
-#include <flock/Client.hpp>
-#include <flock/GroupHandle.hpp>
+#include <flock/cxx/client.hpp>
+#include <flock/cxx/group.hpp>
 #include <iostream>
+#include <cstdlib>
 
 namespace tl = thallium;
 
@@ -18,7 +19,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    std::string server_addr = argv[1];
+    std::string server_addr_str = argv[1];
     uint16_t provider_id = std::atoi(argv[2]);
 
     // Initialize Thallium engine
@@ -27,30 +28,40 @@ int main(int argc, char** argv)
     // Initialize Flock client
     flock::Client client(engine);
 
+    // Lookup server address
+    tl::endpoint server_endpoint = engine.lookup(server_addr_str);
+
     // Create group handle
-    flock::GroupHandle group = client.makeGroupHandle(server_addr, provider_id);
+    flock::GroupHandle group = client.makeGroupHandle(
+        server_endpoint.get_addr(), provider_id, 0);
 
     std::cout << "Connected to Flock group" << std::endl;
 
     // Get group view
-    flock::GroupView view = group.getView();
+    flock::GroupView view = group.view();
 
     std::cout << "\n=== Group Information ===" << std::endl;
-    std::cout << "Group size: " << view.members.size() << " members" << std::endl;
-    std::cout << "View digest: " << view.digest << std::endl;
+    std::cout << "Group size: " << view.members().count() << " members" << std::endl;
+    std::cout << "View digest: " << view.digest() << std::endl;
 
     // Print all members
     std::cout << "\nGroup members:" << std::endl;
-    for(size_t i = 0; i < view.members.size(); i++) {
-        const auto& member = view.members[i];
-        std::cout << "  [" << i << "] Rank: " << member.rank << std::endl;
-        std::cout << "      Address: " << member.address << std::endl;
+    auto members = view.members();
+    for(size_t i = 0; i < members.count(); i++) {
+        auto member = members[i];
+        std::cout << "  [" << i << "] Address: " << member.address << std::endl;
         std::cout << "      Provider ID: " << member.provider_id << std::endl;
     }
 
-    // Get number of members
-    size_t num_members = group.getNumMembers();
-    std::cout << "\nNumber of members: " << num_members << std::endl;
+    // Print metadata if any
+    auto metadata = view.metadata();
+    if(metadata.count() > 0) {
+        std::cout << "\nMetadata:" << std::endl;
+        for(size_t i = 0; i < metadata.count(); i++) {
+            auto md = metadata[i];
+            std::cout << "  " << md.key << " = " << md.value << std::endl;
+        }
+    }
 
     std::cout << "\nFlock C++ client operations completed successfully" << std::endl;
 

@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
     // Bootstrap from view file
     uint16_t provider_id = 42;
-    int ret = flock_group_view_init_from_file(mid, provider_id, view_file, &initial_view);
+    int ret = flock_group_view_init_from_file(view_file, &initial_view);
     if(ret != FLOCK_SUCCESS) {
         fprintf(stderr, "Failed to initialize view from file: %s\n", view_file);
         margo_finalize(mid);
@@ -41,10 +41,10 @@ int main(int argc, char** argv)
 
     // Print all members
     for(size_t i = 0; i < initial_view.members.size; i++) {
-        printf("  Member %zu: %s (rank=%zu)\n",
+        printf("  Member %zu: %s (provider_id=%u)\n",
                i,
                initial_view.members.data[i].address,
-               initial_view.members.data[i].rank);
+               initial_view.members.data[i].provider_id);
     }
 
     // Configure with static backend

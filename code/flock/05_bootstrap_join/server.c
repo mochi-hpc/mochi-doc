@@ -5,9 +5,12 @@
  */
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include <margo.h>
 #include <flock/flock-server.h>
 #include <flock/flock-bootstrap.h>
+#include <flock/flock-client.h>
+#include <flock/flock-group.h>
 
 int main(int argc, char** argv)
 {
@@ -19,7 +22,7 @@ int main(int argc, char** argv)
 
     const char* bootstrap_addr = argv[1];
 
-    // Initialize Margo
+    // Initialize Margo (in server mode, but with client capability for join)
     margo_instance_id mid = margo_init("na+sm", MARGO_SERVER_MODE, 0, 0);
     assert(mid);
 
@@ -47,21 +50,62 @@ int main(int argc, char** argv)
         flock_group_view_init_from_self(mid, provider_id, &initial_view);
         printf("Bootstrapped as initial member (self)\n");
     } else {
-        // Subsequent servers: join existing group
-        ret = flock_group_view_init_from_join(
-            mid, provider_id, bootstrap_addr, &initial_view);
-
+        // Subsequent servers: join existing group by getting its view
+        // Create a flock client to communicate with the existing group
+        flock_client_t client;
+        ret = flock_client_init(mid, ABT_POOL_NULL, &client);
         if(ret != FLOCK_SUCCESS) {
-            fprintf(stderr, "Failed to join group at %s\n", bootstrap_addr);
+            fprintf(stderr, "Failed to create flock client\n");
             margo_finalize(mid);
             return -1;
         }
+
+        // Lookup the bootstrap server address
+        hg_addr_t bootstrap_hg_addr;
+        ret = margo_addr_lookup(mid, bootstrap_addr, &bootstrap_hg_addr);
+        if(ret != HG_SUCCESS) {
+            fprintf(stderr, "Failed to lookup address %s\n", bootstrap_addr);
+            flock_client_finalize(client);
+            margo_finalize(mid);
+            return -1;
+        }
+
+        // Create group handle to get the current view
+        flock_group_handle_t group_handle;
+        ret = flock_group_handle_create(client, bootstrap_hg_addr, provider_id, 0, &group_handle);
+        if(ret != FLOCK_SUCCESS) {
+            fprintf(stderr, "Failed to create group handle\n");
+            margo_addr_free(mid, bootstrap_hg_addr);
+            flock_client_finalize(client);
+            margo_finalize(mid);
+            return -1;
+        }
+
+        // Get the current view from the group
+        ret = flock_group_get_view(group_handle, &initial_view);
+        if(ret != FLOCK_SUCCESS) {
+            fprintf(stderr, "Failed to get group view\n");
+            flock_group_handle_release(group_handle);
+            margo_addr_free(mid, bootstrap_hg_addr);
+            flock_client_finalize(client);
+            margo_finalize(mid);
+            return -1;
+        }
+
+        // Add ourselves to the view
+        flock_group_view_add_member(&initial_view, addr_str, provider_id);
+
         printf("Joined existing group via %s\n", bootstrap_addr);
+
+        // Clean up client resources
+        flock_group_handle_release(group_handle);
+        margo_addr_free(mid, bootstrap_hg_addr);
+        flock_client_finalize(client);
     }
 
     printf("Group size: %zu\n", initial_view.members.size);
 
-    // Configure with centralized backend (required for join method)
+    // Configure with centralized backend (supports dynamic membership)
     const char* config = "{ \"group\":{ \"type\":\"centralized\", \"config\":{} } }";
 
     // Register provider

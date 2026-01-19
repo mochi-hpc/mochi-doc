@@ -49,14 +49,14 @@ int main(int argc, char** argv)
 
     /* Query group membership */
     flock_group_view_t view = FLOCK_GROUP_VIEW_INITIALIZER;
-    ret = flock_group_handle_get_view(group_handle, &view);
+    ret = flock_group_get_view(group_handle, &view);
     if(ret != FLOCK_SUCCESS) {
         fprintf(stderr, "flock_group_handle_get_view failed\n");
         return -1;
     }
 
-    printf("Group has %zu members:\n", view.members.count);
-    for(size_t i = 0; i < view.members.count; i++) {
+    printf("Group has %zu members:\n", view.members.size);
+    for(size_t i = 0; i < view.members.size; i++) {
         printf("  [%zu] %s (provider_id=%d)\n",
                i, view.members.data[i].address,
                view.members.data[i].provider_id);
