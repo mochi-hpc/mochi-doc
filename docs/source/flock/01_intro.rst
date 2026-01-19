@@ -30,11 +30,10 @@ Flock is a group management microservice for Mochi. It provides capabilities for
 - **Membership Discovery**: Discovering other members of a group
 - **Dynamic Membership**: Supporting processes joining and leaving groups
 - **Multiple Bootstrap Methods**: Initializing groups via self, view files, MPI, join, or file-based methods
-- **Multiple Backends**: Static or centralized group management implementations
+- **Multiple Backends**: Static or centralized group management implementations (for now)
 
-Flock is particularly useful for building fault-tolerant distributed services,
-implementing elastic services that can scale up or down, and coordinating multiple
-instances of a microservice.
+Flock is particularly useful if you want your service to provide a simple way to be discovered
+by clients.
 
 Instantiating a Flock provider
 -------------------------------
@@ -51,35 +50,17 @@ I highly recommend you to read the :ref:`Bedrock` section. Using Bedrock will sa
 you development time since it allows you to bootstrap a Mochi service using a JSON file
 instead of writing code).
 
-.. code-block:: json
-
-   {
-       "libraries": [
-           "libflock-bedrock-module.so"
-       ],
-       "providers": [
-           {
-               "type": "flock",
-               "name": "my_flock_provider",
-               "provider_id": 42,
-               "config": {
-                   "bootstrap": "self",
-                   "group": {
-                       "type": "static",
-                       "config": {}
-                   },
-                   "file": "mygroup.flock"
-               }
-           }
-       ]
-   }
+.. literalinclude:: ../../../code/flock/01_intro/bedrock-config.json
+   :language: json
 
 We can now give this config file to Bedrock as follows.
 
 .. code-block:: console
 
-   $ bedrock na+sm -c bedrock-config.json
-   [info] [flock] Flock provider started
+   $ bedrock na+sm -c bedrock-config.json -v trace
+   ...
+   [trace] [flock] Provider registered with ID 42
+   ...
    [info] Bedrock daemon now running at na+sm://12345-0
 
 We now have a Flock provider running, with a *provider id* of 42, managing a group
@@ -149,17 +130,10 @@ Later tutorials will cover each of these methods in detail.
 Backend types
 -------------
 
-Flock provides two backend implementations:
+Flock currently provides two backend implementations:
 
 - **static**: For groups with fixed membership that doesn't change after initialization
-- **centralized**: For groups with dynamic membership, using a centralized coordination approach
+- **centralized**: For groups with dynamic membership, using a centralized coordination approach (first member is the authority on who is currently a member, and cannot leave the group)
 
 The backend type is specified in the "group" section of the configuration.
 Later tutorials will cover the differences between these backends and when to use each.
-
-Next steps
-----------
-
-- :doc:`02_bootstrap_self`: Learn about the "self" bootstrap method in detail
-- :doc:`03_bootstrap_view`: Learn about initializing from a group view
-- :doc:`04_bootstrap_mpi`: Learn about MPI-based bootstrapping

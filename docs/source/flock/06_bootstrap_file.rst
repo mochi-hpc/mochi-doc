@@ -27,25 +27,8 @@ A group view file contains:
 
 Example group view file:
 
-.. code-block:: json
-
-   {
-       "members": [
-           {
-               "address": "na+sm://12345-0",
-               "provider_id": 42
-           },
-           {
-               "address": "na+sm://12345-1",
-               "provider_id": 42
-           }
-       ],
-       "metadata": {
-           "service": "my_service",
-           "version": "1.0"
-       },
-       "digest": 12345678
-   }
+.. literalinclude:: ../../../code/flock/03_bootstrap_view/view.json
+   :language: json
 
 Configuration
 -------------
@@ -83,26 +66,8 @@ In C code
 
 To load a group view from a file programmatically:
 
-.. code-block:: c
-
-   #include <flock/flock-server.h>
-   #include <flock/flock-group-view.h>
-
-   // ... margo initialization ...
-
-   struct flock_provider_args args = FLOCK_PROVIDER_ARGS_INIT;
-   flock_group_view_t initial_view = FLOCK_GROUP_VIEW_INITIALIZER;
-   args.initial_view = &initial_view;
-
-   // Load view from file
-   const char* filename = "mygroup.flock";
-   flock_group_view_init_from_file(filename, &initial_view);
-
-   const char* config = "{ \"group\":{ \"type\":\"static\", \"config\":{} } }";
-   flock_provider_register(mid, provider_id, config, &args, FLOCK_PROVIDER_IGNORE);
-
-   // Clean up
-   flock_group_view_clear(&initial_view);
+.. literalinclude:: ../../../code/flock/06_bootstrap_file/server.c
+   :language: c
 
 The :code:`flock_group_view_init_from_file` function takes:
 
@@ -135,34 +100,9 @@ Configure a provider to write its view to a file:
 
 The provider will write its view to the specified file at initialization.
 
-**2. Programmatically**
+**2. Manually**
 
-.. code-block:: c
-
-   flock_group_view_t view = FLOCK_GROUP_VIEW_INITIALIZER;
-
-   // Add members
-   flock_group_view_add_member(&view, "na+sm://12345-0", 42);
-   flock_group_view_add_member(&view, "na+sm://12345-1", 42);
-
-   // Add metadata
-   flock_group_view_add_metadata(&view, "service", "my_service");
-
-   // Serialize to JSON
-   char* json_str = NULL;
-   flock_group_view_serialize(&view, &json_str);
-
-   // Write to file
-   FILE* f = fopen("mygroup.flock", "w");
-   fprintf(f, "%s", json_str);
-   fclose(f);
-
-   free(json_str);
-   flock_group_view_clear(&view);
-
-**3. Manually**
-
-You can also create the JSON file manually using a text editor, following the
+You can create the JSON file manually using a text editor, following the
 format shown above.
 
 Example workflow
@@ -203,52 +143,6 @@ Additional member configuration:
                "config": {}
            }
        }
-   }
-
-File updates
-------------
-
-When using a static backend, the group view file is typically written once at
-initialization and not updated. With a centralized backend, you can configure
-periodic updates to keep the file synchronized with the current group membership:
-
-.. code-block:: json
-
-   {
-       "config": {
-           "bootstrap": "file",
-           "file": "mygroup.flock",
-           "update_file": true,
-           "group": {
-               "type": "centralized",
-               "config": {}
-           }
-       }
-   }
-
-When :code:`update_file` is true, the provider will periodically rewrite the file
-with the current group view.
-
-Error handling
---------------
-
-File bootstrap can fail if:
-
-- The file doesn't exist or isn't readable
-- The JSON is malformed
-- The file format is incorrect
-- Member addresses are invalid
-
-Always check for errors:
-
-.. code-block:: c
-
-   flock_return_t ret = flock_group_view_init_from_file(filename, &initial_view);
-
-   if (ret != FLOCK_SUCCESS) {
-       fprintf(stderr, "Failed to load group view from %s: error %d\n",
-               filename, ret);
-       // Handle error
    }
 
 Next steps

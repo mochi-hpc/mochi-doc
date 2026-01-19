@@ -56,10 +56,8 @@ configurable options.
 In C code
 ---------
 
-.. code-block:: c
-
-   const char* config = "{ \"group\":{ \"type\":\"static\", \"config\":{} } }";
-   flock_provider_register(mid, provider_id, config, &args, FLOCK_PROVIDER_IGNORE);
+.. literalinclude:: ../../../code/flock/07_backends_static/server.c
+   :language: c
 
 How it works
 ------------
@@ -73,7 +71,7 @@ With the static backend:
 
 This means:
 
-- :code:`flock_group_handle_get_view` always returns the initial view
+- :code:`flock_group_get_view` always returns the initial view
 - There are no membership change notifications
 - No network communication is needed for group queries
 
@@ -95,64 +93,7 @@ Best practices
 **File persistence**:
 
 Always specify a :code:`file` option to persist the group view. This allows other
-processes to bootstrap using the same view:
-
-.. code-block:: json
-
-   {
-       "config": {
-           "bootstrap": "mpi",
-           "file": "mygroup.flock",
-           "group": {
-               "type": "static",
-               "config": {}
-           }
-       }
-   }
-
-Example: MPI-based static group
---------------------------------
-
-This is the most common use case for the static backend. All MPI ranks form a
-group at initialization:
-
-.. code-block:: c
-
-   #include <mpi.h>
-   #include <flock/flock-server.h>
-   #include <flock/flock-bootstrap.h>
-
-   int main(int argc, char** argv)
-   {
-       MPI_Init(&argc, &argv);
-
-       margo_instance_id mid = margo_init("na+sm", MARGO_SERVER_MODE, 0, 0);
-
-       struct flock_provider_args args = FLOCK_PROVIDER_ARGS_INIT;
-       flock_group_view_t initial_view = FLOCK_GROUP_VIEW_INITIALIZER;
-       args.initial_view = &initial_view;
-
-       // Initialize from MPI
-       flock_group_view_init_from_mpi(mid, 42, MPI_COMM_WORLD, &initial_view);
-
-       // Use static backend
-       const char* config = "{ \"group\":{ \"type\":\"static\", \"config\":{} } }";
-       flock_provider_register(mid, 42, config, &args, FLOCK_PROVIDER_IGNORE);
-
-       margo_wait_for_finalize(mid);
-
-       MPI_Finalize();
-       return 0;
-   }
-
-Compile and run:
-
-.. code-block:: console
-
-   $ mpicc -o server server.c $(pkg-config --cflags --libs flock-server)
-   $ mpirun -n 4 ./server
-
-All 4 processes will have identical static groups with 4 members.
+processes to bootstrap using the same view.
 
 Limitations
 -----------

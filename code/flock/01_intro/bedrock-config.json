@@ -1,0 +1,20 @@
+{
+    "libraries": [
+        "libflock-bedrock-module.so"
+    ],
+    "providers": [
+        {
+            "type": "flock",
+            "name": "my_flock_provider",
+            "provider_id": 42,
+            "config": {
+                "bootstrap": "self",
+                "group": {
+                    "type": "static",
+                    "config": {}
+                },
+                "file": "mygroup.flock"
+            }
+        }
+    ]
+}

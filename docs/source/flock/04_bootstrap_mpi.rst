@@ -28,67 +28,28 @@ Configuration
 
 In Bedrock configuration:
 
-.. code-block:: json
+.. literalinclude:: ../../../code/flock/04_bootstrap_mpi/bedrock-config.json
+   :language: json
 
-   {
-       "libraries": [
-           "libflock-bedrock-module.so"
-       ],
-       "providers": [
-           {
-               "type": "flock",
-               "name": "my_flock_provider",
-               "provider_id": 42,
-               "config": {
-                   "bootstrap": "mpi",
-                   "group": {
-                       "type": "static",
-                       "config": {}
-                   },
-                   "file": "mygroup.flock"
-               }
-           }
-       ]
-   }
 
 When you launch your Bedrock application with MPI (e.g., :code:`mpirun -n 4 bedrock ...`),
 all ranks will automatically form a group with each other.
 
+If you want only some of the ranks to be part of the group, for instance ranks 0, 1, 2, and 3,
+add the following in the provider's "config" field:
+
+.. code-block:: json
+
+   "mpi_ranks": [0, 1, 2, 3]
+
 In C code
 ---------
 
-To use MPI bootstrap programmatically:
+To use MPI bootstrap programmatically, you can rely on the ``flock_group_view_init_from_mpi``
+helper function from the ``flock/flock-bootstrap-mpi.h`` header file.
 
-.. code-block:: c
-
-   #include <mpi.h>
-   #include <flock/flock-server.h>
-   #include <flock/flock-bootstrap.h>
-
-   int main(int argc, char** argv)
-   {
-       // Initialize MPI
-       MPI_Init(&argc, &argv);
-
-       // Initialize Margo
-       margo_instance_id mid = margo_init("na+sm", MARGO_SERVER_MODE, 0, 0);
-
-       // Initialize provider arguments and view
-       struct flock_provider_args args = FLOCK_PROVIDER_ARGS_INIT;
-       flock_group_view_t initial_view = FLOCK_GROUP_VIEW_INITIALIZER;
-       args.initial_view = &initial_view;
-
-       // Initialize view from MPI communicator
-       flock_group_view_init_from_mpi(mid, 42, MPI_COMM_WORLD, &initial_view);
-
-       const char* config = "{ \"group\":{ \"type\":\"static\", \"config\":{} } }";
-       flock_provider_register(mid, 42, config, &args, FLOCK_PROVIDER_IGNORE);
-
-       margo_wait_for_finalize(mid);
-
-       MPI_Finalize();
-       return 0;
-   }
+.. literalinclude:: ../../../code/flock/04_bootstrap_mpi/server.c
+   :language: c
 
 The :code:`flock_group_view_init_from_mpi` function takes:
 
@@ -98,7 +59,7 @@ The :code:`flock_group_view_init_from_mpi` function takes:
 - A pointer to the group view to initialize
 
 This function performs an MPI collective operation to gather all addresses and construct
-a group view containing all MPI ranks.
+a group view containing all MPI ranks in the specified communicator.
 
 How it works
 ------------
@@ -106,7 +67,7 @@ How it works
 The MPI bootstrap process:
 
 1. Each MPI rank determines its Margo address
-2. An MPI_Allgather collective exchanges addresses between all ranks
+2. An ``MPI_Allgather`` collective exchanges addresses between all ranks
 3. Each rank constructs an identical group view with all members
 4. The group is initialized with this view
 
@@ -133,35 +94,3 @@ Launch with mpirun:
    [Rank 3] Server running with 4 group members
 
 All four processes will have identical group views containing all four members.
-
-Persisting the group view
---------------------------
-
-You can save the group view to a file after MPI initialization. This allows
-non-MPI processes to join the group later using the "file" or "join" bootstrap methods:
-
-.. code-block:: c
-
-   // After initializing the view from MPI
-   flock_group_view_init_from_mpi(mid, 42, MPI_COMM_WORLD, &initial_view);
-
-   // Rank 0 writes the view to a file
-   int rank;
-   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-   if (rank == 0) {
-       char* json_str = NULL;
-       flock_group_view_serialize(&initial_view, &json_str);
-
-       FILE* f = fopen("group.flock", "w");
-       fprintf(f, "%s", json_str);
-       fclose(f);
-
-       free(json_str);
-   }
-
-Next steps
-----------
-
-- :doc:`05_bootstrap_join`: Learn about joining an existing group
-- :doc:`06_bootstrap_file`: Learn about loading views from files
-- :doc:`07_backends_static`: Learn about the static backend for MPI groups

@@ -18,46 +18,16 @@ Configuration
 
 In Bedrock configuration:
 
-.. code-block:: json
-
-   {
-       "providers": [
-           {
-               "type": "flock",
-               "name": "my_flock_provider",
-               "provider_id": 42,
-               "config": {
-                   "bootstrap": "self",
-                   "group": {
-                       "type": "static",
-                       "config": {}
-                   }
-               }
-           }
-       ]
-   }
+.. literalinclude:: ../../../code/flock/01_intro/bedrock-config.json
+   :language: json
 
 In C code
 ---------
 
 When creating a provider programmatically, use :code:`flock_group_view_init_from_self`:
 
-.. code-block:: c
-
-   #include <flock/flock-server.h>
-   #include <flock/flock-bootstrap.h>
-
-   // ... margo initialization ...
-
-   struct flock_provider_args args = FLOCK_PROVIDER_ARGS_INIT;
-   flock_group_view_t initial_view = FLOCK_GROUP_VIEW_INITIALIZER;
-   args.initial_view = &initial_view;
-
-   // Initialize view from self
-   flock_group_view_init_from_self(mid, provider_id, &initial_view);
-
-   const char* config = "{ \"group\":{ \"type\":\"static\", \"config\":{} } }";
-   flock_provider_register(mid, provider_id, config, &args, FLOCK_PROVIDER_IGNORE);
+.. literalinclude:: ../../../code/flock/02_bootstrap_self/server.c
+   :language: c
 
 The :code:`flock_group_view_init_from_self` function takes:
 
@@ -78,10 +48,3 @@ After initialization with "self", the group view contains:
 
 You can persist this view to a file or share it with other processes to allow
 them to join the group using the "join" or "view" bootstrap methods.
-
-Next steps
-----------
-
-- :doc:`03_bootstrap_view`: Learn about initializing from a provided group view
-- :doc:`04_bootstrap_mpi`: Learn about MPI-based bootstrapping for multi-process groups
-- :doc:`05_bootstrap_join`: Learn about joining an existing group

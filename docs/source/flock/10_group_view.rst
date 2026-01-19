@@ -11,6 +11,7 @@ What is a group view?
 A group view contains:
 
 **Members**: A list of group members, each with:
+
 - Network address (string)
 - Provider ID (uint16_t)
 
@@ -18,32 +19,13 @@ A group view contains:
 
 **Digest**: A version identifier that changes when the view is modified
 
-Group view structure
---------------------
+Example: Working with a group view
+----------------------------------
 
-In C, a group view is represented by :code:`flock_group_view_t`:
+Here's a complete example showing how to retrieve and work with a group view:
 
-.. code-block:: c
-
-   typedef struct flock_group_view {
-       struct {
-           size_t count;
-           struct {
-               char* address;
-               uint16_t provider_id;
-           }* data;
-       } members;
-
-       struct {
-           size_t count;
-           struct {
-               char* key;
-               char* value;
-           }* data;
-       } metadata;
-
-       uint64_t digest;
-   } flock_group_view_t;
+.. literalinclude:: ../../../code/flock/10_group_view/client.c
+   :language: c
 
 Initialization
 --------------
@@ -87,6 +69,7 @@ Adding metadata
 ---------------
 
 Metadata is optional but can be useful for:
+
 - Service identification
 - Version information
 - Configuration data
@@ -104,7 +87,7 @@ Metadata is optional but can be useful for:
 
 .. code-block:: c
 
-   for(size_t i = 0; i < view.metadata.count; i++) {
+   for(size_t i = 0; i < view.metadata.size; i++) {
        printf("%s = %s\n",
               view.metadata.data[i].key,
               view.metadata.data[i].value);
@@ -119,162 +102,14 @@ Metadata is optional but can be useful for:
        printf("Version: %s\n", value);
    }
 
-Serialization
--------------
-
-Views can be serialized to/from JSON for storage or transmission.
-
-**Serialize to JSON**:
-
-.. code-block:: c
-
-   char* json_str = NULL;
-   flock_return_t ret = flock_group_view_serialize(&view, &json_str);
-
-   if(ret == FLOCK_SUCCESS) {
-       printf("Serialized view:\n%s\n", json_str);
-       free(json_str);
-   }
-
-Example output:
-
-.. code-block:: json
-
-   {
-       "members": [
-           {"address": "na+sm://12345-0", "provider_id": 42},
-           {"address": "na+sm://12345-1", "provider_id": 42}
-       ],
-       "metadata": {
-           "service": "my_service",
-           "version": "1.0.0"
-       },
-       "digest": 1234567890
-   }
-
-**Deserialize from JSON**:
-
-.. code-block:: c
-
-   const char* json_str = /* ... */;
-   flock_group_view_t view = FLOCK_GROUP_VIEW_INITIALIZER;
-
-   flock_return_t ret = flock_group_view_deserialize(json_str, &view);
-
-   if(ret == FLOCK_SUCCESS) {
-       printf("Loaded view with %zu members\n", view.members.count);
-       flock_group_view_clear(&view);
-   }
-
 File I/O
 --------
-
-**Save to file**:
-
-.. code-block:: c
-
-   flock_return_t save_view_to_file(const flock_group_view_t* view,
-                                      const char* filename)
-   {
-       char* json_str = NULL;
-       flock_return_t ret = flock_group_view_serialize(view, &json_str);
-       if(ret != FLOCK_SUCCESS) return ret;
-
-       FILE* f = fopen(filename, "w");
-       if(!f) {
-           free(json_str);
-           return FLOCK_ERR_INVALID_ARG;
-       }
-
-       fprintf(f, "%s", json_str);
-       fclose(f);
-       free(json_str);
-
-       return FLOCK_SUCCESS;
-   }
 
 **Load from file**:
 
 .. code-block:: c
 
-   flock_return_t load_view_from_file(const char* filename,
-                                        flock_group_view_t* view)
-   {
-       FILE* f = fopen(filename, "r");
-       if(!f) return FLOCK_ERR_INVALID_ARG;
-
-       fseek(f, 0, SEEK_END);
-       long size = ftell(f);
-       fseek(f, 0, SEEK_SET);
-
-       char* json_str = malloc(size + 1);
-       fread(json_str, 1, size, f);
-       json_str[size] = '\0';
-       fclose(f);
-
-       flock_return_t ret = flock_group_view_deserialize(json_str, view);
-       free(json_str);
-
-       return ret;
-   }
-
-Or use the built-in function:
-
-.. code-block:: c
-
    flock_group_view_init_from_file("mygroup.flock", &view);
-
-Copying views
--------------
-
-**Make a copy**:
-
-.. code-block:: c
-
-   flock_group_view_t view1 = /* ... */;
-   flock_group_view_t view2 = FLOCK_GROUP_VIEW_INITIALIZER;
-
-   flock_group_view_copy(&view1, &view2);
-
-   // Now view2 is an independent copy of view1
-
-**Assignment copies**:
-
-Note that simple assignment does NOT copy:
-
-.. code-block:: c
-
-   flock_group_view_t view2 = view1;  // WRONG: shallow copy
-
-This creates a shallow copy where both views share the same internal arrays.
-Use :code:`flock_group_view_copy` instead.
-
-Comparing views
----------------
-
-**Check equality**:
-
-.. code-block:: c
-
-   bool equal = flock_group_view_equals(&view1, &view2);
-
-This compares:
-- Member count and addresses
-- Metadata
-- Digest
-
-**Check digest only**:
-
-For quick comparison, check if digests match:
-
-.. code-block:: c
-
-   if(view1.digest == view2.digest) {
-       // Views are likely identical
-   }
-
-Note: digest equality doesn't guarantee full equality, but inequality guarantees
-the views differ.
 
 Cleaning up
 -----------
@@ -288,31 +123,16 @@ Cleaning up
 This frees all internal allocations (member addresses, metadata, etc.).
 Always call this when done with a view.
 
-**Note**: Don't call :code:`free()` on the view itself if it's stack-allocated:
-
-.. code-block:: c
-
-   flock_group_view_t view = FLOCK_GROUP_VIEW_INITIALIZER;
-   // ... use view ...
-   flock_group_view_clear(&view);
-   // Don't call free(&view)!
-
 View digest
 -----------
 
 The digest is a hash of the view contents, useful for:
+
 - Quick comparison
 - Version tracking
 - Change detection
 
-**Update digest**:
-
 The digest is automatically updated when you modify the view through the API.
-If you manually modify the view structure, update the digest:
-
-.. code-block:: c
-
-   flock_group_view_update_digest(&view);
 
 Best practices
 --------------
@@ -347,16 +167,6 @@ Best practices
    if(ret != FLOCK_SUCCESS) {
        // Handle error
    }
-
-**5. Copy when needed**:
-
-If you need to keep a view across function calls or while the source view might
-change, make a copy:
-
-.. code-block:: c
-
-   flock_group_view_t my_copy = FLOCK_GROUP_VIEW_INITIALIZER;
-   flock_group_view_copy(&original, &my_copy);
 
 Next steps
 ----------

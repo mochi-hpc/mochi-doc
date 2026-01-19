@@ -63,40 +63,19 @@ The "join" section specifies:
 In C code
 ---------
 
-To join a group programmatically:
+To join a group programmatically, you use the client API to get the current
+view from an existing group member, then add yourself to it:
 
-.. code-block:: c
+.. literalinclude:: ../../../code/flock/05_bootstrap_join/server.c
+   :language: c
 
-   #include <flock/flock-server.h>
-   #include <flock/flock-bootstrap.h>
+The join process works as follows:
 
-   // ... margo initialization ...
-
-   struct flock_provider_args args = FLOCK_PROVIDER_ARGS_INIT;
-   flock_group_view_t initial_view = FLOCK_GROUP_VIEW_INITIALIZER;
-   args.initial_view = &initial_view;
-
-   // Contact a group member to join
-   const char* member_addr = "na+sm://12345-0";
-   uint16_t member_provider_id = 42;
-
-   flock_group_view_init_from_join(mid, provider_id, member_addr,
-                                     member_provider_id, &initial_view);
-
-   // Use centralized backend for dynamic membership
-   const char* config = "{ \"group\":{ \"type\":\"centralized\", \"config\":{} } }";
-   flock_provider_register(mid, provider_id, config, &args, FLOCK_PROVIDER_IGNORE);
-
-The :code:`flock_group_view_init_from_join` function takes:
-
-- The Margo instance
-- The provider ID of the new member
-- The address of an existing member to contact
-- The provider ID of that existing member
-- A pointer to the group view to initialize
-
-This function will contact the specified member and retrieve the current group view,
-then add itself to the group.
+1. Create a Flock client to communicate with the existing group
+2. Lookup the bootstrap server address
+3. Create a group handle and get the current view
+4. Add yourself to the view
+5. Register the provider with the updated view
 
 How it works
 ------------
@@ -134,59 +113,20 @@ First, start an initial member:
 
 .. code-block:: console
 
-   $ bedrock na+sm -c initial-member.json
-   [info] Bedrock daemon now running at na+sm://12345-0
+   $ ./server self
+   Server running at address na+sm://12345-0
+   Bootstrapped as initial member (self)
+   Flock provider registered
 
 Then, start a second member that joins:
 
-.. code-block:: json
-
-   {
-       "providers": [
-           {
-               "type": "flock",
-               "provider_id": 42,
-               "config": {
-                   "bootstrap": "join",
-                   "join": {
-                       "address": "na+sm://12345-0",
-                       "provider_id": 42
-                   },
-                   "group": {
-                       "type": "centralized",
-                       "config": {}
-                   }
-               }
-           }
-       ]
-   }
-
 .. code-block:: console
 
-   $ bedrock na+sm -c join-member.json
-   [info] Joined group with 2 members
-
-Error handling
---------------
-
-The join operation can fail if:
-
-- The specified member is unreachable
-- The member is not part of a Flock group
-- The provider ID doesn't exist
-- The backend doesn't support dynamic membership
-
-Always check the return value and handle errors appropriately:
-
-.. code-block:: c
-
-   flock_return_t ret = flock_group_view_init_from_join(
-       mid, provider_id, member_addr, member_provider_id, &initial_view);
-
-   if (ret != FLOCK_SUCCESS) {
-       fprintf(stderr, "Failed to join group: error %d\n", ret);
-       // Handle error
-   }
+   $ ./server na+sm://12345-0
+   Server running at address na+sm://12346-0
+   Joined existing group via na+sm://12345-0
+   Group size: 2
+   Flock provider registered
 
 Next steps
 ----------
