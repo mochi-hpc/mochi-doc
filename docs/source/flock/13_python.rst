@@ -21,7 +21,6 @@ Here's a simple example showing the basics of Flock in Python:
 
 .. literalinclude:: ../../../code/flock/13_python/quickstart.py
    :language: python
-   :linenos:
 
 Key Points
 ~~~~~~~~~~
@@ -171,7 +170,6 @@ GroupView represents group membership and metadata:
 
 .. literalinclude:: ../../../code/flock/13_python/group_view_ops.py
    :language: python
-   :linenos:
 
 File Operations and Serialization
 ----------------------------------
