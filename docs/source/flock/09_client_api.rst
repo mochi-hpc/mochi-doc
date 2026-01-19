@@ -9,7 +9,7 @@ Overview
 
 The client API provides:
 
-- **Group handle creation**: Connect to a Flock provider
+- **Group handle creation**: Connect to a set of Flock providers
 - **View querying**: Retrieve the current group membership
 - **Member discovery**: Find members by rank or address
 - **Metadata access**: Read group metadata
@@ -36,7 +36,7 @@ Client initialization
 The client is created using :code:`flock_client_init`:
 
 - :code:`mid`: Margo instance
-- :code:`pool`: Argobots pool for RPCs (or :code:`ABT_POOL_NULL` for default)
+- :code:`pool`: Argobots pool (currently unused)
 - :code:`client`: Pointer to store the client handle
 
 **Finalize the client**:
@@ -56,8 +56,8 @@ Use :code:`flock_group_handle_create` with:
 - :code:`refresh`: Whether to auto-refresh the view
 - :code:`group_handle`: Pointer to store the handle
 
-The :code:`refresh` parameter controls whether the handle automatically updates
-its cached view. Set to :code:`true` for dynamic groups, :code:`false` for static groups.
+The :code:`refresh` parameter controls whether the handle needs to contact the
+group to get the most recent view.
 
 **Create from a file**:
 
@@ -94,6 +94,12 @@ Querying group membership
 This creates a **copy** of the current group view. You own this copy and must
 call :code:`flock_group_view_clear` to free it.
 
+.. important::
+
+   ``flock_group_get_view`` does NOT issue an RPC to get the current view.
+   If you expect the view to have changed, call ``flock_group_update_view``
+   and ``flock_request_wait`` on the resulting request.
+
 Error handling
 --------------
 
@@ -113,10 +119,3 @@ Common error codes:
 - :code:`FLOCK_ERR_INVALID_ARG`: Invalid argument
 - :code:`FLOCK_ERR_MERCURY`: Mercury error
 - :code:`FLOCK_ERR_NOT_FOUND`: Member not found
-
-Next steps
-----------
-
-- :doc:`10_group_view`: Detailed guide to working with group views
-- :doc:`11_bedrock`: Using Flock with Bedrock
-- :doc:`12_cpp`: C++ API for Flock
