@@ -1,19 +1,19 @@
 Bootstrap method: join
 =======================
 
-The "join" bootstrap method allows a process to join an existing Flock group by
-contacting one of its members. This is useful for dynamically adding processes to
-a group after it has been initialized.
+The "join" bootstrap method allows a process to dynamically join an existing Flock group.
+Unlike the "file" or "view" bootstrap methods which simply load a static view, "join"
+actively contacts existing group members and requests to be added to the group.
 
 When to use
 -----------
 
 Use the "join" bootstrap method when:
 
-- You want to add processes to an existing group
-- You're implementing elastic services that scale up
-- You have a bootstrap node that other processes can contact
-- You want processes to discover the full group by contacting any member
+- You want to dynamically add processes to a running group
+- You're implementing elastic services that scale up at runtime
+- You need existing group members to be notified of new members
+- You want the group view to be updated across all members
 
 Prerequisites
 -------------
@@ -21,8 +21,22 @@ Prerequisites
 To use the join bootstrap method, you need:
 
 - An existing Flock group with at least one member
-- The address and provider ID of at least one group member
+- A group view file containing addresses of current members
 - A backend that supports dynamic membership (use "centralized", not "static")
+
+How it works
+------------
+
+The join process:
+
+1. The new process loads a view (e.g. from a file) containing addresses of existing group members
+2. It registers a provider with :code:`"bootstrap": "join"` in the configuration
+3. The provider contacts existing members and requests to join
+4. The existing members add the new member to the group
+5. All members receive an updated view with the new member
+
+This is different from the "file" bootstrap, which simply loads a view that we
+expect the process to already be part of.
 
 Configuration
 -------------
@@ -42,10 +56,7 @@ In Bedrock configuration:
                "provider_id": 42,
                "config": {
                    "bootstrap": "join",
-                   "join": {
-                       "address": "na+sm://12345-0",
-                       "provider_id": 42
-                   },
+                   "file": "mygroup.flock",
                    "group": {
                        "type": "centralized",
                        "config": {}
@@ -55,82 +66,48 @@ In Bedrock configuration:
        ]
    }
 
-The "join" section specifies:
+The configuration specifies:
 
-- :code:`address`: The address of a member to contact
-- :code:`provider_id`: The provider ID of that member
+- :code:`bootstrap`: Must be "join" to enable dynamic joining
+- :code:`file`: Path to a file containing the current group view
+- :code:`group.type`: Must support dynamic membership (e.g. not be "static")
 
 In C code
 ---------
 
-To join a group programmatically, you use the client API to get the current
-view from an existing group member, then add yourself to it:
+To join a group programmatically:
 
 .. literalinclude:: ../../../code/flock/05_bootstrap_join/server.c
    :language: c
 
-The join process works as follows:
+The key steps are:
 
-1. Create a Flock client to communicate with the existing group
-2. Lookup the bootstrap server address
-3. Create a group handle and get the current view
-4. Add yourself to the view
-5. Register the provider with the updated view
+1. Load the existing group view from a file using :code:`flock_group_view_init_from_file`
+2. Set :code:`"bootstrap": "join"` in the configuration JSON
+3. Call :code:`flock_provider_register` with the configuration and initial view
 
-How it works
-------------
+The provider will then contact the members listed in the view and request to join the group.
 
-The join process:
+Example workflow
+----------------
 
-1. The new process contacts an existing group member via RPC
-2. The member returns the current group view
-3. The new process initializes with this view
-4. If using a dynamic backend (centralized), the new member is added to the group
-5. Other members are notified of the new member (depending on backend)
-
-Backend considerations
-----------------------
-
-The join bootstrap method works differently depending on the backend:
-
-**Static backend**:
-
-- The new member can retrieve the group view
-- But it cannot actually join (membership is fixed)
-- Use this only for read-only access to the group
-
-**Centralized backend**:
-
-- The new member retrieves the view AND joins the group
-- The centralized coordinator is notified
-- Other members will learn about the new member
-- This is the recommended backend for join
-
-Example: Joining a running group
----------------------------------
-
-First, start an initial member:
+**Step 1**: Start the initial group member with "self" bootstrap:
 
 .. code-block:: console
 
-   $ ./server self
+   $ ./initial_server
    Server running at address na+sm://12345-0
-   Bootstrapped as initial member (self)
    Flock provider registered
+   Group file written to: mygroup.flock
 
-Then, start a second member that joins:
+**Step 2**: A new process joins using the group file:
 
 .. code-block:: console
 
-   $ ./server na+sm://12345-0
+   $ ./05_flock_server mygroup.flock
    Server running at address na+sm://12346-0
-   Joined existing group via na+sm://12345-0
-   Group size: 2
-   Flock provider registered
+   Loaded group view from file: mygroup.flock
+   Current group size: 1
+   Successfully joined the group
 
-Next steps
-----------
-
-- :doc:`06_bootstrap_file`: Learn about loading views from files
-- :doc:`08_backends_centralized`: Learn about the centralized backend for dynamic groups
-- :doc:`10_group_view`: Detailed guide to working with group views
+After joining, all members will have an updated view containing both members.

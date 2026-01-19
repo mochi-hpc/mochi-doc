@@ -61,6 +61,13 @@ The :code:`flock_group_view_init_from_mpi` function takes:
 This function performs an MPI collective operation to gather all addresses and construct
 a group view containing all MPI ranks in the specified communicator.
 
+.. important::
+
+   The "mpi_ranks" field is only processed by Bedrock, not when using the C API.
+   The reason is that the C API allows users to create exactly the communicator
+   they want the group to use, while Bedrock is restricted to using ``MPI_COMM_WORLD``
+   and needs a way to specify which ranks in ``MPI_COMM_WORLD`` are concerned.
+
 How it works
 ------------
 
