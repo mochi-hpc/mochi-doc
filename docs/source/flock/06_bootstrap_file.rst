@@ -2,17 +2,16 @@ Bootstrap method: file
 =======================
 
 The "file" bootstrap method allows you to initialize a Flock group by loading
-a group view from a file. This is useful for persisting group membership across
-restarts or sharing a group view among multiple processes.
+a group view from a file. This assumes that a JSON file with the Flock format
+has been created beforehand.
 
 When to use
 -----------
 
 Use the "file" bootstrap method when:
 
-- You want to persist group membership to disk
-- You're restarting a service and want to restore the previous group
 - You have a pre-generated group view file to distribute
+- You're restarting a service and want to restore the previous group
 - You want to bootstrap multiple processes with the same view
 
 File format
@@ -27,7 +26,7 @@ A group view file contains:
 
 Example group view file:
 
-.. literalinclude:: ../../../code/flock/03_bootstrap_view/view.json
+.. literalinclude:: ../../../code/flock/06_bootstrap_file/view.json
    :language: json
 
 Configuration
@@ -104,50 +103,3 @@ The provider will write its view to the specified file at initialization.
 
 You can create the JSON file manually using a text editor, following the
 format shown above.
-
-Example workflow
-----------------
-
-A common workflow is to:
-
-1. Start an initial member with "self" or "mpi" bootstrap
-2. Configure it to write the view to a file
-3. Distribute the file to other processes
-4. Have those processes use "file" bootstrap to join
-
-Initial member configuration:
-
-.. code-block:: json
-
-   {
-       "config": {
-           "bootstrap": "mpi",
-           "file": "mygroup.flock",
-           "group": {
-               "type": "static",
-               "config": {}
-           }
-       }
-   }
-
-Additional member configuration:
-
-.. code-block:: json
-
-   {
-       "config": {
-           "bootstrap": "file",
-           "file": "mygroup.flock",
-           "group": {
-               "type": "static",
-               "config": {}
-           }
-       }
-   }
-
-Next steps
-----------
-
-- :doc:`07_backends_static`: Learn about the static backend
-- :doc:`08_backends_centralized`: Learn about the centralized backend
-- :doc:`10_group_view`: Detailed guide to working with group views
