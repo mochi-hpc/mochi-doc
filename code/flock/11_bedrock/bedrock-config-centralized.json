@@ -12,8 +12,9 @@
                 "group": {
                     "type": "centralized",
                     "config": {
-                        "heartbeat_interval_ms": 5000,
-                        "failure_timeout_ms": 15000
+                        "ping_timeout_ms": 2000,
+                        "ping_interval_ms": 1000,
+                        "ping_max_num_timeouts": 3
                     }
                 },
                 "file": "mygroup.flock"

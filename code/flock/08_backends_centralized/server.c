@@ -26,13 +26,15 @@ int main(int argc, char** argv)
 
     // Configure with centralized backend
     // Centralized backend: allows dynamic membership changes
-    // One member acts as coordinator for group updates
+    // The primary (first member in view by default) pings followers to detect failures
     const char* config =
         "{"
         "  \"group\": {"
         "    \"type\": \"centralized\","
         "    \"config\": {"
-        "      \"update_interval\": 1000"  // milliseconds
+        "      \"ping_timeout_ms\": 2000,"
+        "      \"ping_interval_ms\": 1000,"
+        "      \"ping_max_num_timeouts\": 3"
         "    }"
         "  }"
         "}";
@@ -44,7 +46,6 @@ int main(int argc, char** argv)
 
     printf("Flock provider registered with CENTRALIZED backend\n");
     printf("Group membership can change dynamically\n");
-    printf("Update interval: 1000ms\n");
     printf("Initial group size: %zu\n", initial_view.members.size);
 
     // Wait for finalize

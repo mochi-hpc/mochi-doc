@@ -92,8 +92,8 @@ Best practices
 
 **File persistence**:
 
-Always specify a :code:`file` option to persist the group view. This allows other
-processes to bootstrap using the same view.
+Always specify a :code:`file` option to persist the group view. This is an easy
+way for client processes to lookup the view later.
 
 Limitations
 -----------
@@ -118,10 +118,3 @@ The static backend has excellent performance characteristics:
 
 This makes it ideal for HPC applications where group membership is predetermined
 and fixed.
-
-Next steps
-----------
-
-- :doc:`08_backends_centralized`: Learn about the centralized backend for dynamic groups
-- :doc:`09_client_api`: Learn about querying group membership
-- :doc:`10_group_view`: Detailed guide to working with group views
