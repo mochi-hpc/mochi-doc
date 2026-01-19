@@ -1,8 +1,13 @@
 C++ API
 =======
 
-Flock provides a modern C++ API built on top of Thallium. It offers a more
+Flock provides a modern C++ API. It offers a more
 intuitive interface using C++ features like RAII, exceptions, and STL containers.
+
+.. important::
+
+   To use the C++ API when using cmake, link again the ``flock::cxx-headers`` target
+   in addition to the appropriate ``flock::client`` or ``flock::server`` targets.
 
 Prerequisites
 -------------
@@ -19,8 +24,8 @@ Include headers
 
 .. code-block:: cpp
 
-   #include <flock/cxx/server.hpp>
-   #include <flock/cxx/client.hpp>
+   #include <flock/cxx/server.hpp> // if server API is required
+   #include <flock/cxx/client.hpp> // if client API is required
    #include <flock/cxx/group.hpp>
    #include <flock/cxx/group-view.hpp>
 
@@ -97,61 +102,3 @@ The C++ API provides a :code:`GroupView` class:
        std::cout << md.key << " = " << md.value << "\n";
    }
 
-Compiling
----------
-
-Compile with pkg-config:
-
-.. code-block:: console
-
-   $ g++ -std=c++17 -o server server.cpp \
-       $(pkg-config --cflags --libs flock-server thallium)
-
-   $ g++ -std=c++17 -o client client.cpp \
-       $(pkg-config --cflags --libs flock-client thallium)
-
-RAII benefits
--------------
-
-The C++ API uses RAII for automatic resource management:
-
-**No manual cleanup**:
-
-.. code-block:: cpp
-
-   {
-       flock::Client client(engine);
-       flock::GroupHandle group = client.makeGroupHandle(server, 42, true);
-       flock::GroupView view = group.view();
-
-       // Use view...
-
-       // No need to call cleanup functions!
-       // Everything is automatically cleaned up when objects go out of scope
-   }
-
-Best practices
---------------
-
-**1. Use RAII**: Let objects clean up automatically
-
-**2. Use auto**: Simplify type declarations
-
-.. code-block:: cpp
-
-   auto view = group.view();  // Instead of flock::GroupView view = ...
-
-**3. Use range-based access**:
-
-.. code-block:: cpp
-
-   auto members = view.members();
-   for(size_t i = 0; i < members.count(); i++) {
-       // Process member
-   }
-
-Next steps
-----------
-
-- :doc:`01_intro`: Review Flock basics
-- :doc:`11_bedrock`: Deploy with Bedrock
