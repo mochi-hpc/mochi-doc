@@ -32,8 +32,8 @@ to  clone the following git reporitory and add it as a Spack namespace.
 
 .. code-block:: console
 
-   git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-   spack repo add mochi-spack-packages
+   $ git clone https://github.com/mochi-hpc/mochi-spack-packages.git
+   $ spack repo add mochi-spack-packages
 
 .. important::
    The above reporitory may contain newer versions of Mercury,
@@ -45,11 +45,11 @@ You can then check that Spack can find Margo (for example) by typping:
 
 .. code-block:: console
 
-   spack info mochi-margo
+   $ spack info mochi-margo
 
 You should see something like the following.
 
-.. code-block:: console
+.. code-block:: text
 
    AutotoolsPackage:   mochi-margo
 
@@ -67,7 +67,7 @@ Installing Margo is then as simple as typping the following.
 
 .. code-block:: console
 
-   spack install mochi-margo
+   $ spack install mochi-margo
 
 You will notice that Spack also installs Mercury and Argobots, since these
 are needed by Margo, as well as other dependencies.
@@ -78,89 +78,114 @@ install Margo if you didn't install it before, as well as its dependencies).
 :code:`spack install mercury` can be used to install Mercury, and
 :code:`spack install argobots` can be used to install Argobots, should you
 need to install either independently of Margo or Thallium.
-:code:`spack install mochi-abt-io` will install ABT-IO.
-:code:`spack install mochi-ssg` will install SSG.
+:code:`spack install mochi-abt-io` will install ABT-IO, and so on.
+All the Mochi packages are prefixed with :code:`mochi-`.
 
 Loading and using the Mochi libraries
 -------------------------------------
 
-Once installed, you can load Margo using the following command.
+It is recommended to use a Spack environment to install your Mochi packages,
+as follows.
 
 .. code-block:: console
 
-   spack load mochi-margo
+   $ spack env create myenv
+   $ spack env activate myenv
+   $ spack add mochi-margo
+   $ spack install
 
-This will load Margo and its dependencies (Mercury, Argobots, etc.).
-:code:`spack load mochi-thallium` will load Thallium and its dependencies
-(Margo, Mercury, Argobots, etc.). You are now ready to use the Mochi libraries!
+Once installed in an environment, your packages will be ready to use.
 
-Using the Mochi libraries with pkg-config
------------------------------------------
+.. note::
 
-Once loaded, all the Mochi libraries can be found using :code:`pkg-config`.
-For examples:
-
-.. code-block:: console
-
-   $ pkg-config --libs margo
+   You can do :code:`spack repo add mochi-spack-packages` from within your
+   activated environment if you don't want to polute your global installation
+   of Spack.
 
 Using the Mochi libraries with cmake
 ------------------------------------
 
 Within a cmake project, Thallium, Mercury, Yokan, and Bedrock can be found using:
 
-.. code-block:: console
+.. code-block:: cmake
 
-   find_package(mercury REQUIRED)
-   find_package(thallium REQUIRED)
-   find_package(yokan REQUIRED)
-   find_package(bedrock REQUIRED)
+   find_package (mercury REQUIRED)
+   find_package (thallium REQUIRED)
+   find_package (yokan REQUIRED)
+   find_package (warabi REQUIRED)
+   find_package (flock REQUIRED)
+   find_package (bedrock REQUIRED)
+   find_package (bedrock-module-api REQUIRED) # for compiling bedrock modules
 
-To make cmake find Margo, Argobots, ABT-IO, or SSG, you can use
+To make cmake find Margo, Argobots, or ABT-IO, you can use
 cmake's PkgConfig module:
 
-.. code-block:: console
+.. code-block:: cmake
 
    find_package (PkgConfig REQUIRED)
    pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
    pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
    pkg_check_modules (ABTIO REQUIRED IMPORTED_TARGET abt-io)
-   pkg_check_modules (SSG REQUIRED IMPORTED_TARGET ssg)
 
 You can now link targets as follows.
 
-.. code-block:: console
+.. code-block:: cmake
 
    # Code using Mercury
-   add_executable(my_mercury_prog source.c)
-   target_link_libraries(my_mercury_prog mercury)
+   add_executable (my_mercury_prog source.c)
+   target_link_libraries (my_mercury_prog mercury)
 
    # Code using Margo
-   add_executable(my_margo_prog source.c)
-   target_link_libraries(my_margo_prog PkgConfig::MARGO)
+   add_executable (my_margo_prog source.c)
+   target_link_libraries (my_margo_prog PkgConfig::MARGO)
 
    # Code using Thallium
-   add_executable(my_thallium_prog source.cpp)
-   target_link_libraries(my_thallium_prog thallium)
+   add_executable (my_thallium_prog source.cpp)
+   target_link_libraries (my_thallium_prog thallium)
 
    # Code using Argobots
-   add_executable(my_abt_prog source.c)
-   target_link_libraries(my_abt_prog PkgConfig::ABT)
+   add_executable (my_abt_prog source.c)
+   target_link_libraries (my_abt_prog PkgConfig::ABT)
 
    # Code using ABT-IO
-   add_executable(my_abt_io_prog source.c)
-   target_link_libraries(my_abt_io_prog PkgConfig::ABTIO)
-
-   # Code using SSG
-   add_executable(my_ssg_prog source.c)
-   target_link_libraries(my_ssg_prog PkgConfig::SSG)
-
-   # Code using Bedrock
-   add_executable(my_bedrock_prog source.cpp)
-   target_link_libraries(my_bedrock_prog bedrock-client)
-   # link against bedrock-server if you need an embedded server
+   add_executable (my_abt_io_prog source.c)
+   target_link_libraries (my_abt_io_prog PkgConfig::ABTIO)
 
    # Code using Yokan
-   add_executable(my_yokan_prog source.cpp)
-   target_link_libraries(my_yokan_prog yokan-client yokan-server yokan-admin)
-   # select the relevant library to link against
+   add_executable (my_yokan_prog source.c)
+   target_link_libraries (my_yokan_prog yokan::client)
+   # link against yokan::server if you need to instantiate a provider
+
+   # Code using Warabi
+   add_executable (my_warabi_prog source.cpp)
+   target_link_libraries (my_warabi_prog warabi::client)
+   # Note: Warabi provides the following targets to link against:
+   # - warabi::client: C++ client library
+   # - warabi::server: C++ server library
+   # - warabi::c-client: C client library
+   # - warabi::c-server: C server library
+
+   # Code using Flock
+   add_executable (my_flock_prog flock.c)
+   target_link_libraries (my_flock_prog flock::client)
+   # Use flock::server if you need to instantiate a provider
+
+   # Code using Bedrock
+   add_executable (my_bedrock_prog source.cpp)
+   target_link_libraries (my_bedrock_prog bedrock::client)
+   # Note: Bedrock is implemented in two separate packages,
+   # providing a total of three libraries:
+   # - bedrock::client (from mochi-bedrock package): Client library
+   # - bedrock::server (from mochi-bedrock package): Server library
+   # - bedrock::module-api (from mochi-bedrock-module-api): For building a module
+
+Using the Mochi libraries with pkg-config
+-----------------------------------------
+
+While it is recommended to use CMake when working with Mochi libraries,
+all the Mochi libraries can also be found using :code:`pkg-config`.
+For examples:
+
+.. code-block:: console
+
+   $ pkg-config --libs margo

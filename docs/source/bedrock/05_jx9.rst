@@ -1,0 +1,55 @@
+Configuring Bedrock using Jx9, TOML, and simplified JSON
+========================================================
+
+JSON configurations for Bedrock can very quickly become complicated
+to write by hand, especially when trying to list many execution
+streams for use in a many-core node, associated with as many pools
+and providers. The alternative configuration methods provided
+hereafter aim to simplified the writing of Bedrock configurations.
+
+Simplified JSON
+---------------
+
+In a JSON Bedrock configurations, any key/value pair in the form :code:`"x.y" : value`
+will be automatically converted into the object :code:`{ "x" : { "y" : value }}`.
+This way of writing the JSON file leads the more flat JSON files that are easier
+to read.
+
+Jx9
+---
+
+By using the :code:`--jx9` argument of the :code:`bedrock` program,
+one can use a Jx9 program instead of a JSON file to generate the
+JSON configuration.
+
+The code bellow is an example of such a Jx9-based configuration.
+It first initializes a base configuration, then uses a loop to
+add as many pools as requested in the :code:`argobots` section.
+
+.. literalinclude:: ../../../code/bedrock/05_jx9/example.jx9
+   :language: json
+
+Bedrock can use this file as follows.
+
+.. code-block:: console
+
+   bedrock ofi+tcp --jx9 -c example.jx9 --jx9-context num_extra_pools=4
+
+The :code:`--jx9-context` argument allows setting variables before
+the Jx9 script is executed, in the form of coma-separated assignments
+(e.g. :code:`x=1,y=2.5,z="abc"` ).
+
+TOML
+----
+
+Bedrock understands TOML configuration files using the :code:`--toml` argument
+of the :code:`bedrock` program. The code bellow is an example of such a
+TOML configuration.
+
+.. literalinclude:: ../../../code/bedrock/05_jx9/example.toml
+   :language: toml
+
+Since TOML is simply an alternative language to express the same kind of
+tree of data as JSON, please refer to `the TOML documentation <https://toml.io/>`_
+for its syntax, and refer to the Bedrock JSON format for the list of expected
+fields of a configuration.

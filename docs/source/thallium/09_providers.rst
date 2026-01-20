@@ -3,17 +3,14 @@ Working in terms of providers
 
 It is often desirable for RPC to target a specific instance
 of a class on the server side. Classes that can accept RPC
-requests are called *providers*. A provider object is characterized 
+requests are called *providers*. A provider object is characterized
 by a provider id (of type :code:`uint16_t`). You will need to make
-sure that no two providers use the same provider id. If they do,
-they must expose RPC methods with different names
-(e.g., providers of different services can have the same
-provider id since they typically don't expose the same RPC names).
+sure that no two providers use the same provider id.
 
 Server
 ------
 
-The following code sample illustrates a custom 
+The following code sample illustrates a custom
 provider class, :code:`my_sum_provider`, which exposes a number
 of its methods as RPC.
 
@@ -30,7 +27,7 @@ The RPC methods are exposed in the class constructor using the
 :code:`define` method of the base provider class. Note that
 multiple definitions of members are possible and exemplified here.
 
-- "prod" is defined the same way as we previously defined RPCs using the engine, 
+- "prod" is defined the same way as we previously defined RPCs using the engine,
   with a function that returns :code:`void` and takes a :code:`const thallium::request&` as first parameter.
 - "sum" is defined without the :code:`const thallium::request&` parameter. Since it returns an :code:`int`,
   Thallium will assume that this is what needs to be sent back to the client. It will therefore respond
@@ -57,7 +54,7 @@ the server address and the provider id. This provider handle is then used in
 place of the usual :code:`thallium::endpoint` to send RPCs to a specific
 instance of provider.
 
-.. important:: 
+.. important::
    We have called :code:`disable_response()` on the "hello" RPC
    here because there is no way for Thallium to infer here that this RPC
    does not send a response.

@@ -1,6 +1,6 @@
-from pymargo.core import Engine, Handle
-from pymargo.bulk import Bulk
-import pymargo.bulk
+from mochi.margo import Engine, Handle
+from mochi.margo.bulk import Bulk
+from mochi.margo.margo.bulk import write_only, pull
 
 class Receiver:
 
@@ -9,9 +9,9 @@ class Receiver:
 
     def do_bulk_transfer(self, handle: Handle, remote_bulk: Bulk, bulk_size: int):
         local_buffer = bytes(bulk_size)
-        local_bulk = self.engine.create_bulk(local_buffer, pymargo.bulk.write_only)
+        local_bulk = self.engine.create_bulk(local_buffer, write_only)
         req = self.engine.transfer(
-            op=pymargo.bulk.pull,
+            op=pull,
             origin_addr=handle.address,
             origin_handle=remote_bulk,
             origin_offset=0,

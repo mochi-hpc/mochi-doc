@@ -1,0 +1,10 @@
+{
+    "members":[
+        {"address":"na+sm://27842-0","provider_id":42},
+        {"address":"na+sm://27843-0","provider_id":42}
+    ],
+    "metadata":{
+        "__config__":"{}",
+        "__type__":"static"
+    }
+}

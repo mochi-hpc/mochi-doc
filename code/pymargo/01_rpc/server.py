@@ -1,4 +1,4 @@
-from pymargo.core import Engine, Handle
+from mochi.margo import Engine, Handle
 
 def hello(handle: Handle, firstname: str, lastname: str):
     print(f"Hello {firstname} {lastname}!")

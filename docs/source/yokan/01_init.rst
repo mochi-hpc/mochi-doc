@@ -17,8 +17,8 @@ available. Many variants refer to database backend types. They are disabled by
 default. In this tutorial we will use the *map* backend, which is natively available
 in Yokan, but feel free to try these tutorials with other backends!
 
-In the following sections, the code can be compiled and linked against the *yokan-server*,
-*yokan-client* and libraries, which can be found either by calling
+In the following sections, the code can be compiled and linked against the ``yokan::server``,
+``yokan::client`` libraries, which can be found either by calling
 :code:`find_package(yokan)` in CMake, or :code:`pkg-config --libs --cflags yokan-server`
 (respectively :code:`yokan-client`) with PkgConfig.
 
@@ -37,7 +37,7 @@ I highly recommand you to read the :ref:`Bedrock` section. Using Bedrock will sa
 you development time since it allows you to bootstrap a Mochi service using a JSON file
 instead of writing code).
 
-.. literalinclude:: ../../../code/yokan/02_bedrock/bedrock.json
+.. literalinclude:: ../../../code/yokan/01_init/bedrock.json
    :language: json
 
 We can now give this config file to Bedrock as follows.
@@ -45,7 +45,6 @@ We can now give this config file to Bedrock as follows.
 .. code-block:: console
 
    $ bedrock na+sm -c config.json
-   [2021-10-14 10:16:17.529] [info] [yokan] YOKAN provider registration done
    [2021-10-14 10:16:17.530] [info] Bedrock daemon now running at na+sm://8551-0
 
 

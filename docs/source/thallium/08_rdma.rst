@@ -81,3 +81,11 @@ starting at offset 3 into the local :code:`bulk` starting at its
 offset 13. We have specified 45 as the number of bytes to be
 transferred. If the sizes had been different, the smallest
 one would have been picked.
+
+.. important::
+
+   Some people expect a streaming semantic from the :code:`>>` and
+   :code:`<<` operators, i.e. as if it behaved like :code:`ostream << ...`.
+   In Thallium, these operators DO NOT have a streaming semantic, i.e.
+   an offset pointer is NOT updated between operations. They simply
+   indicate the direction of the flow of data.

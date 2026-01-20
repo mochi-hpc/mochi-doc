@@ -20,5 +20,8 @@ This section will walk you through a series of tutorials on how to use Yokan.
    yokan/05_modes.rst
    yokan/06_docs.rst
    yokan/07_backends.rst
-   yokan/08_bindings.rst
    yokan/09_filters.rst
+   yokan/10_migration.rst
+   yokan/11_watcher.rst
+   yokan/12_python.rst
+   yokan/13_cpp.rst

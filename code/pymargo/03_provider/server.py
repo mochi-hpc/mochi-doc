@@ -1,5 +1,4 @@
-from pymargo.core import Engine, Handle, provider, \
-                         remote, on_finalize, on_prefinalize
+from mochi.margo import Engine, Handle, provider, remote, on_finalize, on_prefinalize
 
 
 @provider(service_name="my_service")

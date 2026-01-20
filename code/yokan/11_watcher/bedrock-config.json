@@ -1,0 +1,50 @@
+{
+    "margo": {
+        "argobots": {
+            "pools": [
+                {
+                    "name": "default_pool",
+                    "kind": "fifo_wait",
+                    "access": "mpmc"
+                },
+                {
+                    "name": "yokan_pool",
+                    "kind": "fifo_wait",
+                    "access": "mpmc"
+                }
+            ],
+            "xstreams": [
+                {
+                    "name": "default_xstream",
+                    "scheduler": {
+                        "type": "default",
+                        "pools": ["default_pool"]
+                    }
+                },
+                {
+                    "name": "yokan_xstream",
+                    "scheduler": {
+                        "type": "default",
+                        "pools": ["yokan_pool"]
+                    }
+                }
+            ]
+        }
+    },
+    "libraries": {
+        "yokan": "libyokan-bedrock-module.so"
+    },
+    "providers": [
+        {
+            "name": "yokan_provider",
+            "type": "yokan",
+            "provider_id": 42,
+            "pool": "yokan_pool",
+            "config": {
+                "database": {
+                    "type": "map"
+                }
+            }
+        }
+    ]
+}

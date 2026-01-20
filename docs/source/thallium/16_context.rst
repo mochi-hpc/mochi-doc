@@ -1,7 +1,7 @@
 Serialization with context
 ==========================
 
-In some situation, serializing or deserializing C++ objects require
+In some situations, serializing or deserializing C++ objects require
 some context, such as a factory object, some parameters, etc.
 Thallium allows passing a context to its serialization mechanism
 whenever needed.
@@ -13,7 +13,7 @@ The following client example sends a "process" RPC that takes two
 :code:`point` objects. By calling :code:`with_serialization_context()`
 when creating the callable, we can pass any variable we want. By
 default these variables will be copied into an internal context.
-If a reference is needed, :code:`std::ref()` and `std::cref()` can
+If a reference is needed, :code:`std::ref()` and :code:`std::cref()` can
 be used.
 
 Similarly, calling :code:`with_serialization_context` on the

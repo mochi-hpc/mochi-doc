@@ -17,8 +17,8 @@ Organization of the template project
 
 This template project illustrates how a Thallium-based microservice could
 be architectured. It can be compiled as-is, and provides a couple of
-functionalities that make the provider print a "Hello World" message
-on its standard output, or compute the sum of two integers.
+functionalities that make the provider print a compute the sum of two
+integers in various ways to demonstrate the features of Thallium.
 
 This template project uses **alpha** as the name of your microservice.
 Functions, types, files, and libraries therefore use the **alpha** prefix.
@@ -36,7 +36,6 @@ The *include* directory of this template project provides public header files.
 - *alpha/Provider.hpp* contains the Provider class;
 - *alpha/Backend.hpp* contains the definition of an abstract clas that
   can be inherited from to implement new backends for the microservice.
-- *alpha/Admin.hpp* contains the Admin class, as well as admin functions to
   interact with a provider.
 
 This template project uses the [pimpl idiom](https://en.cppreference.com/w/cpp/language/pimpl)
@@ -55,13 +54,11 @@ acknowledges requests but does not process them, or provides mock results.
 The project uses a number of dependencies:
 
 - TCLAP for parsing program options in the examples;
-- CppUnit for unit testing (in the tests directory);
+- Catch2 for unit testing (in the tests directory);
 - spdlog to provide logging.
 
 The *examples* directory contains an example using the microservice:
 the server example will start one or more providers and print the server's address.
-The admin example can connect to a provider and have it create a resource
-(and print the resource id) or open, close, or destroy resources.
 The client example can be run next to interact with the resource.
 
 The template also contains a *spack.yaml* file at its root that can be used to
@@ -69,7 +66,7 @@ install its dependencies. You may add additional dependencies into this file as
 your microservice gets more complex.
 
 As you modify this project to implement your own microservice, feel free to remove
-any dependencies you don't like (such as TCLAP, spdlog, CppUnit) and adapt it to your needs!
+any dependencies you don't like (such as TCLAP, spdlog, Catch2) and adapt it to your needs!
 
 
 Setting up your project

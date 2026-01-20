@@ -56,7 +56,7 @@ The goal of this step is to identify your target platform.  It is especially imp
 
     Example::
 
-	Cray Aries (gni)
+       Cray Aries (gni)
 
 .. admonition:: Artifact 1c
 
@@ -104,7 +104,9 @@ Spack configuration that you can use before collecting Artifact 2.
     Once you have activated spack, run the following command and show the
     output: “spack install libelf”
 
-    Example::
+    Example:
+
+    .. code-block:: text
 
         carns-x1-7g ~> spack install libelf
         ==> Installing libelf-0.8.13-6lrbuq5xfnwdeeox7m5g6cz246txdesi
@@ -133,28 +135,32 @@ upstream Spack repository.
 
     Demonstrate the ability to install a package from the external Mochi
     repository:  Please run the following commands and show their
-    output::
+    output:
+
+    .. code-block:: bash
 
         # choose a directory where you will check out a copy of the current Mochi
         #    Spack package repository.  We use /tmp/hello-mochi in this example, but
         #    you should choose a more permanent path.
-        > cd /tmp/hello-mochi
+        $ cd /tmp/hello-mochi
         # clone the repository
-        > git clone https://github.com/mochi-hpc/mochi-spack-packages.git
+        $ git clone https://github.com/mochi-hpc/mochi-spack-packages.git
         # add the repository to spack
-        > spack repo add /tmp/hello-mochi/mochi-spack-packages
+        $ spack repo add /tmp/hello-mochi/mochi-spack-packages
         # install an example package that is only available in the Mochi repository
-        > spack install mochi-ch-placement
+        $ spack install mochi-ch-placement
         # remove repository from spack (we will make this persistent as part of an
         #    environment later)
-        > spack repo rm mochi
+        $ spack repo rm mochi
 
-    Example::
+    Example:
 
-        carns-x1-7g ~> cd /tmp/hello-mochi                                   
+    .. code-block:: text
+
+        carns-x1-7g ~> cd /tmp/hello-mochi
         carns-x1-7g /t/hello-mochi> git clone https://github.com/mochi-hpc/mochi-spack-packages.git
         Cloning into 'mochi-spack-packages'...
-        carns-x1-7g ~> cd /tmp/hello-mochi                                   
+        carns-x1-7g ~> cd /tmp/hello-mochi
         carns-x1-7g /t/hello-mochi> git clone https://github.com/mochi-hpc/mochi-spack-packages.git
         Cloning into 'mochi-spack-packages'...
         remote: Enumerating objects: 4432, done.
@@ -204,21 +210,25 @@ https://github.com/mochi-hpc-experiments/platform-configurations/tree/main/gener
     Demonstrate the ability to create a Spack environment for a Mochi
     software stack and install all packages within it.
 
-    Show the output from the following commands::
+    Show the output from the following commands:
+
+    .. code-block:: bash
 
         # contents of your spack.yaml file
-        > cat spack.yaml
+        $ cat spack.yaml
         # create Spack environment (it does not have to be named
         # “hello-mochi”)
-        > spack env create hello-mochi ./spack.yaml
+        $ spack env create hello-mochi ./spack.yaml
         # activate spack environment
-        > spack env activate hello-mochi
+        $ spack env activate hello-mochi
         # install all required software in the environment
-        > spack install
+        $ spack install
 
-    Example::
+    Example:
 
-        carns-x1-7g /t/hello-mochi> cat spack.yaml                           
+    .. code-block:: text
+
+        carns-x1-7g /t/hello-mochi> cat spack.yaml
         # This is a Spack Environment file.
         #
         # It describes a set of packages to be installed, along with
@@ -242,8 +252,8 @@ https://github.com/mochi-hpc-experiments/platform-configurations/tree/main/gener
         ==> Created environment 'hello-mochi' in /home/carns/working/src/spack/var/spack/environments/hello-mochi
         ==> You can activate this environment with:
         ==>   spack env activate hello-mochi
-        carns-x1-7g /t/hello-mochi> spack env activate hello-mochi           
-        carns-x1-7g /t/hello-mochi> spack install                     
+        carns-x1-7g /t/hello-mochi> spack env activate hello-mochi
+        carns-x1-7g /t/hello-mochi> spack install
         ==> Starting concretization
         ==> Environment concretized in 21.16 seconds.
         ==> Concretized mochi-margo
@@ -318,7 +328,9 @@ compute nodes on some systems.
     Confirm that your desired network transport is activated
     successfully (green).
 
-    Example::
+    Example:
+
+    .. code-block:: text
 
         ####################################################################
         # Available Margo (Mercury) network transports on host carns-x1-7g
@@ -405,17 +417,21 @@ used to dynamically load additional service providers.
 .. admonition:: Artifact 6
 
     Demonstrate the ability to install and launch a bedrock server daemon.
-    Execute the following commands and show the output::
+    Execute the following commands and show the output:
+
+    .. code-block:: bash
 
         # add mochi-bedrock as a root spec in your environment
-        > spack add mochi-bedrock
+        $ spack add mochi-bedrock
         # install new packages
-        > spack install
+        $ spack install
         # launch the server, substituting the command line argument with the
         #   appropriate address string from Artifact 1d and 5
-        > bedrock tcp://
+        $ bedrock tcp://
 
-    Example::
+    Example:
+
+    .. code-block:: text
 
         carns-x1-7g ~> spack add mochi-bedrock
         ==> Adding mochi-bedrock to environment hello-mochi
@@ -435,7 +451,7 @@ used to dynamically load additional service providers.
         [+]  2y7oqvk              ^libfabric@1.15.1%gcc@11.2.0~debug~disable-spinlocks~kdreg fabrics=rxm,tcp arch=linux-ubuntu22.04-skylake
         [+]  x7yeuj2          ^pkg-config@0.29.2%gcc@11.2.0+internal_glib arch=linux-ubuntu22.04-skylake
         ==> Concretized mochi-bedrock
-         -   gyni5wv  mochi-bedrock@0.5.2%gcc@11.2.0+abtio~ipo~mona~mpi+ssg build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
+         -   gyni5wv  mochi-bedrock@0.5.2%gcc@11.2.0+abtio~ipo~mona~mpi build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
         [+]  xuzv4eo          ^cmake@3.22.1%gcc@11.2.0~doc+ncurses+ownlibs~qt build_type=Release arch=linux-ubuntu22.04-skylake
          -   kqupezf          ^fmt@8.1.1%gcc@11.2.0~ipo+pic~shared build_type=RelWithDebInfo cxxstd=11 arch=linux-ubuntu22.04-skylake
          -   euf7mld          ^mochi-abt-io@0.5.1%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
@@ -453,8 +469,6 @@ used to dynamically load additional service providers.
         [+]  yvp5cp6          ^mochi-margo@0.9.10%gcc@11.2.0~pvar arch=linux-ubuntu22.04-skylake
         [+]  7xpep5r              ^mercury@2.2.0%gcc@11.2.0~bmi~boostsys~checksum~debug~hwloc~ipo~mpi+ofi~psm~psm2+shared+sm~ucx~udreg build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
         [+]  2y7oqvk                  ^libfabric@1.15.1%gcc@11.2.0~debug~disable-spinlocks~kdreg fabrics=rxm,tcp arch=linux-ubuntu22.04-skylake
-         -   kai5m5m          ^mochi-ssg@0.5.3%gcc@11.2.0~drc+mpi~pmix~valgrind patches=f23321f arch=linux-ubuntu22.04-skylake
-         -   533ib4c              ^mpich@4.0.2%gcc@11.2.0~argobots~benvolio~cuda+fortran+hwloc+hydra+libxml2+pci~rocm+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch3 netmod=ofi patches=d4c0e99 pmi=pmi arch=linux-ubuntu22.04-skylake
          -   wcburov          ^mochi-thallium@0.10.1%gcc@11.2.0+cereal~ipo build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
          -   e6u5uqj              ^cereal@1.3.2%gcc@11.2.0~ipo build_type=RelWithDebInfo patches=2dfa0bf arch=linux-ubuntu22.04-skylake
          -   wzxn4cn          ^nlohmann-json@3.11.2%gcc@11.2.0~ipo+multiple_headers build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
@@ -502,29 +516,31 @@ format.
     different node as long as they have network connectivity.  Show the
     output of the following commands (this example activates the
     existing Spack environment in a separate terminal for the client
-    executable to use)::
+    executable to use):
+
+    .. code-block:: bash
 
         # activate Spack environment in another terminal
-        > spack env activate hello-mochi
+        $ spack env activate hello-mochi
         # connect to the bedrock process and display its Mochi configuration.  Note
         #    that if the runtime address of the server includes a `;` character you may
         #    need to either escape it with a backslash or put double quotes around the
         #    entire address string.
-        > bedrock-query <transport type> -a <daemon address> -p
+        $ bedrock-query <transport type> -a <daemon address> -p
 
-    Example::
+    Example:
 
-	carns-x1-7g ~> spack env activate hello-mochi
+    .. code-block:: text
+
+        carns-x1-7g ~> spack env activate hello-mochi
         carns-x1-7g ~> bedrock-query tcp:// -p -a ofi+tcp\;ofi_rxm://192.168.122.1:46053
         {
             "ofi+tcp;ofi_rxm://192.168.122.1:46053": {
-                "abt_io": [],
                 "bedrock": {
                     "pool": "__primary__",
                     "provider_id": 0
                 },
-                "clients": [],
-                "libraries": {},
+                "libraries": [],
                 "margo": {
                     "argobots": {
                         "abt_mem_max_num_stacks": 8,
@@ -577,8 +593,7 @@ format.
                     "rpc_pool": 0,
                     "version": "0.9.10"
                 },
-                "providers": [],
-                "ssg": []
+                "providers": []
             }
         }
 

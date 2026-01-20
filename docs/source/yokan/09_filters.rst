@@ -1,8 +1,9 @@
 Key/value and document filters
 ==============================
 
-The :code:`yk_list_*` and :code:`yk_doc_list_*` functions accept
-a filter argument that can be used to only return key/value pairs
+The :code:`yk_list_*`, :code:`yk_doc_list_*`, ``yk_iter``,
+and ``yk_doc_iter`` functions accept a filter argument that can be
+used to only return key/value pairs
 or document satisfying a certain condition. This tutorial shows how
 to use such filters.
 
@@ -67,18 +68,23 @@ and provide the following member functions.
 - A constructor accepting a margo instance id, a mode, and filter data.
 - :code:`requiresValue` should return whether the filter needs the value.
 - :code:`check` runs the filter against a key/value pair.
+- :code:`keySizeFrom` computes the new key size after the filter is applied,
+  or an upper bound of the key size. This is used for buffer allocation.
+- :code:`valSizeFrom` computes the new value size after the filter is applied,
+  or an upper bound of the value size. This is used for buffer allocation.
 - :code:`keyCopy` and :code:`valCopy` are used to copy the keys and values
   into a destination buffer. These functions can be used to extract or
   modify keys and values on the fly when they are read back by the user.
-  They should return :code:`YOKAN_SIZE_TOO_SMALL` if the provided buffer
-  size is too small for the data to copy.
+  They should return the actual size copied.
+- :code:`shouldStop` (optional) can be implemented to optimize iterations
+  by signaling when no more keys will match the filter (e.g., in a prefix filter).
 
 The filter should be registered using the :code:`YOKAN_REGISTER_KV_FILTER`
 macro, which takes the name of the filter, and the name of the class.
 
 Once such a filter is provided, say in a library *libmy_custom_filter.so*,
 :code:`yk_list_*` functions can be called with the following string as filter:
-:code:`"libmy_custom_filter.so:custom_kv:..."`. Anything after the second
+:code:`"libmy_custom_filter.so:custom_kv:..."` . Anything after the second
 column will be interpreted as binary data and passed to the filter class
 constructor's third argument, hence making it possible to provide arguments
 to a custom filter.
@@ -88,9 +94,13 @@ provide the following member functions.
 
 - A constructor accepting a margo instance id, a mode, and filter data.
 - :code:`check` runs the filter against the document.
+- :code:`docSizeFrom` computes the new document size after the filter is applied,
+  or an upper bound of the document size. This is used for buffer allocation.
+- :code:`docCopy` is used to copy the document into a destination buffer.
+  This function can be used to extract or modify documents on the fly when
+  they are read back by the user. It should return the actual size copied.
+- :code:`shouldStop` (optional) can be implemented to optimize iterations
+  by signaling when no more documents will match the filter.
 
 Similarly, the :code:`YOKAN_REGISTER_DOC_FILTER` macro should be used
 to register the filter.
-
-There is currently no :code:`docCopy` function in document filters, so
-documents cannot be modified on the fly when read.

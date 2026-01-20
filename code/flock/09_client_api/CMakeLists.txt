@@ -1,0 +1,8 @@
+cmake_minimum_required (VERSION 3.10)
+project (flock-client-api C)
+
+
+find_package (flock REQUIRED)
+
+add_executable (09_flock_client client.c)
+target_link_libraries(09_flock_client flock::client)

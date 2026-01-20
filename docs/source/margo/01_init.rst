@@ -1,18 +1,16 @@
 Initializing Margo
 ==================
 
-In this tutorial, we will see how to initialize Margo.
-
 Initializing a server
 ---------------------
 
-The following code initializes Margo for use as a server,
-then prints the address at which the server can be contacted.
+The following code initializes Margo for use as a server, that is, a process that is meant to receive RPCs.
+It then prints the address at which the server can be contacted.
 
 .. literalinclude:: ../../../code/margo/01_init/server.c
    :language: cpp
 
-:code:`margo_init` creates a :code:`margo_instance_id` object. It takes four arguments.
+:code:`margo_init` takes four arguments.
 The first one is *protocol* (here TCP). It is also possible to provide the address and port number to use.
 The second argument specifies that Margo is initialized as a server.
 The third argument indicates whether an Argobots execution stream (ES) should be created to run the
@@ -33,11 +31,11 @@ using :code:`margo_addr_to_string`. The address returned by :code:`margo_addr_se
 manually if you run it.
 
 .. note::
-   We use :code:`margo_info` to display information. This function is part of Margo's logging feature,
+   We use :code:`margo_info` to display information. This function is part of Margo's logging API,
    which includes six logging levels: :code:`margo_trace`, :code:`margo_debug`, :code:`margo_info`,
    :code:`margo_warning`, :code:`margo_error`, and :code:`margo_critical`. These functions take a margo
    instance as first argument, a string format as second argument, and optional parameters.
-   Note that these functions will automatically add a :code:`\n` at the end of the
+   Note that these functions will automatically add a :code:`\\n` at the end of the
    provided string. The logging level can be set using :code:`margo_set_log_level` (see margo-logging.h).
 
 
@@ -46,16 +44,8 @@ Initializing a client
 
 The following code initializes Margo for use as a client.
 
-.. container:: toggle
-
-    .. container:: header
-
-       .. container:: btn btn-info
-
-          client.c (show/hide)
-
-    .. literalinclude:: ../../../code/margo/01_init/client.c
-       :language: cpp
+.. literalinclude:: ../../../code/margo/01_init/client.c
+   :language: cpp
 
 We call :code:`margo_init` with :code:`MARGO_CLIENT_MODE` to indicate that this is a client.
 Just like servers, clients have to run a Mercury progress loop. This progress loop can be

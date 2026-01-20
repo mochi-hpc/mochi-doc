@@ -1,2 +1,6 @@
 /docs/build
 .DS_Store
+/docs/source/margo/doxygen/
+/docs/source/margo/api.rst
+/docs/source/thallium/api.rst
+/docs/source/thallium/doxygen/

@@ -6,6 +6,15 @@
 #include <yokan/client.h>
 #include <yokan/database.h>
 
+/* Callback function for yk_iter */
+static yk_return_t iter_callback(void* uargs, size_t index,
+                                  const void* key, size_t ksize,
+                                  const void* value, size_t vsize)
+{
+    printf("\t[%zu] %.*s => %.*s\n", index, (int)ksize, (char*)key, (int)vsize, (char*)value);
+    return YOKAN_SUCCESS;
+}
+
 int main(int argc, char** argv)
 {
     if(argc != 3) {
@@ -184,6 +193,15 @@ int main(int argc, char** argv)
         free(keys3[i]);
         free(values3[i]);
     }
+
+    // ------------------------------------------------------
+
+    /* iterate through key/value pairs using a callback */
+    printf("Iterating through key/value pairs:\n");
+    ret = yk_iter(db_handle, YOKAN_MODE_INCLUSIVE,
+                  "shane", 5, NULL, 0, 4,
+                  iter_callback, NULL, NULL);
+    assert(ret == YOKAN_SUCCESS);
 
     // ------------------------------------------------------
 

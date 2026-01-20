@@ -10,11 +10,12 @@ Alternatively, the composition and configuration of components can be
 delegated to Bedrock.
 
 Bedrock is a bootstrapping and configuration system for Mochi components.
-It comes in the form of a program that can be run alone or with an MPI
-or a PMIx context. This program takes a JSON configuration file specifying
+It comes in the form of a program that can be run alone or as a parallel application.
+This program takes a JSON configuration file specifying
 the various components to instantiate and their dependencies. Bedrock
 also allows to retrieve the configuration of a service at any point during
-its run time.
+its run time. Finally, it also allows dynamic reconfiguration (adding/removing
+Argobots pools and xstreams, and Mochi providers).
 
 This section of the documentation goes through the use of Bedrock,
 from deploying components, to writing Bedrock modules for your own components.
@@ -27,4 +28,7 @@ from deploying components, to writing Bedrock modules for your own components.
    bedrock/02_json.rst
    bedrock/03_query.rst
    bedrock/04_module.rst
-   bedrock/06_jx9.rst
+   bedrock/05_jx9.rst
+   bedrock/06_flock_integration.rst
+   bedrock/07_runtime_config.rst
+   bedrock/08_python.rst

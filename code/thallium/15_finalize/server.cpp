@@ -32,6 +32,12 @@ class my_sum_provider : public tl::provider<my_sum_provider> {
         return word.size();
     }
 
+    void cleanup() {
+        std::cout << "Provider with ID " << get_provider_id() <<  " is being cleaned up" << std::endl;
+    }
+
+    public:
+
     my_sum_provider(tl::engine& e, uint16_t provider_id=1)
     : tl::provider<my_sum_provider>(e, provider_id)
       // keep the RPCs in remote_procedure objects so we can deregister them.
@@ -42,15 +48,7 @@ class my_sum_provider : public tl::provider<my_sum_provider> {
     {
         // setup a finalization callback for this provider, in case it is
         // still alive when the engine is finalized.
-        get_engine().push_finalize_callback(this, [p=this]() { delete p; });
-    }
-
-    public:
-
-    // this factory method and the private constructor prevent users
-    // from putting an instance  of my_sum_provider on  the stack.
-    static my_sum_provider* create(tl::engine& e, uint16_t provider_id=1) {
-        return new my_sum_provider(e, provider_id);
+        get_engine().push_finalize_callback(this, [this]() { cleanup(); });
     }
 
     ~my_sum_provider() {
@@ -70,9 +68,9 @@ int main(int argc, char** argv) {
     myEngine.enable_remote_shutdown();
     std::cout << "Server running at address " << myEngine.self()
         << " with provider ids 22 and 23 " << std::endl;
-    // create a pointer to the provider instance using the factory methods.
-    my_sum_provider* myProvider22 = my_sum_provider::create(myEngine, 22);
-    my_sum_provider* myProvider23 = my_sum_provider::create(myEngine, 23);
+    // create the provider instances
+    my_sum_provider myProvider22(myEngine, 22);
+    my_sum_provider myProvider23(myEngine, 23);
 
     myEngine.wait_for_finalize();
     // the finalization callbacks will ensure that providers are freed.

@@ -60,7 +60,7 @@ names provided in one of the loaded libraries. The :code:`provider_id` must
 be an integer between 0 and 65534 (max uint16, minus one as 65535 is reserved).
 All the providers must have distinct provider ids.
 :code:`config` should be a JSON object formatted to comply
-with the component's expected JSON format. It will be passed as-is (as a string)
+with the component's expected JSON format. It will be passed as-is
 to the component's registration function. You should refer to the component's
 documentation to know what is expected from this configuration field.
 
@@ -71,14 +71,14 @@ provider creation function when calling it.
 Dependency resolution
 ---------------------
 
-The :code:`dependencies` section in a provider or client lists dependency names associated with
-values. These values can be one of the following.
+The :code:`dependencies` section in a provider lists dependency names associated with
+values. These values can be one of the following:
 
-- The name of an Argobots pool listed in the :code:`"margo"` section of the configurations;
-- The name of an Argoots execution stream listed in the :code:`"margo"` section of the configurations;
-- For providers, the name of another provider defined in the same JSON file
+- **Pool**: The name of an Argobots pool listed in the :code:`"margo"` section;
+- **Xstream**: The name of an Argobots execution stream listed in the :code:`"margo"` section;
+- **Local provider**: The name of another provider defined in the same JSON file
   (such provider must have been defined before) will resolve to a pointer to this provider;
-- A string of the form :code:`"<name>@<location>"` or :code:`"<type>:<id>@<location>"`
+- **Remote provider**: A string of the form :code:`"<name>@<location>"` or :code:`"<type>:<id>@<location>"`
   will resolve into a provider handle pointing to a specific provider identified
   either by its *<name>* or by its *<type>* and provider *<id>* at the specified
   *<location>*. The location may be either :code:`local`, to refer to the calling

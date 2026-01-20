@@ -15,11 +15,19 @@ If "num_urings" is > 1, then uring operations will be issued in round-robin
 fashion across the rings.  Any ABT-IO operations that are not supported
 by uring are serviced as usual by the normal ABT-IO pool.
 
-Optional uring flags can also be specified as follows::
+Optional uring flags can also be specified as follows:
 
-    {"liburing_flags":
-     ["IOSQE_ASYNC","IORING_SETUP_SQPOLL","IORING_SETUP_COOP_TASKRUN",
-     "IORING_SETUP_SINGLE_ISSUER", "IORING_SETUP_DEFER_TASKRUN"]}
+.. code-block:: json
+
+   {
+       "liburing_flags": [
+           "IOSQE_ASYNC",
+           "IORING_SETUP_SQPOLL",
+           "IORING_SETUP_COOP_TASKRUN",
+           "IORING_SETUP_SINGLE_ISSUER",
+           "IORING_SETUP_DEFER_TASKRUN"
+       ]
+   }
 
 Please refer to the liburing documentation for an explanation of these
 flags.
@@ -30,17 +38,20 @@ Recommended configuration
 If you are using liburing then we recommend setting :code:`"num_urings":1`
 and :code:`"liburing_flags":["IOSQE_ASYNC"]`, and configuring the normal
 ABT-IO pool (used for any oprations not supported by liburing) to have just
-one execution stream.  For example::
+one execution stream.  For example:
 
- {"internal_pool_flag": 1,
-    "internal_pool":{
-       "kind":"fifo_wait",
-       "access":"mpmc",
-       "num_xstreams": 1
-    },
-  "num_urings":1,
-  "liburing_flags":["IOSQE_ASYNC"]
- }
+.. code-block:: json
+
+   {
+       "internal_pool_flag": 1,
+       "internal_pool": {
+           "kind": "fifo_wait",
+           "access": "mpmc",
+           "num_xstreams": 1
+       },
+       "num_urings": 1,
+       "liburing_flags": ["IOSQE_ASYNC"]
+   }
 
 One uring is sufficient to saturate most storage devices as long as the
 kernel is instructed to use asynchronous mode by default so that the

@@ -28,14 +28,25 @@ PyMargo. We highly recommend that you read the :ref:`Margo` tutorials first.
 
    - You want to write a Python client interface for a Mochi service
      written in C/C++ (in this case we recommend that you look at
-     how Yokan does this, for instance);
+     how Yokan, Warabi, or Flock do this, for instance);
    - You want to write a Mochi service based on a Python library that
      does not have a C or C++ equivalent, and you are ready to work
      with Python's constraints.
 
+.. note::
+
+   The Margo and Thallium microservice templates include examples
+   of Python bindings too!
+
 
 PyMargo can be :ref:`installed using spack <Installing>`, just like any other Mochi library,
 using :code:`spack install py-mochi-margo`.
+
+.. note::
+
+   PyMargo's namespace has been updated to :code:`mochi.margo`. If you have existing code
+   using :code:`import pymargo`, you should update it to :code:`from mochi.margo import ...`
+   or :code:`import mochi.margo as pymargo` for backward compatibility.
 
 .. toctree::
    :maxdepth: 1

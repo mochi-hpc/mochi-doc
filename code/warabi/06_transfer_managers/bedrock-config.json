@@ -1,0 +1,23 @@
+{
+    "providers": [
+        {
+            "type": "warabi",
+            "provider_id": 42,
+            "config": {
+                "target": {
+                    "type": "memory",
+                    "config": {}
+                },
+                "transfer_manager": {
+                    "type": "pipeline",
+                    "config": {
+                        "num_pools": 4,
+                        "num_buffers_per_pool": 8,
+                        "first_buffer_size": 1048576,
+                        "buffer_size_multiplier": 2
+                    }
+                }
+            }
+        }
+    ]
+}

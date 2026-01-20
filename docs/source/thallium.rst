@@ -27,13 +27,13 @@ in place of the C++ threading library.
    thallium/06_stl.rst
    thallium/07_serialization.rst
    thallium/08_rdma.rst
+   thallium/14_async.rst
    thallium/09_providers.rst
    thallium/15_finalize.rst
    thallium/10_abt_intro.rst
    thallium/11_abt_classes.rst
    thallium/12_rpc_pool.rst
    thallium/13_abt_custom.rst
-   thallium/14_async.rst
    thallium/16_context.rst
    thallium/17_logging.rst
    thallium/18_timed_cb.rst

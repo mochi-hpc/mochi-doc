@@ -20,14 +20,14 @@ set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE Release
          CACHE STRING "Choose the type of build." FORCE)
-    set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS 
+    set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
                   "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
 endif ()
 set (CMAKE_PREFIX_PATH "" CACHE STRING "External dependencies path")
 set (BUILD_SHARED_LIBS "OFF" CACHE BOOL "Build a shared library")
 
 # packages we depend on
-# pkg-config, for non-cmake dependencies
+# pkg-config, for non-cmake dependencies (Margo and Argobots)
 find_package (PkgConfig REQUIRED)
 # MPI and PMIx (both optional) for SSG
 find_package (MPI)
@@ -39,8 +39,6 @@ find_package (mercury REQUIRED)
 find_package (thallium REQUIRED)
 # abt-io
 pkg_check_modules (ABTIO REQUIRED IMPORTED_TARGET abt-io)
-# ssg
-pkg_check_modules (SSG REQUIRED IMPORTED_TARGET ssg)
 # margo
 pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
 # argobots
@@ -51,12 +49,15 @@ find_package (bedrock-module-api REQUIRED)
 find_package (yokan REQUIRED)
 # flock
 find_package (flock REQUIRED)
+# REMI
+find_package (remi REQUIRED)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)
 add_subdirectory (margo)
 add_subdirectory (thallium)
 add_subdirectory (abtio)
-add_subdirectory (ssg)
 add_subdirectory (bedrock)
+add_subdirectory (warabi)
 add_subdirectory (yokan)
+add_subdirectory (flock)

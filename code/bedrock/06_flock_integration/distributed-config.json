@@ -1,0 +1,49 @@
+{
+    "margo": {
+        "argobots": {
+            "pools": [
+                {
+                    "name": "rpc_pool",
+                    "kind": "fifo_wait",
+                    "access": "mpmc"
+                }
+            ]
+        },
+        "rpc_pool": "rpc_pool"
+    },
+    "libraries": [
+        "libflock-bedrock-module.so",
+        "libyokan-bedrock-module.so"
+    ],
+    "providers": [
+        {
+            "name": "service_group",
+            "type": "flock",
+            "provider_id": 1,
+            "dependencies": {
+                "pool": "__primary__"
+            },
+            "config": {
+                "bootstrap": ["join", "mpi"],
+                "group": {
+                    "type": "centralized",
+                    "config": {}
+                },
+                "file": "distributed_service.flock"
+            }
+        },
+        {
+            "name": "kv_store",
+            "type": "yokan",
+            "provider_id": 42,
+            "dependencies": {
+                "pool": "__primary__"
+            },
+            "config": {
+                "database": {
+                    "type": "map"
+                }
+            }
+        }
+    ]
+}
