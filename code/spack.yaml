@@ -55,3 +55,6 @@ spack:
     py-mochi-margo:
       require:
       - "@0.6.0:"
+    py-scikit-build-core:
+      require:
+      - "@0.11.1"
