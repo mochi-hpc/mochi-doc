@@ -314,12 +314,14 @@ def generate_library_api(name,
     with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
         zip_ref.extractall('.')
 
-    # Run doxygen
-    subprocess.call(f'cd {extracted_dir} && doxygen', shell=True)
+    # Run doxygen only if Doxyfile exists
+    has_doxyfile = os.path.exists(f'{extracted_dir}/Doxyfile')
+    if has_doxyfile:
+        subprocess.call(f'cd {extracted_dir} && doxygen', shell=True)
 
-    # Move xml folder
-    shutil.rmtree(doxygen_output, ignore_errors=True)
-    shutil.move(f'{extracted_dir}/doc/xml', doxygen_output)
+        # Move xml folder
+        shutil.rmtree(doxygen_output, ignore_errors=True)
+        shutil.move(f'{extracted_dir}/doc/xml', doxygen_output)
 
     # Merge library's docs folder with the repository's docs folder
     library_docs_dir = f'{extracted_dir}/docs'
@@ -346,29 +348,41 @@ def generate_library_api(name,
     os.remove(zip_filename)
     shutil.rmtree(extracted_dir)
 
-    # Extract classes and headers from doxygen XML
-    classes = get_classes_from_xml(doxygen_output, namespace, exclude_classes)
-    headers = get_headers_from_xml(doxygen_output, exclude_headers)
+    # Generate API documentation only if doxygen was run
+    if has_doxyfile:
+        # Extract classes and headers from doxygen XML
+        classes = get_classes_from_xml(doxygen_output, namespace, exclude_classes)
+        headers = get_headers_from_xml(doxygen_output, exclude_headers)
 
-    # Generate cpp_api.rst if C++ classes found
-    if classes:
-        cpp_api_content = generate_cpp_api_rst(name, classes)
-        with open(f'{name}/cpp_api.rst', 'w') as f:
-            f.write(cpp_api_content)
+        # Generate cpp_api.rst if C++ classes found
+        if classes:
+            cpp_api_content = generate_cpp_api_rst(name, classes)
+            with open(f'{name}/cpp_api.rst', 'w') as f:
+                f.write(cpp_api_content)
 
-    # Generate c_api.rst if C headers found
-    if headers:
-        c_api_content = generate_c_api_rst(name, headers)
-        with open(f'{name}/c_api.rst', 'w') as f:
-            f.write(c_api_content)
+        # Generate c_api.rst if C headers found
+        if headers:
+            c_api_content = generate_c_api_rst(name, headers)
+            with open(f'{name}/c_api.rst', 'w') as f:
+                f.write(c_api_content)
 
-    return os.path.join(here, doxygen_output)
+        return os.path.join(here, doxygen_output)
+
+    return None
 
 
 # Generate API documentation for libraries
 breathe_projects = {}
 
-breathe_projects['thallium'] = generate_library_api(
+
+def register_library(name, **kwargs):
+    """Generate library API and register with breathe if Doxyfile exists."""
+    result = generate_library_api(name, **kwargs)
+    if result is not None:
+        breathe_projects[name] = result
+
+
+register_library(
     'thallium',
     exclude_classes=[
         'is_std_function_object',
@@ -378,10 +392,9 @@ breathe_projects['thallium'] = generate_library_api(
     ]
 )
 
-breathe_projects['margo'] = generate_library_api(
-    'margo',
-    exclude_headers=[]
-)
+register_library('yokan')
+
+register_library('margo')
 
 breathe_default_project = 'thallium'
 
