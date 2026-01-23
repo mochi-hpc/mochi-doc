@@ -272,6 +272,23 @@ def generate_margo_api():
     # Remove mochi-margo.zip and mochi-margo-main
     os.remove('mochi-margo.zip')
     shutil.rmtree('mochi-margo-main')
+    # Generate API from template
+    import jinja2
+    environment = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
+    template = environment.get_template('margo/api.rst.in')
+    # TODO: get the header files from the doxygen XML files, or by looking into the "include" folder
+    headers = [
+        "margo.h",
+        "margo-logging.h",
+        "margo-timer.h",
+        "margo-bulk-pool.h",
+        "margo-bulk-util.h",
+        "margo-util.h"
+    ]
+    with open('margo/api.rst', 'w+') as f:
+        f.write(template.render(
+            headers=headers))
+
 
 generate_thallium_api()
 generate_margo_api()

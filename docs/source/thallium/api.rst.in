@@ -8,5 +8,6 @@ API Documentation
 
 .. doxygenclass:: {{ c }}
    :members:
+   :project: thallium
 
 {% endfor %}
