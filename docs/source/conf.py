@@ -321,6 +321,27 @@ def generate_library_api(name,
     shutil.rmtree(doxygen_output, ignore_errors=True)
     shutil.move(f'{extracted_dir}/doc/xml', doxygen_output)
 
+    # Merge library's docs folder with the repository's docs folder
+    library_docs_dir = f'{extracted_dir}/docs'
+    repo_docs_dir = os.path.dirname(here)  # Parent of source/ is docs/
+    if os.path.isdir(library_docs_dir):
+        for item in os.listdir(library_docs_dir):
+            src = os.path.join(library_docs_dir, item)
+            dst = os.path.join(repo_docs_dir, item)
+            if os.path.isdir(src):
+                if os.path.exists(dst):
+                    # Merge directories recursively
+                    for root, dirs, files in os.walk(src):
+                        rel_path = os.path.relpath(root, src)
+                        dst_root = os.path.join(dst, rel_path) if rel_path != '.' else dst
+                        os.makedirs(dst_root, exist_ok=True)
+                        for file in files:
+                            shutil.copy2(os.path.join(root, file), os.path.join(dst_root, file))
+                else:
+                    shutil.copytree(src, dst)
+            else:
+                shutil.copy2(src, dst)
+
     # Clean up downloaded files
     os.remove(zip_filename)
     shutil.rmtree(extracted_dir)
