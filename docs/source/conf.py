@@ -166,110 +166,203 @@ texinfo_documents = [
 
 here = os.path.dirname(os.path.realpath(__file__))
 
-def get_thallium_classes_from_xml(doxygen_xml_path):
-    """Extract class names from the thallium namespace XML file."""
+
+def get_classes_from_xml(doxygen_xml_path, namespace, exclude_classes=None):
+    """Extract class names from a namespace XML file.
+
+    Args:
+        doxygen_xml_path: Path to the doxygen XML output directory
+        namespace: The C++ namespace to extract classes from
+        exclude_classes: List of class name patterns to exclude (matched as prefixes)
+
+    Returns:
+        Sorted list of fully-qualified class names
+    """
     from bs4 import BeautifulSoup
-    namespace_file = os.path.join(doxygen_xml_path, 'namespacethallium.xml')
+    namespace_file = os.path.join(doxygen_xml_path, f'namespace{namespace}.xml')
     if not os.path.exists(namespace_file):
         return []
     with open(namespace_file, 'r') as f:
         soup = BeautifulSoup(f, 'xml')
-    classes = [
-        innerclass.get_text().replace(' ', '') for innerclass in soup.find_all('innerclass')
-    ]
+    exclude_classes = exclude_classes or []
+    exclude_prefixes = [f'{namespace}::{pattern}' for pattern in exclude_classes]
+    classes = []
+    for innerclass in soup.find_all('innerclass'):
+        class_name = innerclass.get_text()
+        if class_name and class_name.startswith(f'{namespace}::'):
+            # Skip excluded classes
+            if any(class_name.startswith(prefix) for prefix in exclude_prefixes):
+                continue
+            # Normalize whitespace in template specializations
+            class_name = class_name.replace(' ', '')
+            classes.append(class_name)
     return sorted(classes)
 
 
-def generate_thallium_api():
-    # Download thallium as an archive
-    import urllib.request
-    urllib.request.urlretrieve(
-        'https://github.com/mochi-hpc/mochi-thallium/archive/refs/heads/main.zip',
-        'mochi-thallium.zip')
-    # Unzip the file
-    import zipfile
-    with zipfile.ZipFile('mochi-thallium.zip', 'r') as zip_ref:
-        zip_ref.extractall('.')
-    # All doxygen
-    import subprocess
-    subprocess.call('cd mochi-thallium-main && doxygen', shell=True)
-    # Move xml folder
-    import shutil
-    shutil.rmtree('thallium/doxygen', ignore_errors=True)
-    shutil.move('mochi-thallium-main/doc/xml',
-                'thallium/doxygen')
-    # Remove mochi-thallium.zip and mochi-thallium-main
-    os.remove('mochi-thallium.zip')
-    shutil.rmtree('mochi-thallium-main')
-    # Get class names from the XML files
-    classes = get_thallium_classes_from_xml('thallium/doxygen')
-    # Generate API from template
-    import jinja2
-    environment = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
-    template = environment.get_template('thallium/api.rst.in')
-    with open('thallium/api.rst', 'w+') as f:
-        f.write(template.render(classes=classes))
+def get_headers_from_xml(doxygen_xml_path, exclude_headers=None):
+    """Extract header file names from the doxygen index.xml file.
 
-def get_margo_headers_from_xml(doxygen_xml_path):
-    """Extract header file names from the doxygen index.xml file."""
+    Args:
+        doxygen_xml_path: Path to the doxygen XML output directory
+        exclude_headers: List of header filenames to exclude
+
+    Returns:
+        Sorted list of header file names
+    """
     from bs4 import BeautifulSoup
     index_file = os.path.join(doxygen_xml_path, 'index.xml')
     if not os.path.exists(index_file):
         return []
     with open(index_file, 'r') as f:
         soup = BeautifulSoup(f, 'xml')
+    exclude_headers = exclude_headers or []
     headers = []
     for compound in soup.find_all('compound', kind='file'):
         name_elem = compound.find('name')
         if name_elem:
             name = name_elem.get_text()
-            if name.endswith('.h'):
+            if name.endswith('.h') and name not in exclude_headers:
                 headers.append(name)
-    # Sort with margo.h first, then alphabetically
-    headers = sorted(headers)
-    return headers
+    return sorted(headers)
 
 
-def generate_margo_api():
-    # Download margo as an archive
-    import urllib.request
-    urllib.request.urlretrieve(
-        'https://github.com/mochi-hpc/mochi-margo/archive/refs/heads/main.zip',
-        'mochi-margo.zip')
-    # Unzip the file
-    import zipfile
-    with zipfile.ZipFile('mochi-margo.zip', 'r') as zip_ref:
-        zip_ref.extractall('.')
-    # Call doxygen
-    import subprocess
-    subprocess.call('cd mochi-margo-main && doxygen', shell=True)
-    # Move xml folder
+def generate_cpp_api_rst(name, classes):
+    """Generate the cpp_api.rst content for a library's C++ API.
+
+    Args:
+        name: Library name (used as the breathe project name)
+        classes: List of C++ class names to document
+
+    Returns:
+        String containing the RST content
+    """
+    lines = ['C++ API Documentation', '=====================', '']
+    for cls in classes:
+        lines.append(cls)
+        lines.append('-' * len(cls))
+        lines.append('')
+        lines.append(f'.. doxygenclass:: {cls}')
+        lines.append('   :members:')
+        lines.append(f'   :project: {name}')
+        lines.append('')
+    return '\n'.join(lines)
+
+
+def generate_c_api_rst(name, headers):
+    """Generate the c_api.rst content for a library's C API.
+
+    Args:
+        name: Library name (used as the breathe project name)
+        headers: List of C header files to document
+
+    Returns:
+        String containing the RST content
+    """
+    lines = ['C API Documentation', '===================', '']
+    for header in headers:
+        lines.append(header)
+        lines.append('-' * len(header))
+        lines.append('')
+        lines.append(f'.. doxygenfile:: {header}')
+        lines.append(f'   :project: {name}')
+        lines.append('')
+    return '\n'.join(lines)
+
+
+def generate_library_api(name,
+                         namespace=None,
+                         exclude_classes=None,
+                         exclude_headers=None,
+                         branch='main',
+                         github_org='mochi-hpc'):
+    """Generate API documentation for a Mochi library.
+
+    Downloads the library source from GitHub, runs doxygen, and generates
+    the api.rst file. Automatically detects C++ classes (from namespace XML)
+    and/or C headers (from index.xml).
+
+    Args:
+        name: Library name (e.g., 'margo', 'thallium')
+        namespace: C++ namespace name (defaults to library name if not specified)
+        exclude_classes: List of class name patterns to exclude from C++ docs
+        exclude_headers: List of header filenames to exclude from C docs
+        branch: Git branch to download (default: 'main')
+        github_org: GitHub organization (default: 'mochi-hpc')
+
+    Returns:
+        Path to the doxygen XML directory
+    """
     import shutil
-    shutil.rmtree('margo/doxygen', ignore_errors=True)
-    shutil.move('mochi-margo-main/doc/xml',
-                'margo/doxygen')
-    # Remove mochi-margo.zip and mochi-margo-main
-    os.remove('mochi-margo.zip')
-    shutil.rmtree('mochi-margo-main')
-    # Get header files from the doxygen XML files
-    headers = get_margo_headers_from_xml('margo/doxygen')
-    # Generate API from template
-    import jinja2
-    environment = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
-    template = environment.get_template('margo/api.rst.in')
-    with open('margo/api.rst', 'w+') as f:
-        f.write(template.render(
-            headers=headers))
+    import subprocess
+    import urllib.request
+    import zipfile
+
+    # Use library name as namespace if not specified
+    if namespace is None:
+        namespace = name
+
+    repo_name = f'mochi-{name}'
+    zip_filename = f'{repo_name}.zip'
+    extracted_dir = f'{repo_name}-{branch}'
+    doxygen_output = f'{name}/doxygen'
+
+    # Download library as an archive
+    url = f'https://github.com/{github_org}/{repo_name}/archive/refs/heads/{branch}.zip'
+    urllib.request.urlretrieve(url, zip_filename)
+
+    # Unzip the file
+    with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
+        zip_ref.extractall('.')
+
+    # Run doxygen
+    subprocess.call(f'cd {extracted_dir} && doxygen', shell=True)
+
+    # Move xml folder
+    shutil.rmtree(doxygen_output, ignore_errors=True)
+    shutil.move(f'{extracted_dir}/doc/xml', doxygen_output)
+
+    # Clean up downloaded files
+    os.remove(zip_filename)
+    shutil.rmtree(extracted_dir)
+
+    # Extract classes and headers from doxygen XML
+    classes = get_classes_from_xml(doxygen_output, namespace, exclude_classes)
+    headers = get_headers_from_xml(doxygen_output, exclude_headers)
+
+    # Generate cpp_api.rst if C++ classes found
+    if classes:
+        cpp_api_content = generate_cpp_api_rst(name, classes)
+        with open(f'{name}/cpp_api.rst', 'w') as f:
+            f.write(cpp_api_content)
+
+    # Generate c_api.rst if C headers found
+    if headers:
+        c_api_content = generate_c_api_rst(name, headers)
+        with open(f'{name}/c_api.rst', 'w') as f:
+            f.write(c_api_content)
+
+    return os.path.join(here, doxygen_output)
 
 
-generate_thallium_api()
-generate_margo_api()
+# Generate API documentation for libraries
+breathe_projects = {}
+
+breathe_projects['thallium'] = generate_library_api(
+    'thallium',
+    exclude_classes=[
+        'is_std_function_object',
+        'remove_class',
+        'strip_function_object',
+        'unwrap_refwrapper',
+    ]
+)
+
+breathe_projects['margo'] = generate_library_api(
+    'margo',
+    exclude_headers=[]
+)
 
 breathe_default_project = 'thallium'
-breathe_projects = {
-    'thallium': os.path.join(here, 'thallium', 'doxygen'),
-    'margo': os.path.join(here, 'margo', 'doxygen')
-}
 
 # -- Options for todo extension ----------------------------------------------
 

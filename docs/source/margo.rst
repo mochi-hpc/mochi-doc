@@ -38,4 +38,4 @@ in understanding other Margo-based services.
    margo/11_timers.rst
    margo/12_profiling.rst
    margo/13_lifetime.rst
-   margo/api.rst
+   margo/c_api.rst
