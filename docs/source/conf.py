@@ -392,9 +392,9 @@ register_library(
     ]
 )
 
-register_library('yokan')
-
 register_library('margo')
+register_library('yokan')
+register_library('warabi')
 
 breathe_default_project = 'thallium'
 
