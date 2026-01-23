@@ -396,6 +396,7 @@ register_library('margo')
 register_library('yokan')
 register_library('warabi')
 register_library('flock')
+register_library('bedrock')
 
 breathe_default_project = 'thallium'
 
