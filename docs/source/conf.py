@@ -166,6 +166,20 @@ texinfo_documents = [
 
 here = os.path.dirname(os.path.realpath(__file__))
 
+def get_thallium_classes_from_xml(doxygen_xml_path):
+    """Extract class names from the thallium namespace XML file."""
+    from bs4 import BeautifulSoup
+    namespace_file = os.path.join(doxygen_xml_path, 'namespacethallium.xml')
+    if not os.path.exists(namespace_file):
+        return []
+    with open(namespace_file, 'r') as f:
+        soup = BeautifulSoup(f, 'xml')
+    classes = [
+        innerclass.get_text().replace(' ', '') for innerclass in soup.find_all('innerclass')
+    ]
+    return sorted(classes)
+
+
 def generate_thallium_api():
     # Download thallium as an archive
     import urllib.request
@@ -187,69 +201,34 @@ def generate_thallium_api():
     # Remove mochi-thallium.zip and mochi-thallium-main
     os.remove('mochi-thallium.zip')
     shutil.rmtree('mochi-thallium-main')
-    # TODO: get the class names from the XML files themselves
-    classes = [
-            'thallium::abt',
-            'thallium::abt_exception',
-            'thallium::anonymous',
-            'thallium::async_response',
-            'thallium::barrier',
-            'thallium::barrier_exception',
-            'thallium::bulk',
-            'thallium::bulk_segment',
-            'thallium::callable_remote_procedure_with_context',
-            'thallium::condition_variable',
-            'thallium::condition_variable_exception',
-            'thallium::endpoint',
-            'thallium::engine',
-            'thallium::eventual',
-            'thallium::eventual<void>',
-            'thallium::eventual_exception',
-            'thallium::exception',
-            'thallium::future',
-            'thallium::future_exception',
-            'thallium::logger',
-            'thallium::managed',
-            'thallium::margo_exception',
-            'thallium::mutex',
-            'thallium::mutex_exception',
-            'thallium::output_archive',
-            'thallium::packed_data',
-            'thallium::pool',
-            'thallium::pool_exception',
-            'thallium::proc_input_archive',
-            'thallium::proc_output_archive',
-            'thallium::provider',
-            'thallium::provider_handle',
-            'thallium::recursive_mutex',
-            'thallium::remote_bulk',
-            'thallium::remote_procedure',
-            'thallium::request_with_context',
-            'thallium::rwlock',
-            'thallium::rwlock_exception',
-            'thallium::scheduler',
-            'thallium::scheduler_exception',
-            'thallium::self',
-            'thallium::self_exception',
-            'thallium::task',
-            'thallium::task_exception',
-            'thallium::thread',
-            'thallium::thread_exception',
-            'thallium::timed_callback',
-            'thallium::timeout',
-            'thallium::timer',
-            'thallium::timer_exception',
-            'thallium::xstream',
-            'thallium::xstream_barrier',
-            'thallium::xstream_barrier_exception',
-            'thallium::xstream_exception'
-    ]
+    # Get class names from the XML files
+    classes = get_thallium_classes_from_xml('thallium/doxygen')
     # Generate API from template
     import jinja2
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
     template = environment.get_template('thallium/api.rst.in')
     with open('thallium/api.rst', 'w+') as f:
         f.write(template.render(classes=classes))
+
+def get_margo_headers_from_xml(doxygen_xml_path):
+    """Extract header file names from the doxygen index.xml file."""
+    from bs4 import BeautifulSoup
+    index_file = os.path.join(doxygen_xml_path, 'index.xml')
+    if not os.path.exists(index_file):
+        return []
+    with open(index_file, 'r') as f:
+        soup = BeautifulSoup(f, 'xml')
+    headers = []
+    for compound in soup.find_all('compound', kind='file'):
+        name_elem = compound.find('name')
+        if name_elem:
+            name = name_elem.get_text()
+            if name.endswith('.h'):
+                headers.append(name)
+    # Sort with margo.h first, then alphabetically
+    headers = sorted(headers)
+    return headers
+
 
 def generate_margo_api():
     # Download margo as an archive
@@ -272,19 +251,12 @@ def generate_margo_api():
     # Remove mochi-margo.zip and mochi-margo-main
     os.remove('mochi-margo.zip')
     shutil.rmtree('mochi-margo-main')
+    # Get header files from the doxygen XML files
+    headers = get_margo_headers_from_xml('margo/doxygen')
     # Generate API from template
     import jinja2
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
     template = environment.get_template('margo/api.rst.in')
-    # TODO: get the header files from the doxygen XML files, or by looking into the "include" folder
-    headers = [
-        "margo.h",
-        "margo-logging.h",
-        "margo-timer.h",
-        "margo-bulk-pool.h",
-        "margo-bulk-util.h",
-        "margo-util.h"
-    ]
     with open('margo/api.rst', 'w+') as f:
         f.write(template.render(
             headers=headers))

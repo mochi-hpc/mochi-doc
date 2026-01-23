@@ -5,3 +5,5 @@ recommonmark
 breathe
 sphinx_rtd_theme>=0.5.1
 Jinja2
+bs4
+lxml
