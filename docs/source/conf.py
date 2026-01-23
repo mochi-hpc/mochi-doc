@@ -395,6 +395,7 @@ register_library(
 register_library('margo')
 register_library('yokan')
 register_library('warabi')
+register_library('flock')
 
 breathe_default_project = 'thallium'
 
