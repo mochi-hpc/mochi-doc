@@ -112,7 +112,7 @@ Contents
    yokan.rst
    warabi.rst
    flock.rst
-   abtio.rst
+   abt-io.rst
    bedrock.rst
    templates.rst
    interop.rst
