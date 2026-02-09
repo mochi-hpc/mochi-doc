@@ -1,6 +1,0 @@
-$providers = $__config__.providers;
-$names = [];
-foreach($providers as $p) {
-    array_push($names, $p.name);
-}
-return $names;

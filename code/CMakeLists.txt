@@ -29,35 +29,11 @@ set (BUILD_SHARED_LIBS "OFF" CACHE BOOL "Build a shared library")
 # packages we depend on
 # pkg-config, for non-cmake dependencies (Margo and Argobots)
 find_package (PkgConfig REQUIRED)
-# MPI and PMIx (both optional) for SSG
-find_package (MPI)
-find_package (PMIx)
 # mercury
 find_package (mercury REQUIRED)
 #include_directories(${MERCURY_INCLUDE_DIR})
-# thallium
-find_package (thallium REQUIRED)
-# abt-io
-pkg_check_modules (ABTIO REQUIRED IMPORTED_TARGET abt-io)
-# margo
-pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
 # argobots
 pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
-# bedrock
-find_package (bedrock-module-api REQUIRED)
-# yokan
-find_package (yokan REQUIRED)
-# flock
-find_package (flock REQUIRED)
-# REMI
-find_package (remi REQUIRED)
 
 add_subdirectory (argobots)
 add_subdirectory (mercury)
-add_subdirectory (margo)
-add_subdirectory (thallium)
-add_subdirectory (abtio)
-add_subdirectory (bedrock)
-add_subdirectory (warabi)
-add_subdirectory (yokan)
-add_subdirectory (flock)
