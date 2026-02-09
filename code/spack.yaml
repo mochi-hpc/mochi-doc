@@ -2,15 +2,7 @@ spack:
   specs:
   - cmake
   - mercury~checksum~boostsys ^libfabric fabrics=tcp,rxm
-  - mochi-thallium
-  - mochi-margo
-  - mochi-flock
-  - mochi-abt-io
-  - mochi-bedrock
-  - mochi-warabi
-  - mochi-abt-io
   - argobots
-  - mochi-yokan+bedrock+python+lua+remi+leveldb
   concretizer:
     unify: true
     reuse: dependencies
@@ -23,38 +15,6 @@ spack:
       url: oci://ghcr.io/mochi-hpc/mochi-spack-buildcache
       signed: false
   packages:
-    mochi-margo:
-      require: "@0.21.0:"
-    mochi-thallium:
-      require: "@0.15.1:"
-    mochi-remi:
-      require: "@0.5.0:"
-    mochi-abt-io:
-      require: "@0.8.1:"
-    mochi-bedrock-module-api:
-      require: "@0.2.1:"
-    mochi-bedrock:
-      require:
-      - "@0.15.04:"
-      - "+python"
-    mochi-yokan:
-      require:
-      - "@0.9.0:"
-      - "+python"
-      - "+bedrock"
-    mochi-flock:
-      require:
-      - "@0.5.2:"
-      - "+python"
-      - "+bedrock"
-    mochi-warabi:
-      require:
-      - "@0.7.0:"
-      - "+python"
-      - "+bedrock"
-    py-mochi-margo:
-      require:
-      - "@0.6.0:"
     py-scikit-build-core:
       require:
       - "@0.11.1"
