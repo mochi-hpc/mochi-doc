@@ -33,7 +33,7 @@ to  clone the following git reporitory and add it as a Spack namespace.
 .. code-block:: console
 
    $ git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-   $ spack repo add mochi-spack-packages
+   $ spack repo add mochi-spack-packages/spack_repo/mochi
 
 .. important::
    The above reporitory may contain newer versions of Mercury,
