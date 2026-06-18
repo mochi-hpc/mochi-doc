@@ -15,6 +15,9 @@ spack:
       url: oci://ghcr.io/mochi-hpc/mochi-spack-buildcache
       signed: false
   packages:
+    all:
+      require:
+      - "%gcc"
     py-scikit-build-core:
       require:
       - "@0.11.1"
