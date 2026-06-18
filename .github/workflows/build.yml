@@ -4,7 +4,7 @@ on: [push,pull_request,workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
     - name: Add mochi-spack-packages
       run: |
         git clone https://github.com/mochi-hpc/mochi-spack-packages
-        spack -e code repo add mochi-spack-packages
+        spack -e code repo add mochi-spack-packages/spack_repo/mochi
     - name: Install Package from Spack
       run: |
         spack -e code install --fail-fast
