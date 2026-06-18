@@ -14,3 +14,4 @@ with the Mochi libraries.
    misc/04_debugging.rst
    misc/05_auth.rst
    misc/06_cxi.rst
+   misc/07_resilience.rst
