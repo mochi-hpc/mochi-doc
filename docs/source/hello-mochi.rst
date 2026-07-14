@@ -121,73 +121,6 @@ Spack configuration that you can use before collecting Artifact 2.
           Fetch: 1.08s.  Build: 3.13s.  Total: 4.21s.
         [+] /home/carns/working/src/spack/opt/spack/linux-ubuntu22.04-skylake/gcc-11.2.0/libelf-0.8.13-6lrbuq5xfnwdeeox7m5g6cz246txdesi
 
-Install a package from the Mochi Spack repository
--------------------------------------------------
-
-The Mochi project maintains its own independent repository of packages that
-can be added to Spack to gain access to the most up-to-date Mochi software
-releases.  This step demonstrates adding this repository into Spack and then
-installing a simple Mochi package that is not available in the default
-upstream Spack repository.
-
-
-.. admonition:: Artifact 3
-
-    Demonstrate the ability to install a package from the external Mochi
-    repository:  Please run the following commands and show their
-    output:
-
-    .. code-block:: bash
-
-        # choose a directory where you will check out a copy of the current Mochi
-        #    Spack package repository.  We use /tmp/hello-mochi in this example, but
-        #    you should choose a more permanent path.
-        $ cd /tmp/hello-mochi
-        # clone the repository
-        $ git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-        # add the repository to spack
-        $ spack repo add /tmp/hello-mochi/mochi-spack-packages
-        # install an example package that is only available in the Mochi repository
-        $ spack install mochi-ch-placement
-        # remove repository from spack (we will make this persistent as part of an
-        #    environment later)
-        $ spack repo rm mochi
-
-    Example:
-
-    .. code-block:: text
-
-        carns-x1-7g ~> cd /tmp/hello-mochi
-        carns-x1-7g /t/hello-mochi> git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-        Cloning into 'mochi-spack-packages'...
-        carns-x1-7g ~> cd /tmp/hello-mochi
-        carns-x1-7g /t/hello-mochi> git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-        Cloning into 'mochi-spack-packages'...
-        remote: Enumerating objects: 4432, done.
-        remote: Counting objects: 100% (750/750), done.
-        remote: Compressing objects: 100% (92/92), done.
-        remote: Total 4432 (delta 637), reused 728 (delta 619), pack-reused 3682
-        Receiving objects: 100% (4432/4432), 439.71 KiB | 4.27 MiB/s, done.
-        Resolving deltas: 100% (2671/2671), done.
-        carns-x1-7g /t/hello-mochi [1]> spack repo add /tmp/hello-mochi/mochi-spack-packages
-        ==> Added repo with namespace 'mochi'.
-        carns-x1-7g /t/hello-mochi> spack install mochi-ch-placement
-        [+] /usr (external autoconf-2.71-x7siqslynwavupcbrqxd3lu5ejfmqw33)
-        [+] /usr (external automake-1.16.5-uiai5gcqq4cpcvolmkj4nzddgthvmaje)
-        [+] /usr (external libtool-2.4.6-zqwp5nep4ud7vq2yl2oui247k6caerok)
-        [+] /usr (external m4-1.4.18-sb5p7lz7gmfh3qba7tf72clw7vbpyhj5)
-        ==> Installing mochi-ch-placement-0.1-zwfrofwevasjdo7pk5s3nrqqqb7y3u2t
-        ==> No binary for mochi-ch-placement-0.1-zwfrofwevasjdo7pk5s3nrqqqb7y3u2t found: installing from source
-        ==> No patches needed for mochi-ch-placement
-        ==> mochi-ch-placement: Executing phase: 'autoreconf'
-        ==> mochi-ch-placement: Executing phase: 'configure'
-        ==> mochi-ch-placement: Executing phase: 'build'
-        ==> mochi-ch-placement: Executing phase: 'install'
-        ==> mochi-ch-placement: Successfully installed mochi-ch-placement-0.1-zwfrofwevasjdo7pk5s3nrqqqb7y3u2t
-          Fetch: 1.28s.  Build: 7.27s.  Total: 8.55s.
-        [+] /home/carns/working/src/spack/opt/spack/linux-ubuntu22.04-skylake/gcc-11.2.0/mochi-ch-placement-0.1-zwfrofwevasjdo7pk5s3nrqqqb7y3u2t
-        carns-x1-7g /t/hello-mochi> spack repo rm moch
-
 Create a Spack environment and install the Mochi software stack
 ---------------------------------------------------------------
 
@@ -198,14 +131,13 @@ its dependencies.
 
 Spack environments can be constructed ad hoc or they can be specified a
 priori using a spack.yaml file.  If you identified a Mochi recipe for your
-platform in step 1c, then you may use it now and just modify it so that it
-has the correct path to your mochi-spack-packages repo from step 3.  The
+platform in step 1c, then you may use it now.  The
 example below uses the minimal spack.yaml configuration for a generic system
 as found in
 https://github.com/mochi-hpc-experiments/platform-configurations/tree/main/generic
 .
 
-.. admonition:: Artifact 4
+.. admonition:: Artifact 3
 
     Demonstrate the ability to create a Spack environment for a Mochi
     software stack and install all packages within it.
@@ -236,8 +168,6 @@ https://github.com/mochi-hpc-experiments/platform-configurations/tree/main/gener
         spack:
           specs:
           - mochi-margo
-          repos:
-          - /tmp/hello-mochi/mochi-spack-packages
           modules:
                 prefix_inspections:
                   lib: [LD_LIBRARY_PATH]
@@ -322,7 +252,7 @@ example, within an interactive job allocation). The login node may not
 possess the same network transport or even the same CPU architecture as the
 compute nodes on some systems.
 
-.. admonition:: Artifact 5
+.. admonition:: Artifact 4
 
     Show the result of executing the `margo-info` diagnostic utility.
     Confirm that your desired network transport is activated

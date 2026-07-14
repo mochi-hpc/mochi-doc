@@ -71,7 +71,7 @@ Once the container is running, you can open a shell on it using the following co
    docker exec -it mt1 /bin/bash
 
 From the container's command prompt you should be in the :code:`/home/mochi` directory,
-with subdirectories available for :code:`spack`, :code:`mochi-spack-packages`, and the
+with subdirectories available for :code:`spack` and the
 :code:`mochi-tutorial` directory that is mapped to your host machine and populated with
 tutorial exercise files.
 
@@ -80,7 +80,7 @@ tutorial exercise files.
    > docker exec -it mt1 /bin/bash
 
    mochi@d3c9c489a2c1:~$ ls
-   mochi-spack-packages  mochi-tutorial  spack
+   mochi-tutorial  spack
 
    mochi@d3c9c489a2c1:~$ ls mochi-tutorial
    margo-tutorial-exercises
@@ -110,13 +110,9 @@ Option 2: create a development environment manually
    please do not use this option unless you already have an existing Spack
    configuration that you are comfortable using.
 
-If you have Spack already installed and setup on your machine, simply make
-sure that you have the Mochi namespace available for Spack to use. This can be done as follows.
-
-.. code-block:: console
-
-   git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-   spack repo add mochi-spack-packages
+If you have Spack already installed and set up on your machine, you are
+ready to go: Mercury, Argobots, Margo, and Thallium are available as
+builtin Spack packages, so no additional package repository is needed.
 
 
 What's next ?

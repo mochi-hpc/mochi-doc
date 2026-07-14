@@ -14,8 +14,8 @@ This page provides general documentation for installation of Mochi.
     artifact that can be used to either validate the configuration or provide
     diagnostic information for support purposes.
 
-Installing Spack and the Mochi repository
------------------------------------------
+Installing Spack
+----------------
 
 The recommended way to install the Mochi libraries and dependencies
 is to use `Spack <https://spack.readthedocs.io/en/latest/>`_.
@@ -26,21 +26,9 @@ platforms and environments.
 First, you will need to install Spack as explained
 `here <https://spack.readthedocs.io/en/latest/getting_started.html>`_.
 
-Mercury, Argobots, Margo, and Thallium are available as builtin
-packages in Spack. Newer versions, as well as PyMargo, are provided
-by the Mochi Spack repository, which you can clone and add as a Spack
-namespace.
-
-.. code-block:: console
-
-   $ git clone https://github.com/mochi-hpc/mochi-spack-packages.git
-   $ spack repo add mochi-spack-packages/spack_repo/mochi
-
-.. important::
-   The above reporitory may contain newer versions of Mercury,
-   Argobots, Margo, and Thallium than what is available in Spack
-   by default, so we recommend using it even if you will only
-   work with these libraries.
+Mercury, Argobots, Margo, and Thallium, as well as PyMargo, are all
+available as builtin packages in Spack, so no additional package
+repository is needed.
 
 You can then check that Spack can find Margo (for example) by typping:
 
@@ -96,12 +84,6 @@ as follows.
    $ spack install
 
 Once installed in an environment, your packages will be ready to use.
-
-.. note::
-
-   You can do :code:`spack repo add mochi-spack-packages` from within your
-   activated environment if you don't want to polute your global installation
-   of Spack.
 
 Using the Mochi libraries with cmake
 ------------------------------------

@@ -39,8 +39,7 @@ that has been created in the docs directory.
 
 ## Building the code examples
 
-To build the code, you will need spack and the
-[mochi repo](https://github.com/mochi-hpc/mochi-spack-packages) setup.
+To build the code, you will need spack set up.
 
 ```
 cd code
