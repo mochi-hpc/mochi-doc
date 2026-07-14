@@ -4,7 +4,7 @@
 
 This repository contains a Sphinx-based documentation
 for the Mochi libraries: Margo, Thallium, Argobots, Mercury,
-ABT-IO, and SSG, as well as corresponding code examples.
+and PyMargo, as well as corresponding code examples.
 
 ## Building the documentation
 

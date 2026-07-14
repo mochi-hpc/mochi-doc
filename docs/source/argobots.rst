@@ -14,7 +14,7 @@ Argobots is the execution engine behind Mochi's concurrency model:
 
 - **Margo** uses Argobots for managing RPC handler execution and progress loops
 - **Thallium** provides C++ abstractions over Margo's Argobots-based execution
-- **Bedrock** allows fine-grained control over Argobots pools and execution streams
+- **Margo** allows fine-grained control over Argobots pools and execution streams
 - **All Mochi services** run on Argobots threads for lightweight concurrency
 
 Understanding Argobots is essential for:
@@ -56,7 +56,7 @@ Core Concepts
   scheduling behaviors.
 
 **Schedulers**
-  Components that pull work units from pools and execute them on xstreams.
+  Entities that pull work units from pools and execute them on xstreams.
   Argobots provides predefined schedulers (BASIC, RANDWS, PRIO) and supports
   custom scheduler implementations for specialized policies. Each xstream
   is associated with its own scheduler.

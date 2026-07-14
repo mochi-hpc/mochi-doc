@@ -71,9 +71,9 @@ For instance, :code:`Address` has the :code:`hg_addr` property, :code:`Engine`
 has an :code:`mid` property, and so on.
 
 If you have a Mochi library developped in C or C++ and want to make a Python
-binding for it that is compatible with PyMargo, we recommend that you look at
-how `Yokan <https://github.com/mochi-hpc/mochi-yokan>`_ does it, in its `python`
-folder.
+binding for it that is compatible with PyMargo, we recommend that you follow
+the same capsule-based approach: expose your native handles as Python capsules
+and wrap them in higher-level, object-oriented Python classes.
 
 Serialization in PyMargo relies on Python's `pickle` module, hence it is
 not possible to register an RPC with :code:`MARGO_REGISTER` or :code:`engine::define()`

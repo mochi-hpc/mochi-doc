@@ -19,7 +19,7 @@ Hello Mochi
 a new platform.  This document is intended for HPC data service developers
 and system software researchers, but it should be equally useful to anyone
 who wants to try out the Mochi software stack and does not have access to
-pre-configured components.
+a pre-configured installation.
 
 This document is structured as an ordered set of methodical steps that walk
 through the process of building and running Mochi software.  Each step
@@ -87,7 +87,7 @@ Set up Spack
 ------------
 
 Spack is an HPC-friendly, user-deployable, software package manager.
-Although any Mochi component can be installed manually, we recommend using
+Although any Mochi package can be installed manually, we recommend using
 Spack to simplify the build process and help to manage dependencies.
 
 
@@ -315,7 +315,7 @@ maximum performance from Mochi.
 
 
 Important note: at this point in the Hello Mochi procedure we will begin
-executing runtime commands that exercise Mochi components.  If you are using
+executing runtime commands that exercise Mochi.  If you are using
 a platform in which the compute nodes and login nodes are not homogenous,
 then you will need to run the prescribed commands on a compute node (for
 example, within an interactive job allocation). The login node may not
@@ -404,198 +404,9 @@ compute nodes on some systems.
         #
         ####################################################################
 
-Start a server process
-----------------------
-
-At this point you have identified your network transport and confirmed that
-it is available at runtime.  You should now be able to start a server
-process that listens for incoming RPCs on that network fabric. In order to
-confirm this capability, we now install the mochi-bedrock bootstrapping
-system.  Among other things, bedrock provides a skeleton daemon that can be
-used to dynamically load additional service providers.
-
-.. admonition:: Artifact 6
-
-    Demonstrate the ability to install and launch a bedrock server daemon.
-    Execute the following commands and show the output:
-
-    .. code-block:: bash
-
-        # add mochi-bedrock as a root spec in your environment
-        $ spack add mochi-bedrock
-        # install new packages
-        $ spack install
-        # launch the server, substituting the command line argument with the
-        #   appropriate address string from Artifact 1d and 5
-        $ bedrock tcp://
-
-    Example:
-
-    .. code-block:: text
-
-        carns-x1-7g ~> spack add mochi-bedrock
-        ==> Adding mochi-bedrock to environment hello-mochi
-        carns-x1-7g ~> spack install
-        ==> Starting concretization
-        ==> Environment concretized in 18.32 seconds.
-        ==> Concretized mochi-margo
-        [+]  yvp5cp6  mochi-margo@0.9.10%gcc@11.2.0~pvar arch=linux-ubuntu22.04-skylake
-        [+]  hxtr2qr          ^argobots@1.1%gcc@11.2.0~affinity~debug~lazy_stack_alloc+perf~stackunwind~tool~valgrind stackguard=none arch=linux-ubuntu22.04-skylake
-        [+]  x7siqsl          ^autoconf@2.71%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  uiai5gc          ^automake@1.16.5%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  2pqprp2          ^json-c@0.16%gcc@11.2.0~ipo build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-        [+]  xuzv4eo              ^cmake@3.22.1%gcc@11.2.0~doc+ncurses+ownlibs~qt build_type=Release arch=linux-ubuntu22.04-skylake
-        [+]  zqwp5ne          ^libtool@2.4.6%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  sb5p7lz          ^m4@1.4.18%gcc@11.2.0+sigsegv patches=3877ab5,fc9b616 arch=linux-ubuntu22.04-skylake
-        [+]  7xpep5r          ^mercury@2.2.0%gcc@11.2.0~bmi~boostsys~checksum~debug~hwloc~ipo~mpi+ofi~psm~psm2+shared+sm~ucx~udreg build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-        [+]  2y7oqvk              ^libfabric@1.15.1%gcc@11.2.0~debug~disable-spinlocks~kdreg fabrics=rxm,tcp arch=linux-ubuntu22.04-skylake
-        [+]  x7yeuj2          ^pkg-config@0.29.2%gcc@11.2.0+internal_glib arch=linux-ubuntu22.04-skylake
-        ==> Concretized mochi-bedrock
-         -   gyni5wv  mochi-bedrock@0.5.2%gcc@11.2.0+abtio~ipo~mona~mpi build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-        [+]  xuzv4eo          ^cmake@3.22.1%gcc@11.2.0~doc+ncurses+ownlibs~qt build_type=Release arch=linux-ubuntu22.04-skylake
-         -   kqupezf          ^fmt@8.1.1%gcc@11.2.0~ipo+pic~shared build_type=RelWithDebInfo cxxstd=11 arch=linux-ubuntu22.04-skylake
-         -   euf7mld          ^mochi-abt-io@0.5.1%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  hxtr2qr              ^argobots@1.1%gcc@11.2.0~affinity~debug~lazy_stack_alloc+perf~stackunwind~tool~valgrind stackguard=none arch=linux-ubuntu22.04-skylake
-        [+]  x7siqsl              ^autoconf@2.71%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  uiai5gc              ^automake@1.16.5%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  2pqprp2              ^json-c@0.16%gcc@11.2.0~ipo build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-        [+]  zqwp5ne              ^libtool@2.4.6%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        [+]  sb5p7lz              ^m4@1.4.18%gcc@11.2.0+sigsegv patches=3877ab5,fc9b616 arch=linux-ubuntu22.04-skylake
-         -   7ejpj2i              ^openssl@1.1.1q%gcc@11.2.0~docs~shared certs=mozilla patches=3fdcf2d arch=linux-ubuntu22.04-skylake
-         -   3koqnyy                  ^ca-certificates-mozilla@2022-07-19%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-         -   iijqwy5                  ^perl@5.32.1%gcc@11.2.0~cpanm+shared+threads arch=linux-ubuntu22.04-skylake
-         -   y3vm6i6                  ^zlib@1.2.12%gcc@11.2.0+optimize+pic+shared patches=0d38234 arch=linux-ubuntu22.04-skylake
-        [+]  x7yeuj2              ^pkg-config@0.29.2%gcc@11.2.0+internal_glib arch=linux-ubuntu22.04-skylake
-        [+]  yvp5cp6          ^mochi-margo@0.9.10%gcc@11.2.0~pvar arch=linux-ubuntu22.04-skylake
-        [+]  7xpep5r              ^mercury@2.2.0%gcc@11.2.0~bmi~boostsys~checksum~debug~hwloc~ipo~mpi+ofi~psm~psm2+shared+sm~ucx~udreg build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-        [+]  2y7oqvk                  ^libfabric@1.15.1%gcc@11.2.0~debug~disable-spinlocks~kdreg fabrics=rxm,tcp arch=linux-ubuntu22.04-skylake
-         -   wcburov          ^mochi-thallium@0.10.1%gcc@11.2.0+cereal~ipo build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-         -   e6u5uqj              ^cereal@1.3.2%gcc@11.2.0~ipo build_type=RelWithDebInfo patches=2dfa0bf arch=linux-ubuntu22.04-skylake
-         -   wzxn4cn          ^nlohmann-json@3.11.2%gcc@11.2.0~ipo+multiple_headers build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-         -   m6zlvyf          ^spdlog@1.9.2%gcc@11.2.0~ipo+shared build_type=RelWithDebInfo arch=linux-ubuntu22.04-skylake
-         -   7gakfr5          ^tclap@1.2.2%gcc@11.2.0 arch=linux-ubuntu22.04-skylake
-        ==> Installing environment hello-mochi
-        [+] /usr (external cmake-3.22.1-xuzv4eofjfrd7lirlhwuoag5vasidhgn)
-        [+] /home/carns/working/src/spack/opt/spack/linux-ubuntu22.04-skylake/gcc-11.2.0/argobots-1.1-hxtr2qrrl7jxdhtw5ccdryqcajee3opu
-        [+] /usr (external autoconf-2.71-x7siqslynwavupcbrqxd3lu5ejfmqw33)
-        [+] /usr (external automake-1.16.5-uiai5gcqq4cpcvolmkj4nzddgthvmaje)
-        [+] /usr (external libtool-2.4.6-zqwp5nep4ud7vq2yl2oui247k6caerok)
-        [+] /usr (external m4-1.4.18-sb5p7lz7gmfh3qba7tf72clw7vbpyhj5)
-
-        # output omitted for clarity
-
-        [+] /home/carns/working/src/spack/opt/spack/linux-ubuntu22.04-skylake/gcc-11.2.0/mochi-thallium-0.10.1-wcburovh777u7cyksdybslmtmxurdkch
-        ==> Installing mochi-bedrock-0.5.2-gyni5wvfhszkdpj3ja5sgqmiax2amczi
-        ==> No binary for mochi-bedrock-0.5.2-gyni5wvfhszkdpj3ja5sgqmiax2amczi found: installing from source
-        ==> Using cached archive: /home/carns/working/src/spack/var/spack/cache/_source-cache/archive/4c/4c6d188c43141805c9c9cde6f8f20031437c394a5136f9a97d9561342ac19994.tar.gz
-        ==> No patches needed for mochi-bedrock
-        ==> mochi-bedrock: Executing phase: 'cmake'
-        ==> mochi-bedrock: Executing phase: 'build'
-        ==> mochi-bedrock: Executing phase: 'install'
-        ==> mochi-bedrock: Successfully installed mochi-bedrock-0.5.2-gyni5wvfhszkdpj3ja5sgqmiax2amczi
-          Fetch: 0.00s.  Build: 1m 46.89s.  Total: 1m 46.89s.
-        [+] /home/carns/working/src/spack/opt/spack/linux-ubuntu22.04-skylake/gcc-11.2.0/mochi-bedrock-0.5.2-gyni5wvfhszkdpj3ja5sgqmiax2amczi
-        ==> Updating view at /home/carns/working/src/spack/var/spack/environments/hello-mochi/.spack-env/view
-        ==> Warning: Skipping external package: mpich@4.0.2%gcc@11.2.0~argobots~benvolio~cuda+fortran+hwloc+hydra+libxml2+pci~rocm+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch3 netmod=ofi patches=d4c0e99 pmi=pmi arch=linux-ubuntu22.04-skylake/533ib4c
-        carns-x1-7g ~> bedrock tcp://
-        [2022-09-09 11:42:48.126] [info] Bedrock daemon now running at ofi+tcp;ofi_rxm://192.168.122.1:36773
-
-Access the server from a separate client process
-------------------------------------------------
-
-If you leave the daemon from Step 6 running, you can now connect to it.  The
-mochi-bedrock package includes a utility called `bedrock-query` that can be
-used to retrieve the Mochi configuration from the bedrock server in JSON
-format.
-
-.. admonition:: Artifact 7
-
-    Use the runtime address emitted by bedrock in the final line of
-    Artifact 7 to connect to the server using the bedrock-query command
-    line tool.  This command can be executed from the same node or a
-    different node as long as they have network connectivity.  Show the
-    output of the following commands (this example activates the
-    existing Spack environment in a separate terminal for the client
-    executable to use):
-
-    .. code-block:: bash
-
-        # activate Spack environment in another terminal
-        $ spack env activate hello-mochi
-        # connect to the bedrock process and display its Mochi configuration.  Note
-        #    that if the runtime address of the server includes a `;` character you may
-        #    need to either escape it with a backslash or put double quotes around the
-        #    entire address string.
-        $ bedrock-query <transport type> -a <daemon address> -p
-
-    Example:
-
-    .. code-block:: text
-
-        carns-x1-7g ~> spack env activate hello-mochi
-        carns-x1-7g ~> bedrock-query tcp:// -p -a ofi+tcp\;ofi_rxm://192.168.122.1:46053
-        {
-            "ofi+tcp;ofi_rxm://192.168.122.1:46053": {
-                "bedrock": {
-                    "pool": "__primary__",
-                    "provider_id": 0
-                },
-                "libraries": [],
-                "margo": {
-                    "argobots": {
-                        "abt_mem_max_num_stacks": 8,
-                        "abt_thread_stacksize": 2097152,
-                        "pools": [
-                            {
-                                "access": "mpmc",
-                                "kind": "fifo_wait",
-                                "name": "__primary__"
-                            }
-                        ],
-                        "version": "1.1",
-                        "xstreams": [
-                            {
-                                "affinity": [],
-                                "cpubind": -1,
-                                "name": "__primary__",
-                                "scheduler": {
-                                    "pools": [
-                                        0
-                                    ],
-                                    "type": "basic_wait"
-                                }
-                            }
-                        ]
-                    },
-                    "enable_diagnostics": false,
-                    "enable_profiling": false,
-                    "handle_cache_size": 32,
-                    "mercury": {
-                        "address": "ofi+tcp;ofi_rxm://192.168.122.1:46053",
-                        "auto_sm": false,
-                        "input_eager_size": 4064,
-                        "listening": true,
-                        "max_contexts": 1,
-                        "na_no_block": false,
-                        "na_no_retry": false,
-                        "no_bulk_eager": false,
-                        "no_loopback": false,
-                        "output_eager_size": 4080,
-                        "request_post_incr": 256,
-                        "request_post_init": 256,
-                        "stats": false,
-                        "version": "2.2.0"
-                    },
-                    "output_dir": "/home/carns",
-                    "profile_sparkline_timeslice_msec": 1000,
-                    "progress_pool": 0,
-                    "progress_timeout_ub_msec": 100,
-                    "rpc_pool": 0,
-                    "version": "0.9.10"
-                },
-                "providers": []
-            }
-        }
-
-Congratulations!  At this point you have validated the basic functionality of your Margo environment.  Please see the Mochi Read the Docs page for additional information about using more advanced Mochi components.
-
+Congratulations!  At this point you have validated the basic functionality of
+your Margo environment: Spack is configured, the Mochi software stack is
+installed, and your desired network transport initializes successfully.  You
+are now ready to start developing your own Mochi data service with Margo (or
+Thallium in C++).  Please see the tutorials on this website for a step-by-step
+introduction to writing Margo servers and clients.

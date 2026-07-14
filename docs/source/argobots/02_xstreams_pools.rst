@@ -3,7 +3,7 @@ Execution Streams and Pools
 
 In this tutorial, you will learn how to create multiple execution streams for parallel
 execution and understand how pools distribute work among them. This is essential for
-achieving high performance in Mochi applications and understanding how Bedrock configures
+achieving high performance in Mochi applications and understanding how Margo configures
 Argobots for your services.
 
 Key Concepts
@@ -223,18 +223,18 @@ When to Use Each Strategy
   - You have more tasks than execution streams
   - Example: Task-parallel algorithms, recursive divide-and-conquer
 
-Mochi/Bedrock Connection
--------------------------
+Mochi/Margo Connection
+----------------------
 
 Understanding execution streams and pools is crucial for configuring Mochi services
-through Bedrock and Margo. Bedrock and Margo configurations allow you to:
+through Margo. Margo configurations allow you to:
 
 - Create custom pools for different types of work
 - Assign RPC handlers or providers to specific pools
 - Configure work-stealing for load balancing
 - Set pool access modes for optimal performance
 
-Example Bedrock pool configuration:
+Example Margo pool configuration:
 
 .. code-block:: json
 

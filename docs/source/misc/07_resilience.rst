@@ -22,4 +22,4 @@ timeout of 4 milliseconds.
 
 This method is not fool-proof, but can be a useful tool to develop more resilient data services.
 Beyond this, techniques such as replication, consensus, two-phase commit, or rollback, may be used
-as needed depending on each specific component.
+as needed depending on each specific service.

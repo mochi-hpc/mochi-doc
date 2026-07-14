@@ -27,8 +27,9 @@ First, you will need to install Spack as explained
 `here <https://spack.readthedocs.io/en/latest/getting_started.html>`_.
 
 Mercury, Argobots, Margo, and Thallium are available as builtin
-packages in Spack. For all the other Mochi libraries, you will need
-to  clone the following git reporitory and add it as a Spack namespace.
+packages in Spack. Newer versions, as well as PyMargo, are provided
+by the Mochi Spack repository, which you can clone and add as a Spack
+namespace.
 
 .. code-block:: console
 
@@ -78,8 +79,8 @@ install Margo if you didn't install it before, as well as its dependencies).
 :code:`spack install mercury` can be used to install Mercury, and
 :code:`spack install argobots` can be used to install Argobots, should you
 need to install either independently of Margo or Thallium.
-:code:`spack install mochi-abt-io` will install ABT-IO, and so on.
-All the Mochi packages are prefixed with :code:`mochi-`.
+The Margo and Thallium packages are prefixed with :code:`mochi-`
+(:code:`mochi-margo` and :code:`mochi-thallium`).
 
 Loading and using the Mochi libraries
 -------------------------------------
@@ -105,19 +106,14 @@ Once installed in an environment, your packages will be ready to use.
 Using the Mochi libraries with cmake
 ------------------------------------
 
-Within a cmake project, Thallium, Mercury, Yokan, and Bedrock can be found using:
+Within a cmake project, Thallium and Mercury can be found using:
 
 .. code-block:: cmake
 
    find_package (mercury REQUIRED)
    find_package (thallium REQUIRED)
-   find_package (yokan REQUIRED)
-   find_package (warabi REQUIRED)
-   find_package (flock REQUIRED)
-   find_package (bedrock REQUIRED)
-   find_package (bedrock-module-api REQUIRED) # for compiling bedrock modules
 
-To make cmake find Margo, Argobots, or ABT-IO, you can use
+To make cmake find Margo or Argobots, you can use
 cmake's PkgConfig module:
 
 .. code-block:: cmake
@@ -125,7 +121,6 @@ cmake's PkgConfig module:
    find_package (PkgConfig REQUIRED)
    pkg_check_modules (MARGO REQUIRED IMPORTED_TARGET margo)
    pkg_check_modules (ABT REQUIRED IMPORTED_TARGET argobots)
-   pkg_check_modules (ABTIO REQUIRED IMPORTED_TARGET abt-io)
 
 You can now link targets as follows.
 
@@ -146,38 +141,6 @@ You can now link targets as follows.
    # Code using Argobots
    add_executable (my_abt_prog source.c)
    target_link_libraries (my_abt_prog PkgConfig::ABT)
-
-   # Code using ABT-IO
-   add_executable (my_abt_io_prog source.c)
-   target_link_libraries (my_abt_io_prog PkgConfig::ABTIO)
-
-   # Code using Yokan
-   add_executable (my_yokan_prog source.c)
-   target_link_libraries (my_yokan_prog yokan::client)
-   # link against yokan::server if you need to instantiate a provider
-
-   # Code using Warabi
-   add_executable (my_warabi_prog source.cpp)
-   target_link_libraries (my_warabi_prog warabi::client)
-   # Note: Warabi provides the following targets to link against:
-   # - warabi::client: C++ client library
-   # - warabi::server: C++ server library
-   # - warabi::c-client: C client library
-   # - warabi::c-server: C server library
-
-   # Code using Flock
-   add_executable (my_flock_prog flock.c)
-   target_link_libraries (my_flock_prog flock::client)
-   # Use flock::server if you need to instantiate a provider
-
-   # Code using Bedrock
-   add_executable (my_bedrock_prog source.cpp)
-   target_link_libraries (my_bedrock_prog bedrock::client)
-   # Note: Bedrock is implemented in two separate packages,
-   # providing a total of three libraries:
-   # - bedrock::client (from mochi-bedrock package): Client library
-   # - bedrock::server (from mochi-bedrock package): Server library
-   # - bedrock::module-api (from mochi-bedrock-module-api): For building a module
 
 Using the Mochi libraries with pkg-config
 -----------------------------------------

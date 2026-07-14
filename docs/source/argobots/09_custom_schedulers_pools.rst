@@ -62,7 +62,7 @@ Mochi ecosystem:
 
 **How to Use Margo Custom Pools**:
 
-In Bedrock or Margo configurations, you can specify these custom pool types:
+In Margo configurations, you can specify these custom pool types:
 
 .. code-block:: json
 

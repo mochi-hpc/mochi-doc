@@ -149,10 +149,10 @@ Choosing a Scheduler
   - You have multiple execution streams
   - Load balancing is critical
 
-Mochi/Bedrock Integration
---------------------------
+Mochi/Margo Integration
+-----------------------
 
-Bedrock configurations expose scheduler choices in each xstream definition:
+Margo configurations expose scheduler choices in each xstream definition:
 
 .. code-block:: json
 

@@ -393,11 +393,6 @@ register_library(
 )
 
 register_library('margo')
-register_library('yokan')
-register_library('warabi')
-register_library('flock')
-register_library('bedrock')
-register_library('abt-io')
 
 breathe_default_project = 'thallium'
 
